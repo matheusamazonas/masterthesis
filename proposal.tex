@@ -1,0 +1,112 @@
+\documentclass{article}
+\usepackage{rutitlepage}
+\usepackage{booktabs}
+\usepackage{url}
+\usepackage{geometry}
+\usepackage[english]{babel}
+
+\usepackage[
+backend=biber,
+style=numeric
+]{biblatex}
+\addbibresource{plan.bib}
+
+\usepackage{glossaries}
+\makeglossaries
+\input{glossary.tex}
+
+\urlstyle{tt}
+
+\newcommand{\projecttitle}{Developing Real Life, Task Oriented Applications for the Internet of Things}
+\newcommand{\rinus}{prof.~dr.~dr.h.c.~ir.~M.J.~Plasmeier }
+\newcommand{\mart}{M. Lubbers MSc.}
+
+\date{June 12th, 2018}
+\author{Matheus Amazonas Cabral de Andrade}
+
+\begin{document}
+\maketitleru[
+    layout=seventeen,
+    title=Master's Thesis Proposal,
+    subtitle=\projecttitle,
+    others={{Supervisors:}{\rinus \\ \mart}}]
+
+% Mention some basic information, such as start date, expected end date, supervisor and (preliminary) project title. Also you must mention your study programme: computing science or information science.
+\section{Basic Information}
+
+The Master's thesis will be conducted as part of my Master's in Computing Science (Software Science specialization). The research will be carried out in the iCIS's Department of Software Science, specifically in the iTasks research group.
+
+The project started on April 23rd 2018 and is expected to end on August 26th 2018. Its proposed title is "\projecttitle"
+
+The project's supervisor is \rinus and the daily supervisor is \mart
+
+\section{Context}
+The iCIS's Software Science department has been developing both the functional programming language Clean and the \acrfull{edsl} iTasks within Clean. iTasks is a library that implements the \acrfull{top} paradigm in Clean. This paradigm is a new flavor of programming that allows users to collaborate online using tasks that access shared data sources.
+
+By design, iTasks provides an environment where technical details can be abstracted from, allowing the user to focus on design choices. One of these abstractions is portability: the same iTasks source file can generate iTasks servers for macOS, Linux, Windows and Android. In addition, users can access iTasks applications from any Internet browser that supports Javascript. 
+
+Even though iTasks supported many existing platforms, \acrfull{iot} devices were not supported yet. In order to allow such devices to run iTasks tasks, an \acrshort{edsl} was created: mTask.  
+
+%Write the problem statement. In this statement you describe what is the problem to be solved.
+\section{Research Question}
+
+Even though mTask was created to allow iTasks task to run on \acrshort{iot} devices, it has not been proved capable of running real life applications yet. The examples built during its development were simple demonstrations and were far from real life \acrshort{iot} applications. Given that, I propose the following research question:
+
+Is it possible to develop real life, \acrshort{iot} applications using mTask? If so, how can the development process be improved? If not, what are the challenges to solve to make it possible?
+
+%Describe the way of working. This means: describe how you want to solve the problem.
+\section{Methodology}
+
+I plan to tackle the research question by example. Namely, trying to develop a real life \acrshort{iot} application using mTask. The attempt to develop such an application should display mTask's capability to create real life applications while displaying new opportunities to improve the development process.
+
+The application I chose to develop tackles a popular problem in \acrshort{iot}: house automation. This application would be responsible for automating simple house management tasks such as turning the central heating system off when the room is warm, or opening up the curtains at a set time. The proposed application requires several \acrshort{iot} devices equipped with sensors (temperature, light, humidity, etc.) and actuators (LEDs, motors, relays, etc.) spread across rooms. We chose Arduino as our target device given its popularity, cost, efficiency and the myriad of sensors and actuators it supports.
+
+The development process consists of two phases: simulation and device deployment. In the first phase, Arduinos are not used, but instead an mTask simulator that was developed during my Research Internship. Such a setting allows rapid prototyping, quick testing and debugging. Once I am confident that the application behaves as expected, the development can move to the second phase: device deployment. During this phase, the Arduino devices will be equipped with the sensors and actuators required by the house automation example and the mTask runtime will be uploaded to them. Following, we can use iTasks to send the mTask programs to the devices. Finally, we can observe the interaction of the devices and the iTasks application to evaluate whether the application behaves as expected. 
+
+I expect that the attempt to develop such an application will reveal existing problems in mTask that have not surfaced yet and that hopefully can be solved. In addition, I expect the application development to suggest improvements to the current mTask development process and tools.
+
+%Give an overview of relevant literature and describe how you want to use it.
+\section{Literature}
+The suggested literature is listed below.
+
+\nocite{*}
+\printbibliography[heading={none}]
+
+Article \cite{top} is suggested in order to deepen my understanding on \acrshort{top} and iTasks. The mTask library is an implementation of the \acrshort{top} paradigm targeted to \acrshort{iot} devices. Therefore, understanding \acrshort{top} is crucial to understanding mTask.
+
+Article \cite{parametric} introduces parametric lenses, a concept that is widely used in iTasks and that I plan to utilize during the development of the proposed application. 
+
+Haskino \cite{haskino} is a Haskell library for Arduino programming. Investigating it might generate valuable insight into using functional languages to program Arduinos.
+
+The task-based approach of mTask \cite{micro} is a recent proposed addition to mTask.
+
+Publication \cite{mtasks} is essential because it introduces the work that occasionally became mTask. Its reading should ease the understanding and usage of mTask.
+
+The work described on \cite{martthesis} introduced the interpretable version (view) of mTask. Given that the application I plan to implement uses this mTask's view, this reading is mandatory.
+
+The survey on \acrshort{iot} \cite{survey} should give me a better understanding of the current status, applications and challenges of the field.
+
+Paper \cite{ivory} reports on the experience of building a real life, embedded application (an autopilot) using Ivory, a \acrshort{edsl} embedded into Haskell. This report might give some ideas on how to implement the proposed application and on how to improve mTask.
+
+\section{Planning}
+
+The project started on April 23rd 2018, shortly after I finished my Research Internship. It is planned to end on August 25th 2018. The proposed project's timeline is presented below:
+
+\begin{enumerate}
+    \item Adapting mTask: from April 23rd until May 16th
+    \item Application selection: from May 17th until June 12th 
+    \item Application development: from June 13th until July 15th
+    \item Writing the thesis report: from June 25th until August 5th
+    \item First report draft: July 22nd
+    \item Second report draft: August 5th
+    \item Presentation preparation: from August 6th until August 12th
+    \item Presentation: sometime between August 12th and 17th. 
+    \item Final corrections: from August 20th until August 26th
+    \item Final submission: August 26th
+\end{enumerate}
+
+\clearpage
+
+\printglossary[type=\acronymtype]
+
+\end{document}

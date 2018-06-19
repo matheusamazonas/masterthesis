@@ -1,0 +1,91 @@
+\documentclass[a4paper,twoside]{book}
+\usepackage{rutitlepage}
+%\usepackage{booktabs}
+\usepackage{url}
+\usepackage{geometry}
+\usepackage[english]{babel}
+\usepackage{lipsum,etoolbox}
+\usepackage[nodayofweek]{datetime}
+\usepackage[acronym,shortcuts]{glossaries}
+\usepackage{listings}
+\usepackage[backend=biber,style=numeric]{biblatex}
+
+\addbibresource{plan.bib}
+
+\lstset{language=Clean,showstringspaces=false,basicstyle=\ttfamily,frame=leftline}
+
+\makeglossaries
+
+\input{acronyms.tex}
+
+\urlstyle{tt}
+
+\newcommand{\projecttitle}{Developing Real Life, Task Oriented Applications for the Internet of Things}
+\newcommand{\rinus}{prof.~dr.~dr.h.c.~ir.~M.J.~Plasmeier }
+\newcommand{\pieter}{dr.~P.W.M. Koopman}
+\newcommand{\mart}{M. Lubbers MSc.}
+
+\date{\today}
+\author{Matheus Amazonas Cabral de Andrade}
+
+\begin{document}
+\maketitleru[
+    layout=seventeen,
+    title=Master's Thesis,
+    subtitle=\projecttitle,
+    others={{Supervisor:}{\rinus},{Daily Supervisor:}{\mart},{Second Reader:}{\pieter}}]
+    
+\clearpage
+
+\chapter*{\centering Abstract}
+    \addcontentsline{toc}{chapter}{Abstract}
+    \input{chapters/abstract}
+    
+\chapter*{\centering Acknowledgements}
+    \addcontentsline{toc}{chapter}{Acknowledgements}
+    \input{chapters/acknowledgements}
+
+\tableofcontents
+\clearpage
+
+\chapter{Introduction}
+    \input{chapters/introduction}
+
+\chapter{Embedded Domain Specific Languages}
+    \input{chapters/edsl}
+
+\chapter{Task Oriented Programming}
+    \input{chapters/top}
+
+\chapter{The mTask EDSL}
+    \input{chapters/mtask}
+
+\chapter{The Application}
+    \input{chapters/application}
+
+\chapter{Application Development}
+    \input{chapters/development}
+
+\chapter{Conclusion}
+    \input{chapters/conclusion}
+
+\chapter{Related Work}
+    \input{chapters/related}
+
+\clearpage
+
+\nocite{*}
+\addcontentsline{toc}{chapter}{Bibliography}
+\printbibliography[]
+
+\clearpage
+
+%\chapter*{Acronyms}
+\addcontentsline{toc}{chapter}{Glorrasy}
+\printglossary[]
+
+\addcontentsline{toc}{chapter}{Listings}
+\lstlistoflistings
+
+
+\end{document}
