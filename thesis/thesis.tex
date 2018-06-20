@@ -9,13 +9,15 @@
 \usepackage[acronym,shortcuts]{glossaries}
 \usepackage{listings}
 \usepackage[backend=biber,style=numeric]{biblatex}
+\usepackage{courier} % Clean syntax highlighting
 
-\addbibresource{plan.bib}
 
+\addbibresource{thesis.bib}
+
+\input{clean.sty}
 \lstset{language=Clean,showstringspaces=false,basicstyle=\ttfamily,frame=leftline}
 
 \makeglossaries
-
 \input{acronyms.tex}
 
 \urlstyle{tt}
@@ -80,9 +82,8 @@
 
 \clearpage
 
-%\chapter*{Acronyms}
-\addcontentsline{toc}{chapter}{Glorrasy}
-\printglossary[]
+\addcontentsline{toc}{chapter}{Glossary}
+\printglossary[type=\acronymtype,title=Glossary]
 
 \addcontentsline{toc}{chapter}{Listings}
 \lstlistoflistings

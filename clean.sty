@@ -1,0 +1,75 @@
+\usepackage{listings}
+\usepackage{stmaryrd}
+
+% color definitions
+% the following colors are appealing for background of code segments
+%CornflowerBlue    heldere blauwe kleur
+%CadetBlue         sobere blauwe kleur
+%Periwinkle        blauw die neigt naar paars, nogal donker
+%Thistle           wat valere kleur, minder nadrukkelijk aanwezig
+%YellowOrange      erg nadrukkelijke kleur
+\newcommand{\ExampleCodeBackgroundColor}{\color{White}}
+\newcommand{\ExampleCodeFrameColor}{\color{black}}
+\newcommand{\CleanDocFrameColor}{\color{black}}
+
+
+\lstdefinelanguage{Clean}{%
+	alsoletter={ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz_`1234567890},
+	alsoletter={~!@\#$\%^\&*-+=?<>:|\\.},
+	morekeywords={generic,implementation,definition,dynamic,module,import,from,where,in,of,case,let,infix,infixr,infixl,class,instance,with,if,derive,code},
+	sensitive=true,
+	escapeinside={[+}{+]},
+	morecomment=[l]{//},
+	morecomment=[n]{/*}{*/},
+	morestring=[b]",
+	morestring=[s]{['}{']},
+	basewidth=0.43em,
+	columns=[c]fixed,
+	texcl=true,
+	literate=%
+		% Basic Clean constructs
+		%{\\}{{$\lambda\:$}}1
+		{::}{{$:\!\!\!:$}}1
+		{:.}{{$:\!.$}}1
+		{...}{{.\!.\!.}}2
+		{++}{{$+\!+$}}2
+		{+++}{{$+\!\!\!+\!\!\!+$}}2
+		{==.}{{==\!.}}2
+		{=.}{{=\!.}}1
+		{>=}{{$\geq\:$}}1
+		{<=}{{$\leq\:$}}1
+		{||-}{{$\mid\mid\!$-}}2
+		{-||}{{-$\!\mid\mid$}}2
+		{-||-}{{-$\!\mid\mid\!$-}}2
+		{-&&-}{{-$\!\&\!\&\!$-}}4
+		{not}{{$\neg$}}1
+		{->}{{$\shortrightarrow$}}1
+		{<<@}{{$\ll\!\!@$}}2
+		{>>=}{{$\gg\!\!=$}}2
+		{>>*}{{$\gg\!\!\!\!^*$}}2
+		{>>|}{{$\gg\!\mid$}}2
+		{A.}{{$\forall\;\,$}}1
+		{E.}{{$\exists\;\,$}}1
+}
+
+
+\lstdefinestyle{cleanStyleInline} {
+    breakatwhitespace,
+    breaklines
+}
+
+\newcommand{\CleanInline}[1]{\lstinline[language=Clean,style=cleanStyleInline];#1;}
+\newcommand{\Cl}[1]{\CleanInline{#1}}
+%\newcommand{\CI}[1]{\lstinline[language=Clean,basicstyle=\ttfamily\fontseries{l}\normalsize]|#1|}
+
+\lstdefinestyle{numbers}{numbers=right, stepnumber=1, numberstyle=\tiny, numbersep=-5pt}
+
+% environments for documentary code segments
+\lstnewenvironment{CleanDoc}{\lstset{language=Clean}}{}
+\lstnewenvironment{CleanDocN}{\lstset{language=Clean,style=numbers}}{}
+\lstnewenvironment{CleanDocB}{\lstset{language=Clean,frame=single,rulecolor=\CleanDocFrameColor}}{}
+\lstnewenvironment{CleanDocNB}{\lstset{language=Clean,style=numbers,frame=single,rulecolor=\CleanDocFrameColor}}{}
+
+% environments for example code segments
+\lstnewenvironment{CleanEx}{\lstset{language=Clean,frame=single}}{}
+\lstnewenvironment{CleanExN}{\lstset{language=Clean,style=numbers,frame=single,rulecolor=\ExampleCodeFrameColor,backgroundcolor=\ExampleCodeBackgroundColor}}{}
