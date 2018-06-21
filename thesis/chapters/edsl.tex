@@ -1,15 +1,15 @@
-A \ac{gpl} is a computer language that was designed with the purpose of developing software in a wide range of domains. An example is the C++ programming language, which can be used in domains that vary from systems programming to video games and web servers. In contrast, a \ac{dsl} is a computer language that was designed to be used in a particular domain. Game Maker Language, \acs{html}, LaTeX and \acs{vhdl} are examples of \acp{dsl}. These languages, when compared to \acp{gpl}, usually offer a higher level of abstraction from their target domain.
+A \ac{gpl} is a computer language intended to be used in a wide range of domains. An example is the C++ programming language, which can be used in domains that vary from video games to web servers and systems programming. In contrast, a \ac{dsl} is a computer language that was designed to be used in a particular domain. Game Maker Language, \acs{html}, LaTeX and \acs{vhdl} are examples of \acp{dsl}. These languages, when compared to \acp{gpl}, offer a higher level of abstraction from their target domain.
 
-A \ac{dsl} can be implemented using two different strategies: standalone and embedded. Each strategy has its advantages and disadvantages. In the former strategy, the language is build from the ground up, which consists of developing either a compiler or an interpreter. This strategy provides the language designer with a lot design freedom, but requires a cumbersome amount of work. In the latter strategy, the proposed \ac{dsl} is embedded in another preexisting language. This strategy frees its designer of the task of building a new compiler, but limits the \ac{dsl} to the features of the language it is embedded in.
+A \ac{dsl} can be implemented using two different strategies: standalone and embedded. Each strategy has its advantages and disadvantages. In the former strategy, the language is build from the ground up, which consists of developing either a compiler or an interpreter. This strategy provides the language designer with a lot design freedom, but requires a cumbersome amount of work. In the latter strategy, the proposed \ac{dsl} is embedded in another language. This strategy frees its designer of building a new compiler, but limits the \ac{dsl} to the features of its host language.
 
 The semantics of a \ac{edsl} are given by its views (also called backends). Common views are evaluation, pretty printing, compilation, optimization and verification. There are two main techniques for building an \ac{edsl}: deep and shallow embedding.
 
 \section{Deep Embedding}
 
-Building a deep \ac{edsl} consists of representing language constructs as \acp{adt} in the host language. Views are functions that accept the \ac{adt} as input and return another \ac{adt} that represents its semantics. An example of a simple deep \ac{edsl} and its views (pretty printing and evaluation) can be seen on Listing \ref{deep1}.
+Building a deeply \ac{edsl} consists of representing language constructs as \acp{adt} in the host language. Views are functions that take the \ac{adt} as input and return another \ac{adt} that represents its semantics. An example of a simple deeply \ac{edsl} and its views (pretty printing and evaluation) can be seen on Listing \ref{deep1}.
 
 
-\begin{lstlisting}[caption=A simple deep \ac{edsl} and its views,captionpos=b,label=deep1]
+\begin{lstlisting}[caption=A simple deeply \ac{edsl} and its views,captionpos=b,label=deep1]
 :: MyDSL = I Int
     | B Bool
     | Add MyDSL MyDSL
@@ -22,59 +22,82 @@ prettyPrint :: MyDSL -> [String]
 eval :: MyDSL -> Int
 \end{lstlisting}
 
-The biggest advantage of deep embedding is that adding a view to the \ac{dsl} is easy: simply create a function that transforms the \ac{adt}. One disadvantage of deep \acp{edsl} is that extending the \ac{dsl} might require a lot of work, since new code has to be created for every new construct in all the views. Another disadvantage is its lack of static type safety. As seen on Listing \ref{deep1}, \texttt{MyDSL} allows operations on mixed data types, as addition on booleans and disjunction on integers. In addition, variables are checked during runtime.
+The biggest advantage of deep embedding is that adding a view to the \ac{dsl} is easy: simply create a function that transforms the \ac{adt}. One disadvantage is that extending the \ac{dsl} might require a lot of work, since new code has to be created for every new construct in all the views. Another disadvantage is its lack of static type safety. As seen on Listing \ref{deep1}, \texttt{MyDSL} allows operations on mixed data types, as addition on booleans and disjunction on integers. In addition, variables are checked at runtime instead of compile time.
 
-\acp{gadt} can be used to accomplish static type safety in deep \acp{edsl}, but it does not solve the type safety problem and it can not check variables during compilation. Also, \acp{gadt} are not available in Clean.
+\acp{gadt} can be used to accomplish static type safety in deeply \acp{edsl}, but they not enable compile time variable checks. 
 
 \section{Shallow Embedding}
-Building a shallow \ac{edsl} consists of representing the language constructs directly as its semantics. An example of a simple shallow \ac{edsl} can be seen on Listing \ref{shallow1}.
+Building a shallowly \ac{edsl} consists of representing the language constructs directly as its semantics. An example of a simple shallowly \ac{edsl} can be seen on Listing \ref{shallow1}.
 
-\begin{lstlisting}[caption=A simple shallow \ac{edsl},captionpos=b,label=shallow1]
+\begin{lstlisting}[caption=A simple shallowly \ac{edsl},captionpos=b,label=shallow1]
 :: Sem a = Sem (a, [String])
 
 add :: (Sem a) (Sem a) -> Sem a | + a
 and :: (Sem Bool) (Sem Bool) -> Sem Bool
 eq :: (Sem a)  (Sem a) -> Sem Bool | == a
+var :: String -> Sem Int
 \end{lstlisting}
 
-One advantage of shallow over deep embedding is that adding a new language construct is easy, given that a each construct is just a function. Another advantage is that overloading can be achieved with the use of class constraints. In addition, static type checking was obtained without the usage of \acp{gadt}. 
+One advantage of shallow over deep embedding is that adding a new language construct is easy, given that each construct is just a function. Another advantage is that overloading can be achieved with the use of class constraints. In addition, static type checking was obtained without \acp{gadt}. 
 
-The biggest disadvantages of shallow embedding are based on the fact that all views will always be computed regardless of its need. First, there is no separation of concerns. Second, there is computational waste when not all views are necessary. Finally, adding a new view in the semantics becomes increasingly burdensome. Another disadvantage of shallow embedding is that variables still remain unchecked during compilation. 
+The biggest disadvantages of shallow embedding are based on the fact that all views will always be computed regardless of its need. First, there is no separation of concerns. Second, there is computational waste when not all views are necessary. Finally, adding a new view in the semantics becomes increasingly burdensome. Another disadvantage of shallow embedding is that variables still remain unchecked during compilation. Finally, since the language constructs are functions, they can not be inspected as in deeply \acp{edsl}.
 
 \subsection{Shallow Embedding with Type Classes}
 
-Type classes can be used to avoid computing all the views of a shallow \ac{edsl}. The \ac{dsl} type class should contain the language constructs and each view should provide an instance of the class. An example of a simple shallow \ac{edsl} with classes can be seen on Listing \ref{shallow2}.
+Type classes can be used to avoid computing all the views of a shallowly \ac{edsl}. A type class containing the language constructs is created and each of the \ac{dsl} views should provide an instance of the class. An example of a simple shallowly \ac{edsl} with classes can be seen on Listing \ref{shallow2}.
 
-\begin{lstlisting}[caption=A simple shallow \ac{edsl} with classes,captionpos=b,label=shallow2]
+\begin{lstlisting}[caption=A simple shallowly \ac{edsl} with classes,captionpos=b,label=shallow2]
 :: Print a = P [String]
 :: Eval a = E a
 
 class myDSL v where
+    lit :: t -> v t | toString t
     add :: (v t) (v t) -> v t | + t
-    andd :: (v Bool) (v Bool) -> v Bool
+    and :: (v Bool) (v Bool) -> v Bool
     eq  :: (v t) (v t) -> v Bool | == t
     
 instance myDSL Print where
-    add (P x) (P y) = P (x ++ [" + "] ++ y)
-    andd (P x) (P y) = P (x ++ [" && "] ++ y)
-    eq  (P x) (P y) = P (x ++ [" == "] ++ y)
+    lit x = P [toString x]
+    add (P x) (P y) = P (x ++ [" + ":y])
+    and (P x) (P y) = P (x ++ [" && ":y])
+    eq  (P x) (P y) = P (x ++ [" == ":y])
     
 instance myDSL Eval where
+    lit x = E x
     add (E x) (E y) = E (x + y)
-    andd (E x) (E y) = E (x && y)
+    and (E x) (E y) = E (x && y)
     eq  (E x) (E y) = E (x == y)
 \end{lstlisting}
 
-Type class based shallow embedding solves most of the problems previously faced with deep and shallow embedding. The language is statically typed, the views are separated, adding a view is simple, extending the language with a new construct is easy and operators can be overloaded. The only remaining problem is that variables still are not checked. In order to enable compilation time variable check, one can take advantage of the fact that function parameters are statically typed in Clean. Listing \ref{shallow3} shows how to implement this technique in Clean.
+Class-based shallow embedding solves most of the problems previously faced with deep and shallow embedding. The language is statically typed, the views are separated, adding a view is simple, extending the language with a new construct is easy and operators can be overloaded. 
 
-\begin{lstlisting}[caption=A simple shallow \ac{edsl} with classes,captionpos=b,label=shallow3]
+Two problems remain. First, language constructs still can not be inspected. This is an inherent property of shallowly \acp{edsl} and unfortunately can not be eliminated. 
+
+Second, variables are still not checked at compile time. In order to solve this problem, we can leverage the fact that function arguments are well typed in the host language. A variable declaration is defined as a function where its argument represent the variable and the function body represents the remaining of the program. As a result, any usage of the variable in the function body is well typed. An example of a class-based shallowly \ac{edsl} with compile time variable checks can be seen on Listing \ref{shallow3}.
+
+\begin{lstlisting}[caption=A simple shallowly \ac{edsl} with compile time variable checks,captionpos=b,label=shallow3]
+:: Eval a = E a
 :: In a b = In infixl 0 a b
 
+class expr v where
+    lit :: t -> v t
+    (+.) infixl 6 :: (v t) (v t) -> v t
+    
 class var v where
-	var :: ((v t) -> In t (v a)) -> v a
-	
-test = var \k = 4 In
-	k  ==.  0
+    var :: ((v t) -> In t (v a)) -> v a
+    ( =. ) infixr 3 :: (v t) (v t) -> v t
+
+instance expr Eval where ...
+instance var Eval where ...
+
+test1 :: Eval Int	
+test1 = var \k = 4 In
+	k  =.  k + lit 7
+
+test2 :: Eval Int	
+test2 = var \k = 4 In
+	k  =.  lit True     // Compilation error
 \end{lstlisting}
 
-In the example above the variable \texttt{k} can be used anytime after its declaration, the behavior we wanted to accomplish. We leverage the Clean type system to enable compilation time variable checks with scoping.
+As seen in the example above, the variable \texttt{k} can be used after its declaration in a well typed manner. Function \texttt{test1} compiles successfully, as expected. Function \texttt{test2}, in the other hand, does not compile due to a type error. Therefore, compile time check of variables was achieved.
+
