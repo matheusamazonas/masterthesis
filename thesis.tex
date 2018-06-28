@@ -1,24 +1,23 @@
 \documentclass[a4paper,twoside]{book}
 \usepackage{rutitlepage}
-%\usepackage{booktabs}
 \usepackage{url}
 \usepackage{geometry}
 \usepackage[english]{babel}
 \usepackage{lipsum,etoolbox}
 \usepackage[nodayofweek]{datetime}
-\usepackage[acronym,shortcuts]{glossaries}
+\usepackage[toc,acronym,shortcuts]{glossaries}
 \usepackage{listings}
 \usepackage[backend=biber,style=numeric]{biblatex}
 \usepackage{courier} % Clean syntax highlighting
 
 
-\addbibresource{thesis.bib}
+\addbibresource{thesis/thesis.bib}
 
 \input{clean.sty}
 \lstset{language=Clean,showstringspaces=false,basicstyle=\ttfamily,frame=leftline}
 
 \makeglossaries
-\input{acronyms.tex}
+\input{thesis/acronyms.tex}
 
 \urlstyle{tt}
 
@@ -41,38 +40,38 @@
 
 \chapter*{\centering Abstract}
     \addcontentsline{toc}{chapter}{Abstract}
-    \input{chapters/abstract}
+    \input{thesis/chapters/abstract}
     
 \chapter*{\centering Acknowledgements}
     \addcontentsline{toc}{chapter}{Acknowledgements}
-    \input{chapters/acknowledgements}
+    \input{thesis/chapters/acknowledgements}
 
 \tableofcontents
 \clearpage
 
 \chapter{Introduction}
-    \input{chapters/introduction}
+    \input{thesis/chapters/introduction}
 
 \chapter{Embedded Domain Specific Languages}
-    \input{chapters/edsl}
+    \input{thesis/chapters/edsl}
 
 \chapter{Task Oriented Programming}
-    \input{chapters/top}
+    \input{thesis/chapters/top}
 
 \chapter{The mTask EDSL}
-    \input{chapters/mtask}
+    \input{thesis/chapters/mtask}
 
 \chapter{The Application}
-    \input{chapters/application}
+    \input{thesis/chapters/application}
 
 \chapter{Application Development}
-    \input{chapters/development}
+    \input{thesis/chapters/development}
 
 \chapter{Conclusion}
-    \input{chapters/conclusion}
+    \input{thesis/chapters/conclusion}
 
 \chapter{Related Work}
-    \input{chapters/related}
+    \input{thesis/chapters/related}
 
 \clearpage
 
@@ -80,10 +79,10 @@
 \addcontentsline{toc}{chapter}{Bibliography}
 \printbibliography[]
 
-\clearpage
+%\clearpage
 
-\addcontentsline{toc}{chapter}{Glossary}
-\printglossary[type=\acronymtype,title=Glossary]
+\printglossaries
+
 
 \addcontentsline{toc}{chapter}{Listings}
 \lstlistoflistings
