@@ -38,18 +38,18 @@
 		{=.}{{=\!.}}1
 		{>=}{{$\geq\:$}}1
 		{<=}{{$\leq\:$}}1
-		{||-}{{$\mid\mid\!$-}}2
-		{-||}{{-$\!\mid\mid$}}2
-		{-||-}{{-$\!\mid\mid\!$-}}2
-		{-&&-}{{-$\!\&\!\&\!$-}}4
+		%{||-}{{$\mid\mid\!$-}}2
+		%{-||}{{-$\!\mid\mid$}}2
+		%{-||-}{{-$\!\mid\mid\!$-}}2
+		%{-&&-}{{-$\!\&\!\&\!$-}}4
 		{not}{{$\neg$}}1
 		{->}{{$\shortrightarrow$}}1
 		{<<@}{{$\ll\!\!@$}}2
-		{>>=}{{$\gg\!\!=$}}2
-		{>>*}{{$\gg\!\!\!\!^*$}}2
-		{>>|}{{$\gg\!\mid$}}2
+		%{>>=}{{$\gg\!\!=$}}2
+		%{>>*}{{$\gg\!\!\!\!^*$}}2
+		%{>>|}{{$\gg\!\mid$}}2
 		{A.}{{$\forall\;\,$}}1
-		{E.}{{$\exists\;\,$}}1
+		%{E.}{{$\exists\;\,$}}1
 }
 
 
@@ -60,7 +60,7 @@
 
 \newcommand{\CleanInline}[1]{\lstinline[language=Clean,style=cleanStyleInline];#1;}
 \newcommand{\Cl}[1]{\CleanInline{#1}}
-%\newcommand{\CI}[1]{\lstinline[language=Clean,basicstyle=\ttfamily\fontseries{l}\normalsize]|#1|}
+\newcommand{\CI}[1]{\lstinline[language=Clean,basicstyle=\ttfamily\fontseries{l}\normalsize]|#1|}
 
 \lstdefinestyle{numbers}{numbers=right, stepnumber=1, numberstyle=\tiny, numbersep=-5pt}
 

@@ -7,14 +7,23 @@
 \usepackage[nodayofweek]{datetime}
 \usepackage[toc,acronym,shortcuts]{glossaries}
 \usepackage{listings}
+\usepackage{float} % Pictures
 \usepackage[backend=biber,style=numeric]{biblatex}
-\usepackage{courier} % Clean syntax highlighting
+%\usepackage{courier} % Clean syntax highlighting
+\usepackage{subcaption} %subfigure
+\usepackage[export]{adjustbox} % subfigure
+\usepackage{graphicx} %subfigure
+\usepackage{lmodern}
 
 
 \addbibresource{thesis/thesis.bib}
 
 \input{clean.sty}
-\lstset{language=Clean,showstringspaces=false,basicstyle=\ttfamily,frame=leftline}
+\lstset{
+    language=Clean,
+    showstringspaces=false,
+    basicstyle=\ttfamily,
+    frame=leftline}
 
 \makeglossaries
 \input{thesis/acronyms.tex}

@@ -8,6 +8,7 @@ import StdString
 import StdBool
 import StdMisc
 import StdList => qualified and
+import iTasks
 
 // ------------- Listing 2.1 -------------
 // :: MyDSL = I Int
@@ -86,4 +87,30 @@ import StdList => qualified and
 // test2 = var \k = 4 In
 // 	k  =. lit True
 
-Start = 1
+// ------------- Listing 3.1 -------------
+// class toPrompt d where
+//     toPrompt :: !d -> UI
+
+// enterInformation :: !d ![EnterOption m] -> Task m | toPrompt d & iTask m
+// viewInformation :: !d ![ViewOption m] !m -> Task m | toPrompt d & iTask m
+// updateInformation :: !d ![UpdateOption m m] m -> Task m | toPrompt d & iTask m 
+
+// ------------- Listing 3.1 -------------
+
+:: Location = { city :: String, state :: String }
+
+location :: Location
+location = { city="Omaha", state="Nebraska"}
+
+derive class iTask Location
+
+enterLocation :: Task Location
+enterLocation = enterInformation "Enter the location" []
+
+viewLocation :: Task Location
+viewLocation = viewInformation "View the location" [] location
+
+updateLocation :: Task Location
+updateLocation = updateInformation "Update the location" [] location
+
+Start w = startEngine viewLocation w
