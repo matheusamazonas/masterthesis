@@ -32,9 +32,9 @@ Building a shallowly \ac{edsl} consists of representing the language constructs 
 \begin{lstlisting}[caption=A simple shallowly \ac{edsl},captionpos=b,label=shallow1]
 :: Sem a = Sem (a, [String])
 
-add :: (Sem a) (Sem a) -> Sem a | + a
+add :: (Sem a)    (Sem a)    -> Sem a    | + a
 and :: (Sem Bool) (Sem Bool) -> Sem Bool
-eq :: (Sem a)  (Sem a) -> Sem Bool | == a
+eq ::  (Sem a)    (Sem a)    -> Sem Bool | == a
 var :: String -> Sem Int
 \end{lstlisting}
 
@@ -52,9 +52,9 @@ Type classes can be used to avoid computing all the views of a shallowly \ac{eds
 
 class myDSL v where
     lit :: t -> v t | toString t
-    add :: (v t) (v t) -> v t | + t
+    add :: (v t)    (v t)    -> v t    | + t
     and :: (v Bool) (v Bool) -> v Bool
-    eq  :: (v t) (v t) -> v Bool | == t
+    eq  :: (v t)    (v t)    -> v Bool | == t
     
 instance myDSL Print where
     lit x = P [toString x]
@@ -81,10 +81,10 @@ Second, variables are still not checked at compile time. In order to solve this 
 
 class expr v where
     lit :: t -> v t
-    (+.) infixl 6 :: (v t) (v t) -> v t
+    (+.) infixl 6 :: (v t) (v t)  -> v t
     
 class var v where
-    var :: ((v t) -> In t (v a)) -> v a
+    var :: ((v t) -> In t (v a))   -> v a
     ( =. ) infixr 3 :: (v t) (v t) -> v t
 
 instance expr Eval where ...
