@@ -60,32 +60,34 @@ import iTasks
 //     eq  (E x) (E y) = E (x == y)
 
 // ------------- Listing 2.4 -------------
-// :: Eval a = E a
-// :: In a b = In infixl 0 a b
+:: Eval a b = E a
+:: In a b = In infixl 0 a b
+:: Var = Var
+:: Expr = Expr
 
-// class expr v where
-//     lit :: t -> v t
-//     (+.) infixl 6 :: (v t) (v t) -> v t | + t
+class expr v where
+    lit :: t -> v t Expr
+    (+.) infixl 6 :: (v t p) (v t q) -> v t Expr | + t
 
-// class var v where
-// 	var :: ((v t) -> In t (v a)) -> v a
-// 	(=.) infixr 3 :: (v t) (v t) -> v t
+class var v where
+	var :: ((v t Var) -> In t (v a p)) -> v a p
+	(=.) infixr 3 :: (v t Var) (v t p) -> v t Expr
 
-// instance expr Eval where
-// 	lit x = E x
-// 	(+.) (E a) (E b) = E (a + b)
+instance expr Eval where
+	lit x = E x
+	(+.) (E a) (E b) = E (a + b)
 
-// instance var Eval where
-// 	var _ = undef
-// 	(=.) _ _ = undef
+instance var Eval where
+	var _ = undef
+	(=.) _ _ = undef
 
-// test1 :: Eval Int
-// test1 = var \k = 4 In
-// 	k  =. k +. lit 7
+test1 :: Eval Int Expr
+test1 = var \k = 4 In
+	k  =. k +. lit 7
 
-// test2 :: Eval Int
-// test2 = var \k = 4 In
-// 	k  =. lit True
+test2 :: Eval Int Expr
+test2 = var \k = 4 In
+	k  =. lit True 
 
 // ------------- Listing 3.1 -------------
 // class toPrompt d where
@@ -97,20 +99,20 @@ import iTasks
 
 // ------------- Listing 3.1 -------------
 
-:: Location = { city :: String, state :: String }
+// :: Location = { city :: String, state :: String }
 
-location :: Location
-location = { city="Omaha", state="Nebraska"}
+// location :: Location
+// location = { city="Omaha", state="Nebraska"}
 
-derive class iTask Location
+// derive class iTask Location
 
-enterLocation :: Task Location
-enterLocation = enterInformation "Enter the location" []
+// enterLocation :: Task Location
+// enterLocation = enterInformation "Enter the location" []
 
-viewLocation :: Task Location
-viewLocation = viewInformation "View the location" [] location
+// viewLocation :: Task Location
+// viewLocation = viewInformation "View the location" [] location
 
-updateLocation :: Task Location
-updateLocation = updateInformation "Update the location" [] location
+// updateLocation :: Task Location
+// updateLocation = updateInformation "Update the location" [] location
 
-Start w = startEngine viewLocation w
+Start w = 1//startEngine viewLocation w

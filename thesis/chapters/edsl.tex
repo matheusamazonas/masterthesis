@@ -42,7 +42,7 @@ One advantage of shallow over deep embedding is that adding a new language const
 
 The biggest disadvantages of shallow embedding are based on the fact that all views will always be computed regardless of its need. First, there is no separation of concerns. Second, there is computational waste when not all views are necessary. Finally, adding a new view in the semantics becomes increasingly burdensome. Another disadvantage of shallow embedding is that variables still remain unchecked during compilation. Finally, since the language constructs are functions, they can not be inspected as in deeply \acp{edsl}.
 
-\subsection{Shallow Embedding with Type Classes}
+\subsection{Shallow Embedding with Type Classes}\label{sec:class_based_edsl}
 
 Type classes can be used to avoid computing all the views of a shallowly \ac{edsl}. A type class containing the language constructs is created and each of the \ac{dsl} views should provide an instance of the class. An example of a simple shallowly \ac{edsl} with classes can be seen on Listing \ref{shallow2}.
 
@@ -73,30 +73,39 @@ Class-based shallow embedding solves most of the problems previously faced with 
 
 Two problems remain. First, language constructs still can not be inspected. This is an inherent property of shallowly \acp{edsl} and unfortunately can not be eliminated. 
 
-Second, variables are still not checked at compile time. In order to solve this problem, we can leverage the fact that function arguments are well typed in the host language. A variable declaration is defined as a function where its argument represent the variable and the function body represents the remaining of the program. As a result, any usage of the variable in the function body is well typed. An example of a class-based shallowly \ac{edsl} with compile time variable checks can be seen on Listing \ref{shallow3}.
+Second, variables are still not checked at compile time. In order to solve this problem, we can leverage the fact that function arguments are well typed in the host language. A variable declaration is defined as a function where its argument represents the variable and the function body represents the remaining of the program. As a result, any usage of the variable in the function body is well typed. In order to avoid constructs that are not variables on the left-hand side of the attribution operator, the phantom types \texttt{Var} and \texttt{Expr} were introduced~\cite{mtasks}. 
+
+An example of a class-based shallowly \ac{edsl} with compile time variable checks can be seen on Listing \ref{shallow3}.
 
 \begin{lstlisting}[caption=A simple shallowly \ac{edsl} with compile time variable checks,captionpos=b,label=shallow3]
-:: Eval a = E a
+:: Eval a b = E a
 :: In a b = In infixl 0 a b
+:: Var = Var
+:: Expr = Expr
 
 class expr v where
-    lit :: t -> v t
-    (+.) infixl 6 :: (v t) (v t)  -> v t
-    
+    lit :: t -> v t Expr
+    (+.) infixl 6 :: (v t p) (v t q) -> v t Expr | + t
+
 class var v where
-    var :: ((v t) -> In t (v a))   -> v a
-    ( =. ) infixr 3 :: (v t) (v t) -> v t
+	var :: ((v t Var) -> In t (v a p)) -> v a p
+	(=.) infixr 3 :: (v t Var) (v t p) -> v t Expr
 
-instance expr Eval where ...
-instance var Eval where ...
+instance expr Eval where
+	lit x = E x
+	(+.) (E a) (E b) = E (a + b)
 
-test1 :: Eval Int	
+instance var Eval where
+	var _ = undef
+	(=.) _ _ = undef
+
+test1 :: Eval Int Expr
 test1 = var \k = 4 In
-	k  =.  k + lit 7
+	k  =. k +. lit 7
 
-test2 :: Eval Int	
+test2 :: Eval Int Expr
 test2 = var \k = 4 In
-	k  =.  lit True     // Compilation error
+	k  =. lit True     // Compilation error
 \end{lstlisting}
 
 As seen in the example above, the variable \texttt{k} can be used after its declaration in a well typed manner. Function \texttt{test1} compiles successfully, as expected. Function \texttt{test2}, in the other hand, does not compile due to a type error. Therefore, compile time check of variables was achieved.
