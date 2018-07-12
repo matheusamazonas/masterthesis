@@ -44,7 +44,7 @@ The biggest disadvantages of shallow embedding are based on the fact that all vi
 
 \subsection{Shallow Embedding with Type Classes}\label{sec:class_based_edsl}
 
-Type classes can be used to avoid computing all the views of a shallowly \ac{edsl}. A type class containing the language constructs is created and each of the \ac{dsl} views should provide an instance of the class. An example of a simple shallowly \ac{edsl} with classes can be seen on Listing \ref{shallow2}.
+Type constructor classes can be used to avoid computing all the views of a shallowly \ac{edsl}. A type constructor class containing the language constructs is created and each of the \ac{dsl} views should provide an instance of the class. An example of a simple shallowly \ac{edsl} with classes can be seen on Listing \ref{shallow2}.
 
 \begin{lstlisting}[caption=A simple shallowly \ac{edsl} with classes,captionpos=b,label=shallow2]
 :: Print a = P [String]

@@ -53,17 +53,17 @@ Figure \ref{fig:itasks_display} displays the user interfaces generated for the b
 \begin{figure}[H]
 \begin{subfigure}{0.33\textwidth}
 \includegraphics[scale=0.7]{thesis/img/enter_location.png}
-\caption{Enter Information}
+\caption{Enter information}
 \label{fig:enter_info}
 \end{subfigure}
 \begin{subfigure}{0.33\textwidth}
 \includegraphics[scale=0.55]{thesis/img/view_location.png}
-\caption{View Information}
+\caption{View information}
 \label{fig:view_info}
 \end{subfigure}
 \begin{subfigure}{0.33\textwidth}
 \includegraphics[scale=0.7]{thesis/img/update_location.png}
-\caption{Update Information}
+\caption{Update information}
 \label{fig:upd_info}
 \end{subfigure}
 \caption{The visual representation of the basic iTasks interaction functions}
@@ -79,7 +79,7 @@ Although the basic tasks introduced in Section \ref{interaction} allow the user 
 
 Tasks can be executed in sequence using the \texttt{>>*} combinator, also called the \textit{step} combinator. Its type signature can been seen on Listing \ref{seq_comb}. The step combinator takes a \texttt{Task a} and a list of task continuations as input. A task continuation defines a condition on when to execute another task. It is a predicate that runs on either user actions, task values or thrown exceptions.
 
-\begin{lstlisting}[caption=Sequential Combinators,label=seq_comb,captionpos=b]
+\begin{lstlisting}[caption=Sequential combinators,label=seq_comb,captionpos=b]
 (>>*) infixl 1 :: (Task a) [TaskCont a (Task b)] -> Task b | iTask a & iTask b
 
 :: TaskCont a b                               
@@ -98,7 +98,7 @@ The \texttt{>>=} (also called \textit{bind}) is an example of sequential combina
 
 Tasks can be executed in parallel using either the \texttt{-\&\&-} or the \texttt{-||-} combinators. The first executes two tasks in parallel and returns a tuple containing the result of both argument tasks. The \texttt{-||-} combinator executes two tasks in parallel and returns the task value of the first stable argument task. The type signatures of both combinators can be seen on Listing \ref{par_comb}.
 
-\begin{lstlisting}[caption=Parallel Combinators,label=par_comb,captionpos=b]
+\begin{lstlisting}[caption=Parallel combinators,label=par_comb,captionpos=b]
 (-||-) infixr 3 :: (Task a) (Task a) -> Task a     | iTask a
 (-&&-) infixr 4 :: (Task a) (Task b) -> Task (a,b) | iTask a & iTask b
 \end{lstlisting}
