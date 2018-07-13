@@ -1,7 +1,6 @@
 sudo: required
-dist: trusty
-before_install:
-- ./tlsetup.sh
-
+services: docker
 script:
-- make latex COMPILER=xelatex
+  # We use the docker image from https://hub.docker.com/r/rekka/tectonic/
+  - docker pull rekka/tectonic
+  - docker run --mount src=$TRAVIS_BUILD_DIR/,target=/usr/src/tex,type=bind rekka/tectonic tectonic thesis.tex
