@@ -1,9 +1,9 @@
 In some cases, interactions between the iTasks system and the real world could be automated. This is the case for tasks such as reading the room temperature or turning a LED on once a task is completed. Microcontrollers --- such as Arduino --- are perfect for this kind of task. They are great for control tasks that involve reading sensors (e.g., temperature, light) and controlling actuators (e.g., motors, LEDs). In addition, due to the growth of \ac{iot}, they are becoming increasingly cheaper. Due to hardware limitations, microcontrollers can not run iTasks tasks. As an alternative, the mTask \ac{edsl} was created. This \ac{dsl} allows the programming of microcontrollers in Clean using a TOP-like approach~\cite{clean,mtasks,mtasks2,martthesis}.
 
-The mTask \ac{dsl} is a type safe, class-based, multi-view \ac{edsl} (\autoref{sec:class_based_edsl}). It currently has three views: iTasks simulation, C code generation and interpretable bytecode generation.
+The mTask \ac{dsl} is a type safe, class-based, multi-view \ac{edsl} (\autoref{sec:class_based_edsl}). It currently has three views: C++ code generation, evaluation and interpretable bytecode generation. An overview of the views is given in Section \ref{sec:mtask_views}.
 
 \section{The Language}
-Since mTask is an \ac{edsl}, language constructs are represented as functions in the host language. Instead of using functions directly, mTasks is composed by type constructor classes, as described in \autoref{sec:class_based_edsl}. A mTask type constructor class can be seen on Listing \ref{mtask_class}. In this example, the \texttt{arith} class is partially presented. An overview of mTask classes will be presented in Section \ref{mtask_classes}.
+Since mTask is an \ac{edsl}, language constructs are represented as functions in the host language. Instead of using functions directly, mTasks is composed by type constructor classes, as described in \autoref{sec:class_based_edsl}. A mTask type constructor class can be seen on Listing \ref{mtask_class}. In this example, the \texttt{arith} class is partially presented. An overview of mTask classes will be presented in Section \ref{sec:mtask_classes}.
 
 \begin{lstlisting}[caption=A mTask class,captionpos=b,label=mtask_class]
 class arith v where
@@ -26,7 +26,7 @@ instance isExpr Expr
 Views implement instances of mTask classes. Due to the multi-class nature of mTask, a view can choose which language constructs it supports by selecting which class instances to implement. Moreover, new language constructs can be added to the language without the need to change existing code. 
 
 
-\subsection{Overview of the classes}\label{mtask_classes}
+\subsection{Overview of the Classes}\label{sec:mtask_classes}
 
 The mTask \ac{edsl} is formed by many type constructor classes. Here, only the classes that are most relevant to the thesis are presented. Some class constraints were omitted to ease understanding.
 
@@ -80,7 +80,7 @@ functions for digital read and write on pins. These functions operate on boolean
 
 \begin{lstlisting}[caption=mTask I/O classes,captionpos=b,label=mtask_io]
 :: DigitalPin = D0 | D1 | D2 | D3 | D4 | D5 |D6 | D7 | D8 | D9 | D10 | D11 | D12 | D13
-:: AnalogPin = A0 | A1 | A2 | A3 | A4 | A5
+:: AnalogPin  = A0 | A1 | A2 | A3 | A4 | A5
 :: Pin = Digital DigitalPin | Analog AnalogPin
 
 class pin p |  == p where
@@ -89,7 +89,7 @@ instance pin DigitalPin
 instance pin AnalogPin
 
 class digitalIO v where
-  digitalRead  :: p -> v Bool Expr | pin p
+  digitalRead  :: p -> v Bool Expr            | pin p
   digitalWrite :: p (v Bool q) -> v Bool Expr | pin  p
 class analogIO v where
   analogRead  :: AnalogPin -> v Int Expr 
@@ -97,9 +97,66 @@ class analogIO v where
 \end{lstlisting}
 
 
-\subsection{Overview of the views}
+\subsection{Overview of the Views}\label{sec:mtask_views}
+
+Currently, mTask has three views: C++ code generation, evaluation and bytecode generation.
+
+The C++ code generation view translates language constructs to Arduino's dialect of C++. The Arduino IDE compiles the C++ source code to machine code for the microcontrollers. 
+It is convenient to generate C++ code instead of machine code because it saves us from the task of generating code for different microcontrollers. In addition, C++ gives us the level of control we need to handle low level input/output operations. This view consists of a function that modifies a compilation state, \texttt{CODE}. The state is a record that stores the generated code along with some information to generate identifiers and to keep track of source code indentation. At the end of compilation, the \texttt{CODE} record is transformed into C++ code which can be saved into disk, loaded into the Arduino IDE and uploaded to microcontrollers.
 
 
-\section{Interpreted mTask}
+The evaluation view translates language constructs into Clean programs~\cite{mtasks2}. It consists of a function that modifies an evaluation state. The state is a record that stores tasks, program variables and input/output information. Given that programs running on microcontrollers are hard to debug, one can benefit from this view to find program errors. This view can be used to build a mTask simulator using iTasks where the user can observe the state of the program on each loop of the microcontroller.
+
+The last mTask view transforms language constructs into interpretable bytecode. Since the research focused on this view of mTask, it will be discussed in more detail in Section \ref{sec:int_mtask}.
+
+\section{Interpreted mTask}\label{sec:int_mtask}
+
+\subsection{Motivation}
+
+Although the C++ code generation view works as expected, it has a limitation. Tasks generated by this view are static: once they are compiled and uploaded, they can not be changed. If the user wishes to change the current task or add new tasks to the microcontroller, the program has to be recompiled and reuploaded. This presents two problems. First, microcontrollers have a limited amount of write cycles in their program memory~\cite{martthesis}. Therefore, the repeated uploading of new programs is not desired. Second, due to the nature of microcontrollers and the \ac{iot}, such devices are often located on places that are hard to reach. Therefore, it is not desirable that every time a new task has to be uploaded to a device, it has to be physically reached, plugged into a computer and put back in place.
+
+To overcome that limitation, a new view of mTask was created~\cite{martthesis}. This view generates interpretable bytecode rather than C++ code. The bytecode can be interpreted by a runtime system in the client. This runtime system (also called the \textit{engine}), is written in C++ and can be compiled and uploaded using the Arduino IDE. Tasks and \acp{sds} are sent to the client dynamically via the communication protocol. Therefore, devices are programmed once but can execute tasks dynamically. Additionally, this setting is more robust than the static mTask. If the communication with a device fails, the server can dynamically send the tasks that were running on it to a new, suitable device. 
+
+\subsection{Communication Protocol}
+
+Devices can be connected either via serial communication or TCP. The server and the client communicate via a protocol based on messages. Incoming messages are of type \texttt{MTaskMSGSend} --- messages are always named from a server perspective. There are messages for task addition and deletion, shutdown request, \ac{sds} addition and update and specification request. The definition of the \texttt{MTaskMSGSend} \ac{adt} can be seen in Listing \ref{msg_send}.
+
+\begin{lstlisting}[caption=Communication protocol: sent messages,captionpos=b,label=msg_send]
+:: BCValue = E.e: BCValue e & mTaskType e
+
+:: MTaskMSGSend = 
+      MTTask MTaskInterval String
+    | MTTaskDel Int
+    | MTShutdown
+    | MTSds Int BCValue
+    | MTUpd Int BCValue
+    | MTSpec
+\end{lstlisting}
+
+The client communicates with the server via messages of type \texttt{MTaskMSGRecv}. There are messages for task acknowledgment and deletion, \ac{sds} acknowledgment, deletion and publication, debugging messages, device specification and empty messages. The definition of the \texttt{MTaskMSGRecv} \ac{adt} can be seen in Listing \ref{msg_rec}. The \texttt{MTaskDeviceSpec} data type contains the specification of the device, i.e., its stack size, memory size, number of digital and analog pins.
+
+\begin{lstlisting}[caption=Communication protocol: received messages,captionpos=b,label=msg_rec]
+:: MTaskMSGRecv = 
+      MTTaskAck Int Int
+    | MTTaskDelAck Int
+    | MTSDSAck Int
+    | MTSDSDelAck Int
+    | MTPub Int BCValue
+    | MTMessage String
+    | MTDevSpec MTaskDeviceSpec
+    | MTEmpty
+\end{lstlisting}
+
+\subsection{The Client}
+
+The client runs a loop function that runs repeatedly until a \textit{shutdown} message is received. The loop consists of two pieces: checking for incoming messages and running the task scheduler. The first step is straightforward: it checks the input buffer and processes any messages that might be in it. The task scheduler runs tasks based on task intervals. Tasks can run once (\texttt{OneShot}), repeatedly based on an interval (\texttt{OnInverval}) or based on an interruption (\texttt{OnInterrupt}). An interpreter is responsible for the execution of a task's bytecode.
+
+\subsection{The Simulator}
+
+During my Research Internship, I developed an iTask simulator for the interpreted mTask. The motivation behind it is the same as the simulator for the static mTask: programs running in microprocessors are hard to debug. The simulator mimics the C++ engine in many aspects, including communication, task scheduling and bytecode interpretation. 
+
+The simulator provides a web interface where the user can inspect the communication channels and the simulator state. The simulator state contains data about the simulator clock, memory, stack, tasks, \acp{sds} and peripherals (pins, LED, etc). The web interface allows peripheral values to be set manually. This is a great addition to the mTask development environment, given that sensor values can not be easily simulated on microcontrollers. In addition, users can set breakpoints on bytecode instructions and inspect the state of the simulator on specific points.
+
+The simulator offers two modes: manual and automatic. Manual mode requires user interaction via the web interface to run. Manual simulation can be executed via either big or small steps. These two step options offer different levels of abstraction to the user. Big steps execute one entire engine loop at a time. Small steps execute each bytecode instruction individually. Automatic mode executes the simulator without the need of user interaction. It is particularly useful when the programmer needs to simulate a device but does not want to step manually through its execution. Many simulators on different modes can run simultaneously.
 
 \section{Example}
