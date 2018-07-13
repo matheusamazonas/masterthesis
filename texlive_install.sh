@@ -12,11 +12,11 @@ if ! command -v texlua > /dev/null; then
   cd ..
 fi
 
+tlmgr option repository http://mirror.ctan.org/systems/texlive/tlnet
+
 # Just including texlua so the cache check above works
 # Needed for any use of texlua even if not testing LuaTeX
 tlmgr install luatex
-
-tlmgr option repository http://mirror.ctan.org/systems/texlive/tlnet
 
 # Other contrib packages: done as a block to avoid multiple calls to tlmgr
 # texlive-latex-base is needed to run pdflatex
