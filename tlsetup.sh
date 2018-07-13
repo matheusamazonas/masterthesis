@@ -46,7 +46,10 @@ sudo apt-get install -y biber
 # Initialize user tree for installing additional packages
 sudo tlmgr init-usertree
 
-# Define repository for obtaining LaTeX packages (using TexLive 2015)
+#Update tlmgr so we can use TexLie
+sudo tlmgr update --self
+
+# Define repository for obtaining LaTeX packages 
 sudo tlmgr option repository http://mirror.ctan.org/systems/texlive/tlnet
 
 # ----------------------------------------------------------------------------
