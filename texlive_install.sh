@@ -46,7 +46,8 @@ tlmgr install   \
   fmtcount      \
   xkeyval       \
   mfirstuc      \
-  textcase
+  textcase      \
+  xfor
 
 # Keep no backups (not required, simply makes cache bigger)
 tlmgr option -- autobackup 0
