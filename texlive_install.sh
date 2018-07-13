@@ -43,7 +43,8 @@ tlmgr install   \
   adjustbox     \
   graphicx      \
   lmodern       \
-  fmtcount
+  fmtcount      \
+  xkeyval
 
 # Keep no backups (not required, simply makes cache bigger)
 tlmgr option -- autobackup 0
