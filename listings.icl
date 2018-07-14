@@ -184,6 +184,7 @@ import iTasks
 
 // ------------- Listing 4.5 -------------
 // :: In a b = In infix 0 a b
+// :: Main a = {main :: a}
 
 // class sds v where
 //   sds :: ((v t Upd)  -> In t (Main (v c s))) -> (Main (v c s))
@@ -197,6 +198,7 @@ import iTasks
 // :: DigitalPin = D0 | D1 | D2 | D3 | D4 | D5 |D6 | D7 | D8 | D9 | D10 | D11 | D12 | D13
 // :: AnalogPin  = A0 | A1 | A2 | A3 | A4 | A5
 // :: Pin = Digital DigitalPin | Analog AnalogPin
+// :: UserLED   = LED1 | LED2 | LED3
 
 // class pin p |  == p where
 // 	pin :: p -> Pin
@@ -209,6 +211,9 @@ import iTasks
 // class analogIO v where
 //   analogRead  :: AnalogPin -> v Int Expr 
 //   analogWrite :: AnalogPin (v Int p) -> v Int Expr
+// class userLed v where
+//   ledOn  :: (v UserLED q) -> (v () Stmt)
+//   ledOff :: (v UserLED q) -> (v () Stmt)
 
 // ------------- Listing 4.7 -------------
 // :: BCValue = E.e: BCValue e & mTaskType e
@@ -231,5 +236,25 @@ import iTasks
 //     | MTMessage String
 //     | MTDevSpec MTaskDeviceSpec
 //     | MTEmpty
+
+// ------------- Listing 4.9 -------------
+// switch :: Main (v () Stmt) 
+// switch = { main = 
+// 	IF (digitalRead D0) (
+// 		ledOn (lit LED1)
+// 	) (
+// 		ledOff (lit LED1)
+// 	)}
+	
+// curtains :: Main (v () Stmt)
+// curtains = sds \alarm=False In { main = 
+// 	IF (analogRead A0 >. lit 3) (
+// 		digitalWrite D0 (lit True) :.
+// 		alarm =. lit True :.
+// 		pub alarm :.
+// 		retrn
+// 	) (
+// 		digitalWrite D0 (lit False)
+// 	)}
 
 Start w = 1//startEngine viewLocation w

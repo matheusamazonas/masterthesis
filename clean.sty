@@ -15,7 +15,7 @@
 
 \lstdefinelanguage{Clean}{%
 	alsoletter={ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz_`1234567890},
-	alsoletter={~!@\#$\%^\&*-+=?<>:|\\.},
+	alsoletter={~!@\#$\%^\&*-+=?<>:|\\.\\{\\}},
 	morekeywords={generic,implementation,definition,dynamic,module,import,from,where,in,of,case,let,infix,infixr,infixl,class,instance,with,if,derive,code},
 	sensitive=true,
 	escapeinside={[+}{+]},
@@ -29,7 +29,7 @@
 	literate=%
 		% Basic Clean constructs
 		%{\\}{{$\lambda\:$}}1
-		{::}{{$:\!\!\!:$}}1
+		%{::}{{$:\!\!\!:$}}1
 		%{:.}{{$:\!.$}}1
 		{...}{{.\!.\!.}}2
 		%{++}{{$+\!+$}}2

@@ -11,7 +11,7 @@ class arith v where
     (+.) infixl 6 :: (v t p) (v t q) -> v t Expr     | type, +, t & isExpr p & isExpr q
 \end{lstlisting}
 
-The \texttt{lit} function lifts a value to the mTask domain. The \texttt{+.} infix operator adds two expressions (represented by the \texttt{isExpr} class constraint) and returns another expression. The constraints \texttt{type} and \texttt{mTaskType} ensure that only mTask types can be used. Language constructs are of the form \texttt{v t p} where \texttt{v} is the view, \texttt{t} is the type of the construct and \texttt{p} is the the construct kind. The constructor kind is a phantom \ac{adt} that specifies whether the constructor is an updatable, an expression or a statement~\cite{mtasks2}. The definitions of the constructor kinds and the \texttt{isExpr} class along with its instances can be seen in Listing \ref{mtask_kinds}.
+The \texttt{lit} function lifts a value to the mTask domain. The \texttt{+.} infix operator adds two expressions (represented by the \texttt{isExpr} class constraint) and returns another expression. The constraints \texttt{type} and \texttt{mTaskType} ensure that only mTask types can be used. Language constructs are of the form \texttt{v t p} where \texttt{v} is the view, \texttt{t} is the type of the construct and \texttt{p} is the construct kind. The constructor kind is a phantom \ac{adt} that specifies whether the constructor is an updatable, an expression or a statement~\cite{mtasks2}. The definitions of the constructor kinds and the \texttt{isExpr} class along with its instances can be seen in Listing \ref{mtask_kinds}.
 
 \begin{lstlisting}[caption=mTask construction kinds, captionpos=b,label=mtask_kinds]
 :: Upd   = Upd
@@ -28,7 +28,7 @@ Views implement instances of mTask classes. Due to the multi-class nature of mTa
 
 \subsection{Overview of the Classes}\label{sec:mtask_classes}
 
-The mTask \ac{edsl} is formed by many type constructor classes. Here, only the classes that are most relevant to the thesis are presented. Some class constraints were omitted to ease understanding.
+The mTask \ac{edsl} is formed by many type constructor classes. Here, only the classes that are most relevant to the research are presented. Some class constraints were omitted to ease understanding.
 
 \paragraph{Expression:} There are two classes to create expressions in mTask: \texttt{arith} and \texttt{boolExpr}. They model constructs for arithmetic and boolean expressions, respectively. The \texttt{arith} class contains operators for addition, multiplication, subtraction and division in addition to a function to lift values to the mTask domain. The \texttt{boolExpr} contains operators over booleans (e.g., conjunction, disjunction) in addition to equality and inequality operators. Shortened versions of these classes can be seen in Listing \ref{mtask_expr}. 
 
@@ -52,7 +52,7 @@ class boolExpr v where
 class If v q r ~s where
   If :: (v Bool p) (v t q) (v t r) -> v t s      | isExpr p 
 class IF v where
-  IF :: (v Bool p) (v t q) (v s r) -> v () Stmt  | isExpr p
+  IF :: (v Bool p) (v t q) (v s r)  -> v () Stmt | isExpr p
   (?) infix 1 :: (v Bool p) (v t q) -> v () Stmt | isExpr p
 class seq v where
   (>>=.) infixr 0 :: (v t p) ((v t Expr) -> (v u q)) -> (v u Stmt) 
@@ -61,10 +61,11 @@ class retrn v where
   retrn :: v () Expr
 \end{lstlisting}
 
-\paragraph{\aclp{sds}} The \texttt{sds} class contains functions to create \aclp{sds}. The \texttt{sds} function is used to create updatable \acp{sds} and the \texttt{con} function is used to create constant \acp{sds}. Both use the technique described in Section \ref{sec:class_based_edsl} to guarantee a type-safe usage of \acp{sds}. The \texttt{sdspub} class contains a construct to publish \acp{sds}. The \texttt{assign} contains a single function to enable assignment in mTask. \ac{sds} classes can be seen in Listing \ref{mtask_sds}. Notice the functions below enforce the construct kind \texttt{Upd} to ensure that only updatables are used.
+\paragraph{\aclp{sds}} The \texttt{sds} class contains functions to create \aclp{sds}. The \texttt{sds} function is used to create updatable \acp{sds} and the \texttt{con} function is used to create constant \acp{sds}. Both use the technique described in Section \ref{sec:class_based_edsl} to guarantee a type-safe usage of \acp{sds}. The \texttt{sdspub} class contains a construct to publish \acp{sds}. The \texttt{assign} class contains a single function to enable assignment in mTask. \ac{sds} classes can be seen in Listing \ref{mtask_sds}. Notice that the functions below enforce the construct kind \texttt{Upd} to ensure that only updatables are used.
 
 \begin{lstlisting}[caption=mTask SDS classes,captionpos=b,label=mtask_sds]
 :: In a b = In infix 0 a b
+:: Main a = {main :: a}
 
 class sds v where
   sds :: ((v t Upd)  -> In t (Main (v c s))) -> (Main (v c s))
@@ -76,12 +77,13 @@ class assign v where
 \end{lstlisting}
 
 \paragraph{Input and output} There are constructs to handle both analog and digital input and output. The class \texttt{digitalIO} contains
-functions for digital read and write on pins. These functions operate on booleans. Analogously, the \texttt{analogIO} class contains functions for analog read and write on pins.
+functions for digital read and write on pins. These functions operate on booleans. Analogously, the \texttt{analogIO} class contains functions for analog read and write on pins. The \texttt{userLed} class contains functions to turn LEDs on an off. Input/output classes can be seen in Listing \ref{mtask_io}. 
 
 \begin{lstlisting}[caption=mTask I/O classes,captionpos=b,label=mtask_io]
 :: DigitalPin = D0 | D1 | D2 | D3 | D4 | D5 |D6 | D7 | D8 | D9 | D10 | D11 | D12 | D13
 :: AnalogPin  = A0 | A1 | A2 | A3 | A4 | A5
 :: Pin = Digital DigitalPin | Analog AnalogPin
+:: UserLED   = LED1 | LED2 | LED3
 
 class pin p |  == p where
 	pin :: p -> Pin
@@ -94,6 +96,9 @@ class digitalIO v where
 class analogIO v where
   analogRead  :: AnalogPin -> v Int Expr 
   analogWrite :: AnalogPin (v Int p) -> v Int Expr
+class userLed v where
+  ledOn  :: (v UserLED q) -> (v () Stmt)
+  ledOff :: (v UserLED q) -> (v () Stmt)
 \end{lstlisting}
 
 
@@ -113,13 +118,13 @@ The last mTask view transforms language constructs into interpretable bytecode. 
 
 \subsection{Motivation}
 
-Although the C++ code generation view works as expected, it has a limitation. Tasks generated by this view are static: once they are compiled and uploaded, they can not be changed. If the user wishes to change the current task or add new tasks to the microcontroller, the program has to be recompiled and reuploaded. This presents two problems. First, microcontrollers have a limited amount of write cycles in their program memory~\cite{martthesis}. Therefore, the repeated uploading of new programs is not desired. Second, due to the nature of microcontrollers and the \ac{iot}, such devices are often located on places that are hard to reach. Therefore, it is not desirable that every time a new task has to be uploaded to a device, it has to be physically reached, plugged into a computer and put back in place.
+Although the C++ code generation view works as expected, it poses a limitation. Tasks generated by this view are static: once they are compiled and uploaded, they can not be changed. If the user wishes to change the current task or add new tasks to the microcontroller, the program has to be recompiled and reuploaded. This presents two problems. First, microcontrollers have a limited amount of write cycles in their program memory~\cite{martthesis}. Therefore, the repeated uploading of new programs is not desired. Second, due to the nature of microcontrollers and the \ac{iot}, such devices are often located on places that are hard to reach. Therefore, it is not desirable that every time a new task has to be uploaded, the device has to be physically reached, plugged into a computer and put back in place.
 
-To overcome that limitation, a new view of mTask was created~\cite{martthesis}. This view generates interpretable bytecode rather than C++ code. The bytecode can be interpreted by a runtime system in the client. This runtime system (also called the \textit{engine}), is written in C++ and can be compiled and uploaded using the Arduino IDE. Tasks and \acp{sds} are sent to the client dynamically via the communication protocol. Therefore, devices are programmed once but can execute tasks dynamically. Additionally, this setting is more robust than the static mTask. If the communication with a device fails, the server can dynamically send the tasks that were running on it to a new, suitable device. 
+To overcome that limitation, a new view of mTask was created~\cite{martthesis}. This view generates interpretable bytecode rather than C++ code. The bytecode can be interpreted by a runtime system in the device (the \textit{client}). This runtime system (also called the \textit{engine}), is written in C++ and can be compiled and uploaded using the Arduino IDE. Tasks and \acp{sds} are sent to the client dynamically via the communication protocol. Therefore, devices are programmed once but can execute tasks dynamically. Additionally, this setting is more robust than the static mTask. If the communication with a device fails, the server can dynamically send the tasks that were running on it to a new, suitable device. 
 
 \subsection{Communication Protocol}
 
-Devices can be connected either via serial communication or TCP. The server and the client communicate via a protocol based on messages. Incoming messages are of type \texttt{MTaskMSGSend} --- messages are always named from a server perspective. There are messages for task addition and deletion, shutdown request, \ac{sds} addition and update and specification request. The definition of the \texttt{MTaskMSGSend} \ac{adt} can be seen in Listing \ref{msg_send}.
+Devices can be connected either via serial communication or TCP. The server and the client communicate via a protocol based on messages. Incoming messages are of type \texttt{MTaskMSGSend} --- messages are always named from the server's perspective. There are messages for task addition and deletion, shutdown request, \ac{sds} addition and update and specification request. The definition of the \texttt{MTaskMSGSend} \ac{adt} can be seen in Listing \ref{msg_send}.
 
 \begin{lstlisting}[caption=Communication protocol: sent messages,captionpos=b,label=msg_send]
 :: BCValue = E.e: BCValue e & mTaskType e
@@ -133,7 +138,7 @@ Devices can be connected either via serial communication or TCP. The server and 
     | MTSpec
 \end{lstlisting}
 
-The client communicates with the server via messages of type \texttt{MTaskMSGRecv}. There are messages for task acknowledgment and deletion, \ac{sds} acknowledgment, deletion and publication, debugging messages, device specification and empty messages. The definition of the \texttt{MTaskMSGRecv} \ac{adt} can be seen in Listing \ref{msg_rec}. The \texttt{MTaskDeviceSpec} data type contains the specification of the device, i.e., its stack size, memory size, number of digital and analog pins.
+The client communicates with the server via messages of type \texttt{MTaskMSGRecv}. There are messages for task acknowledgment and deletion, \ac{sds} acknowledgment, deletion and publication, debugging messages, device specification and empty messages. The definition of the \texttt{MTaskMSGRecv} \ac{adt} can be seen in Listing \ref{msg_rec}. The \texttt{MTaskDeviceSpec} data type contains the specification of the device, i.e. its stack size, memory size, number of digital and analog pins.
 
 \begin{lstlisting}[caption=Communication protocol: received messages,captionpos=b,label=msg_rec]
 :: MTaskMSGRecv = 
@@ -153,10 +158,34 @@ The client runs a loop function that runs repeatedly until a \textit{shutdown} m
 
 \subsection{The Simulator}
 
-During my Research Internship, I developed an iTask simulator for the interpreted mTask. The motivation behind it is the same as the simulator for the static mTask: programs running in microprocessors are hard to debug. The simulator mimics the C++ engine in many aspects, including communication, task scheduling and bytecode interpretation. 
+During my Research Internship, I developed an iTask simulator for the interpreted mTask. The motivation behind it is the same as the simulator for the static mTask: programs running in microprocessors are hard to debug. The simulator mimics the C++ engine in many aspects, including communication, task scheduling and instruction interpretation. 
 
 The simulator provides a web interface where the user can inspect the communication channels and the simulator state. The simulator state contains data about the simulator clock, memory, stack, tasks, \acp{sds} and peripherals (pins, LED, etc). The web interface allows peripheral values to be set manually. This is a great addition to the mTask development environment, given that sensor values can not be easily simulated on microcontrollers. In addition, users can set breakpoints on bytecode instructions and inspect the state of the simulator on specific points.
 
-The simulator offers two modes: manual and automatic. Manual mode requires user interaction via the web interface to run. Manual simulation can be executed via either big or small steps. These two step options offer different levels of abstraction to the user. Big steps execute one entire engine loop at a time. Small steps execute each bytecode instruction individually. Automatic mode executes the simulator without the need of user interaction. It is particularly useful when the programmer needs to simulate a device but does not want to step manually through its execution. Many simulators on different modes can run simultaneously.
+The simulator offers two modes: manual and automatic. Manual mode requires user interaction via the web interface to run. Manual simulation can be performed via either big or small steps. These two step options offer different levels of abstraction to the user. Big steps execute one entire engine loop at a time. Small steps execute each bytecode instruction individually. Automatic mode executes the simulator without the need of user interaction. It is particularly useful when the programmer needs to simulate a device but does not want to step manually through its execution. Many simulators on different modes can run simultaneously.
 
-\section{Example}
+\section{Examples}
+
+Two examples of mTask tasks can be seen in Listing \ref{mtask_examples}. The first example, \texttt{switch}, turns an LED on and off based on a switch connected to to digital pin \texttt{D0}. The second example, \texttt{curtains}, opens and closes curtains based on the room lighting. The curtains' controller is connected to digital pin \texttt{D0} and the light sensor is connected to analog pin \texttt{A0}. When the light sensor value is greater then 3, the curtains open. Otherwise, the curtains close. In addition, an alarm (represented by the \texttt{alarm} \ac{sds}) is triggered when the curtains open. Once the curtains open and the alarm is triggered, the task terminates.
+
+\begin{lstlisting}[caption=Examples of mTask tasks,captionpos=b,label=mtask_examples]
+switch :: Main (v () Stmt) 
+switch = { main = 
+	IF (digitalRead D0) (
+		ledOn (lit LED1)
+	) (
+		ledOff (lit LED1)
+	)}
+	
+curtains :: Main (v () Stmt)
+curtains = sds \alarm=False In { main = 
+	IF (analogRead A0 >. lit 3) (
+		digitalWrite D0 (lit True) :.
+		alarm =. lit True :.
+		pub alarm :.
+		retrn
+	) (
+		digitalWrite D0 (lit False)
+	)}
+\end{lstlisting}
+
