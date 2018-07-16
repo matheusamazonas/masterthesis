@@ -1,6 +1,6 @@
 A \ac{gpl} is a computer language intended to be used in a wide range of domains. An example is the C++ programming language, which can be used in domains that vary from video games to web servers and systems programming. In contrast, a \ac{dsl} is a computer language that was designed to be used in a particular domain. Game Maker Language, \acs{html}, LaTeX and \acs{vhdl} are examples of \acp{dsl}. These languages, when compared to \acp{gpl}, offer a higher level of abstraction from their target domain.
 
-A \ac{dsl} can be implemented using two different strategies: standalone and embedded. Each strategy has its advantages and disadvantages. In the former strategy, the language is build from the ground up, which consists of developing either a compiler or an interpreter. This strategy provides the language designer with a lot design freedom, but requires a cumbersome amount of work. In the latter strategy, the proposed \ac{dsl} is embedded in another language. This strategy frees its designer of building a new compiler, but limits the \ac{dsl} to the features of its host language.
+A \ac{dsl} can be implemented using two different strategies: standalone and embedded. Each strategy has its advantages and disadvantages. In the former strategy, the language is build from the ground up, which consists of developing either a compiler or an interpreter. This strategy provides the language designer with a lot design freedom, but requires a cumbersome amount of work. In the latter strategy, the proposed \ac{dsl} is embedded in another language. Therefore, the \ac{dsl} inherits functionality from its host language. This inheritance often is desirable (e.g., a type checker) but sometimes might be undesirable as well (e.g., type coercion). This strategy frees its designer of building a new compiler.
 
 The semantics of a \ac{edsl} are given by its views (also called backends). Common views are evaluation, pretty printing, compilation, optimization and verification. There are two main techniques for building an \ac{edsl}: deep and shallow embedding.
 
@@ -27,7 +27,7 @@ The biggest advantage of deep embedding is that adding a view to the \ac{dsl} is
 \acp{gadt} can be used to accomplish static type safety in deeply \acp{edsl}, but they not enable compile time variable checks. 
 
 \section{Shallow Embedding}
-Building a shallowly \ac{edsl} consists of representing the language constructs directly as its semantics. An example of a simple shallowly \ac{edsl} can be seen on Listing \ref{shallow1}.
+Building a shallowly \ac{edsl} consists of representing the language constructs directly as its semantics. An example of a simple shallowly \ac{edsl} can be seen on Listing \ref{shallow1}. On this example, the \texttt{Sem} \ac{adt} contains both the evaluation (\texttt{a}) and the pretty printing (\texttt{[String]}) views.
 
 \begin{lstlisting}[caption=A simple shallowly \ac{edsl},captionpos=b,label=shallow1]
 :: Sem a = Sem (a, [String])
@@ -44,9 +44,9 @@ The biggest disadvantages of shallow embedding are based on the fact that all vi
 
 \subsection{Shallow Embedding with Type Classes}\label{sec:class_based_edsl}
 
-Type constructor classes can be used to avoid computing all the views of a shallowly \ac{edsl}. A type constructor class containing the language constructs is created and each of the \ac{dsl} views should provide an instance of the class. An example of a simple shallowly \ac{edsl} with classes can be seen on Listing \ref{shallow2}.
+Type constructor classes can be used to avoid computing all the views of a shallowly \ac{edsl}~\cite{tagless}. A type constructor class containing the language constructs is created and each of the \ac{dsl} views should provide an instance of the class. An example of a class-based shallowly \ac{edsl} can be seen on Listing \ref{shallow2}.
 
-\begin{lstlisting}[caption=A simple shallowly \ac{edsl} with classes,captionpos=b,label=shallow2]
+\begin{lstlisting}[caption=A simple class-based shallowly \ac{edsl},captionpos=b,label=shallow2]
 :: Print a = P [String]
 :: Eval a = E a
 
@@ -73,9 +73,9 @@ Class-based shallow embedding solves most of the problems previously faced with 
 
 Two problems remain. First, language constructs still can not be inspected. This is an inherent property of shallowly \acp{edsl} and unfortunately can not be eliminated. 
 
-Second, variables are still not checked at compile time. In order to solve this problem, we can leverage the fact that function arguments are well typed in the host language. A variable declaration is defined as a function where its argument represents the variable and the function body represents the remaining of the program. As a result, any usage of the variable in the function body is well typed. In order to avoid constructs that are not variables on the left-hand side of the attribution operator, the phantom types \texttt{Var} and \texttt{Expr} were introduced~\cite{mtasks}. 
+Second, variables are still not checked at compile time. In order to solve this problem, we can leverage the fact that function arguments are well typed in the host language. A variable declaration is defined as a function where its argument represents the variable and the function body represents the remaining of the program. As a result, any usage of the variable in the function body is well typed. In order to avoid constructs that are not variables on the left-hand side of the attribution operator, the types \texttt{Var} and \texttt{Expr} were introduced~\cite{mtasks}. In some views, these types are phantom types. 
 
-An example of a class-based shallowly \ac{edsl} with compile time variable checks can be seen on Listing \ref{shallow3}.
+An example of a class-based shallowly \ac{edsl} with compile time variable checks can be seen on Listing \ref{shallow3}. \texttt{Eval} is an example of a view with a phantom type: the type variable \texttt{b}.
 
 \begin{lstlisting}[caption=A simple shallowly \ac{edsl} with compile time variable checks,captionpos=b,label=shallow3]
 :: Eval a b = E a
@@ -85,27 +85,27 @@ An example of a class-based shallowly \ac{edsl} with compile time variable check
 
 class expr v where
     lit :: t -> v t Expr
-    (+.) infixl 6 :: (v t p) (v t q) -> v t Expr | + t
+    (+.) infixl 6 :: (v t p) (v t q) ->  v t Expr | + t
 
 class var v where
-	var :: ((v t Var) -> In t (v a p)) -> v a p
-	(=.) infixr 3 :: (v t Var) (v t p) -> v t Expr
+    var :: ((v t Var) -> In t (v a p)) -> v a p
+    (=.) infixr 3 :: (v t Var) (v t p) -> v t Expr
 
 instance expr Eval where
-	lit x = E x
-	(+.) (E a) (E b) = E (a + b)
+    lit x = E x
+    (+.) (E a) (E b) = E (a + b)
 
 instance var Eval where
-	var _ = undef
-	(=.) _ _ = undef
+    var _ = ...
+    (=.) _ _ = ...
 
 test1 :: Eval Int Expr
 test1 = var \k = 4 In
-	k  =. k +. lit 7
+    k  =. k +. lit 7
 
 test2 :: Eval Int Expr
 test2 = var \k = 4 In
-	k  =. lit True     // Compilation error
+    k  =. lit True     // Compilation   error
 \end{lstlisting}
 
 As seen in the example above, the variable \texttt{k} can be used after its declaration in a well typed manner. Function \texttt{test1} compiles successfully, as expected. Function \texttt{test2}, in the other hand, does not compile due to a type error. Therefore, compile time check of variables was achieved.

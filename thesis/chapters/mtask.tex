@@ -1,9 +1,9 @@
-In some cases, interactions between the iTasks system and the real world could be automated. This is the case for tasks such as reading the room temperature or turning a LED on once a task is completed. Microcontrollers --- such as Arduino --- are perfect for this kind of task. They are great for control tasks that involve reading sensors (e.g., temperature, light) and controlling actuators (e.g., motors, LEDs). In addition, due to the growth of \ac{iot}, they are becoming increasingly cheaper. Due to hardware limitations, microcontrollers can not run iTasks tasks. As an alternative, the mTask \ac{edsl} was created. This \ac{dsl} allows the programming of microcontrollers in Clean using a TOP-like approach~\cite{clean,mtasks,mtasks2,martthesis}.
+In some cases, interactions between the iTasks system and the real world could be automated. This is the case for tasks such as reading the room temperature or turning a LED on once a task is completed. Microcontrollers --- such as Arduino --- are perfect for this kind of task. They are great for control tasks that involve reading sensors (e.g., temperature, light) and controlling actuators (e.g., motors, LEDs). In addition, due to the growth of \ac{iot}, they are becoming increasingly cheaper. Due to hardware limitations, microcontrollers can not run iTasks tasks. As an alternative, the mTask \ac{edsl} was created. This \ac{dsl} allows the programming of microcontrollers in Clean using a TOP-like approach~\cite{mtasks,mtasks2,martthesis}.
 
-The mTask \ac{dsl} is a type safe, class-based, multi-view \ac{edsl} (\autoref{sec:class_based_edsl}). It currently has three views: C++ code generation, evaluation and interpretable bytecode generation. An overview of the views is given in Section \ref{sec:mtask_views}.
+The mTask \ac{dsl} is a type safe, class-based, multi-view \ac{edsl} (Section \ref{sec:class_based_edsl}). It currently has three views: C++ code generation, evaluation and interpretable bytecode generation. An overview of the views is given in Section \ref{sec:mtask_views}.
 
 \section{The Language}
-Since mTask is an \ac{edsl}, language constructs are represented as functions in the host language. Instead of using functions directly, mTasks is composed by type constructor classes, as described in \autoref{sec:class_based_edsl}. A mTask type constructor class can be seen on Listing \ref{mtask_class}. In this example, the \texttt{arith} class is partially presented. An overview of mTask classes will be presented in Section \ref{sec:mtask_classes}.
+Because mTask is a shallowly \ac{edsl}, language constructs are represented as functions in the host language. Instead of using functions directly, mTask is composed by type constructor classes, as described in \autoref{sec:class_based_edsl}. A mTask type constructor class can be seen on Listing \ref{mtask_class}. In this example, the \texttt{arith} class is partially presented. An overview of mTask classes will be presented in Section \ref{sec:mtask_classes}.
 
 \begin{lstlisting}[caption=A mTask class,captionpos=b,label=mtask_class]
 class arith v where
@@ -11,7 +11,7 @@ class arith v where
     (+.) infixl 6 :: (v t p) (v t q) -> v t Expr     | type, +, t & isExpr p & isExpr q
 \end{lstlisting}
 
-The \texttt{lit} function lifts a value to the mTask domain. The \texttt{+.} infix operator adds two expressions (represented by the \texttt{isExpr} class constraint) and returns another expression. The constraints \texttt{type} and \texttt{mTaskType} ensure that only mTask types can be used. Language constructs are of the form \texttt{v t p} where \texttt{v} is the view, \texttt{t} is the type of the construct and \texttt{p} is the construct kind. The constructor kind is a phantom \ac{adt} that specifies whether the constructor is an updatable, an expression or a statement~\cite{mtasks2}. The definitions of the constructor kinds and the \texttt{isExpr} class along with its instances can be seen in Listing \ref{mtask_kinds}.
+Language constructs are of the form \texttt{v t p} where \texttt{v} is the view, \texttt{t} is the type of the construct and \texttt{p} is the construct kind. The \texttt{lit} function lifts a value to the mTask domain. The \texttt{+.} infix operator adds two expressions (represented by the \texttt{isExpr} class constraint) and returns another expression. The constraints \texttt{type} and \texttt{mTaskType} ensure that only mTask types can be used. The constructor kind is a phantom \ac{adt} that specifies whether the constructor is an updatable, an expression or a statement~\cite{mtasks2}. The definitions of the constructor kinds and the \texttt{isExpr} class along with its instances can be seen in Listing \ref{mtask_kinds}.
 
 \begin{lstlisting}[caption=mTask construction kinds, captionpos=b,label=mtask_kinds]
 :: Upd   = Upd
@@ -23,7 +23,7 @@ instance isExpr Upd
 instance isExpr Expr
 \end{lstlisting}
 
-Views implement instances of mTask classes. Due to the multi-class nature of mTask, a view can choose which language constructs it supports by selecting which class instances to implement. Moreover, new language constructs can be added to the language without the need to change existing code. 
+Views are instances of mTask classes. Due to the multi-class nature of mTask, a view can choose which language constructs it supports by selecting which classes it implements. Moreover, new language constructs can be added to the language without the need to change existing code. 
 
 
 \subsection{Overview of the Classes}\label{sec:mtask_classes}
@@ -46,11 +46,9 @@ class boolExpr v where
 	...
 \end{lstlisting}
 
-\paragraph{Control flow:} There are two classes that implement \textit{if} constructs in mTask: \texttt{If} ad \texttt{IF}. They implement different variations of \textit{if} constructs. Given that mTask tasks can be executed periodically, loop constructs are unnecessary and are not part of mTask. The \texttt{seq} class contains the the monadic bind operator (\texttt{>>=.}) for mTask. In addition, it contains a variant of the monadic operator where the result of its first argument is disregarded. This operator is equivalent to the semicolon in imperative languages. The \texttt{retrn} class contains a single function that terminates the task. Control flow classes can be seen in Listing \ref{mtask_contr}
+\paragraph{Control flow:} The \texttt{IF} class implements \textit{if} constructs. The \texttt{IF} function implements a \textit{if-then-else} statement and the \texttt{?} infix operator implements an \textit{if-then} statement. Given that mTask tasks can be executed periodically, loop constructs are unnecessary and are not part of mTask. The \texttt{seq} class contains the the monadic bind operator (\texttt{>>=.}) for mTask. In addition, it contains a variant of the monadic operator where the result of its first argument is disregarded. This operator is equivalent to the semicolon in imperative languages. The \texttt{retrn} class contains a single function that terminates the task. Control flow classes can be seen in Listing \ref{mtask_contr}
 
 \begin{lstlisting}[caption=mTask control flow classes,captionpos=b,label=mtask_contr]
-class If v q r ~s where
-  If :: (v Bool p) (v t q) (v t r) -> v t s      | isExpr p 
 class IF v where
   IF :: (v Bool p) (v t q) (v s r)  -> v () Stmt | isExpr p
   (?) infix 1 :: (v Bool p) (v t q) -> v () Stmt | isExpr p
@@ -120,7 +118,7 @@ The last mTask view transforms language constructs into interpretable bytecode. 
 
 Although the C++ code generation view works as expected, it poses a limitation. Tasks generated by this view are static: once they are compiled and uploaded, they can not be changed. If the user wishes to change the current task or add new tasks to the microcontroller, the program has to be recompiled and reuploaded. This presents two problems. First, microcontrollers have a limited amount of write cycles in their program memory~\cite{martthesis}. Therefore, the repeated uploading of new programs is not desired. Second, due to the nature of microcontrollers and the \ac{iot}, such devices are often located on places that are hard to reach. Therefore, it is not desirable that every time a new task has to be uploaded, the device has to be physically reached, plugged into a computer and put back in place.
 
-To overcome that limitation, a new view of mTask was created~\cite{martthesis}. This view generates interpretable bytecode rather than C++ code. The bytecode can be interpreted by a runtime system in the device (the \textit{client}). This runtime system (also called the \textit{engine}), is written in C++ and can be compiled and uploaded using the Arduino IDE. Tasks and \acp{sds} are sent to the client dynamically via the communication protocol. Therefore, devices are programmed once but can execute tasks dynamically. Additionally, this setting is more robust than the static mTask. If the communication with a device fails, the server can dynamically send the tasks that were running on it to a new, suitable device. 
+To overcome that limitation, a new view of mTask was created~\cite{martthesis}. This view generates interpretable bytecode rather than C++ code. The bytecode can be interpreted by a runtime system in the device (the \textit{client}). This runtime system (also called the \textit{engine}), is written in C++ and can be compiled and uploaded using the Arduino IDE. Tasks and \acp{sds} are sent to the client dynamically. Therefore, devices are programmed once but can execute tasks dynamically. Additionally, this setting is more robust than the static mTask. If the communication with a device fails, the server can dynamically send the tasks that were running on it to another suitable device. 
 
 \subsection{Communication Protocol}
 
@@ -154,7 +152,7 @@ The client communicates with the server via messages of type \texttt{MTaskMSGRec
 
 \subsection{The Client}
 
-The client runs a loop function that runs repeatedly until a \textit{shutdown} message is received. The loop consists of two pieces: checking for incoming messages and running the task scheduler. The first step is straightforward: it checks the input buffer and processes any messages that might be in it. The task scheduler runs tasks based on task intervals. Tasks can run once (\texttt{OneShot}), repeatedly based on an interval (\texttt{OnInverval}) or based on an interruption (\texttt{OnInterrupt}). An interpreter is responsible for the execution of a task's bytecode.
+The client runs a loop function that runs repeatedly until a \textit{shutdown} message is received. The loop consists of two pieces: checking for incoming messages and running the task scheduler. The first step is straightforward: it checks the input buffer and processes any messages that might be in it. The task scheduler runs tasks based on task intervals. Tasks can run once (\texttt{OneShot}), repeatedly based on an interval (\texttt{OnInverval}) or based on an interruption (\texttt{OnInterrupt}). The interpreter is responsible for the execution of a task's bytecode.
 
 \subsection{The Simulator}
 

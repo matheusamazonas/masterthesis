@@ -1,4 +1,4 @@
-\acf{top} is a new programming paradigm used to develop online collaborative applications. In a \acs{top} application, users --- both people and other systems --- work together to accomplish a common goal~\cite{top}. Its central concept is called a Task, an abstraction that can be used for many different types of work. This abstraction, along with other TOP concepts, allows the programmer to focus on design decisions instead of technical details. TOP programs are declarative: they focus on \textit{what} work should be performed, rather than on \textit{how} to perform it.
+\acf{top} is a new programming paradigm used to develop online collaborative applications~\cite{top}. In a \acs{top} application, users --- both people and other systems --- work together to accomplish a common goal~\cite{top}. Its central concept is called a task, an abstraction that can be used for many different types of work. This abstraction, along with other TOP concepts, allows the programmer to focus on design decisions instead of technical details. TOP programs are declarative: they focus on \textit{what} work should be performed, rather than on \textit{how} to perform it.
 
 \section{iTasks}\label{itasks}
 iTasks is an \acs{edsl} that implements the \acs{top} paradigm. Its host language is the pure and lazy functional programming language \textit{Clean}~\cite{clean}. iTasks uses generic programming to automatically generate code for user-specified first-order data types whilst also allowing for specialization. Given an iTasks program, the system generates code for both the server and the client.
@@ -14,20 +14,20 @@ An iTasks Task is a function that consumes a state and returns a \texttt{TaskVal
 \label{fig:task_value}
 \end{figure}
 
-A Task can be of any type, as long as it provides instances for the type classes in the \texttt{iTask} type class collection. This instance can be automatically derived or explicitly declared. Automatic derivation is available for any type as long as it is not an abstract, extendable or the function type. Basic types have instances already defined in the iTasks library. Explicit declaration allows the user to define custom instances of the \texttt{iTask} class collection if the default derived instance is not suitable. Moreover, it allows instances for extendable, abstract and the function types. 
+A Task can be of any type, as long as it provides instances for the type classes in the \texttt{iTask} type class collection. This instance can be automatically derived or explicitly declared. Automatic derivation is available for any first-order type as long as it is not abstract. Basic types have instances already defined in the iTasks library. Explicit declaration allows the user to define custom instances of the \texttt{iTask} class collection if the default derived instance is not suitable. Moreover, it allows instances for extendable, abstract and the function types. 
 
 \section{Interaction}\label{interaction}
 
-The iTasks library provides basic tasks for user interaction. Listing \ref{l_top1} shows the three basic interactive tasks: \texttt{enterInformation}, \texttt{viewInformation} and \texttt{updateInformation}. They create user interface elements to enter, view and update information respectively. As we can see in Listing \ref{l_top1}, these basic tasks include a class constraint on the type of the returned \texttt{Task}. This constraint enforces that the type \texttt{m} implements an instance of the \texttt{iTask} type class. 
+The iTasks library provides basic tasks for user interaction. Listing \ref{l_top1} shows the three basic interactive tasks: \texttt{enterInformation}, \texttt{viewInformation} and \texttt{updateInformation}. They create user interface elements to enter, view and update information respectively. As we can see in Listing \ref{l_top1}, these basic tasks include a class constraint on the type of the returned \texttt{Task}. This constraint enforces that the type \texttt{m} has an instance of the \texttt{iTask} type class. 
 
 \begin{lstlisting}[caption=iTasks basic interaction functions,captionpos=b,label=l_top1]
-enterInformation  :: d [EnterOption m]      -> Task m | toPrompt d & iTask m
-viewInformation   :: d [ViewOption m] m     -> Task m | toPrompt d & iTask m
-updateInformation :: d [UpdateOption m m] m -> Task m | toPrompt d & iTask m 
+enterInformation  :: d [EnterOption m]      -> Task m | iTask m
+viewInformation   :: d [ViewOption m] m     -> Task m | iTask m
+updateInformation :: d [UpdateOption m m] m -> Task m | iTask m 
 \end{lstlisting}
 
 
-Listing \ref{l_top2} displays examples of how to use the basic interactive tasks. We introduce a new \ac{adt}, called \texttt{Location} and automatically derive its instance of the \texttt{iTask} type class. Following, we introduce a new example \texttt{Location}. Finally, we define new tasks in terms of the basic tasks presented in Listing \ref{l_top1}. Here, keep in mind that the iTasks standard library implements an instance of the \texttt{toPromt} type class for the type \texttt{String}.  
+Listing \ref{l_top2} displays examples of how to use the basic interactive tasks. We introduce a new \ac{adt}, called \texttt{Location} and automatically derive its instance of the \texttt{iTask} type class. Following, we introduce a new example \texttt{Location}. Finally, we define new tasks in terms of the basic tasks presented in Listing \ref{l_top1}. 
 
 
 \begin{lstlisting}[caption=Example of basic iTasks interaction functions,captionpos=b,label=l_top2]
@@ -96,7 +96,7 @@ The \texttt{>>=} (also called \textit{bind}) is an example of sequential combina
 
 \subsection{Parallel Combinators}
 
-Tasks can be executed in parallel using either the \texttt{-\&\&-} or the \texttt{-||-} combinators. The first executes two tasks in parallel and returns a tuple containing the result of both argument tasks. The \texttt{-||-} combinator executes two tasks in parallel and returns the task value of the first stable argument task. The type signatures of both combinators can be seen on Listing \ref{par_comb}.
+Tasks can be executed in parallel using the \textit{parallel} combinator. All the other parallel combinators in the iTasks library are derived from it. Among them, the \texttt{-\&\&-} and the \texttt{-||-} are the most commonly used. The first executes two tasks in parallel and returns a tuple containing the result of both argument tasks. The \texttt{-||-} combinator executes two tasks in parallel and returns the task value of the first stable argument task. The type signatures of both combinators can be seen on Listing \ref{par_comb}.
 
 \begin{lstlisting}[caption=Parallel combinators,label=par_comb,captionpos=b]
 (-||-) infixr 3 :: (Task a) (Task a) -> Task a     | iTask a
@@ -122,7 +122,7 @@ There are four basic functions to operate on shares: \textit{get}, \textit{set},
 :: Shared a :== SDS () a a
 
 get   :: (ReadWriteShared a w)           -> Task a | iTask a
-set   :: a (ReadWriteShared r a)         -> Task a | iTask a & TC r
+set   :: a (ReadWriteShared r a)         -> Task a | iTask a
 upd   :: (r -> w) (ReadWriteShared r w)   -> Task w | iTask r & iTask w
 watch :: (ReadWriteShared r w)           -> Task r | iTask r
 \end{lstlisting}
