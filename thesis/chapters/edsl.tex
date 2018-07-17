@@ -1,6 +1,6 @@
 A \ac{gpl} is a computer language intended to be used in a wide range of domains. An example is the C++ programming language, which can be used in domains that vary from video games to web servers and systems programming. In contrast, a \ac{dsl} is a computer language that was designed to be used in a particular domain. Game Maker Language, \acs{html}, LaTeX and \acs{vhdl} are examples of \acp{dsl}. These languages, when compared to \acp{gpl}, offer a higher level of abstraction from their target domain.
 
-A \ac{dsl} can be implemented using two different strategies: standalone and embedded. Each strategy has its advantages and disadvantages. In the former strategy, the language is build from the ground up, which consists of developing either a compiler or an interpreter. This strategy provides the language designer with a lot design freedom, but requires a cumbersome amount of work. In the latter strategy, the proposed \ac{dsl} is embedded in another language. Therefore, the \ac{dsl} inherits functionality from its host language. This inheritance often is desirable (e.g., a type checker) but sometimes might be undesirable as well (e.g., type coercion). This strategy frees its designer of building a new compiler.
+A \ac{dsl} can be implemented using two different strategies: standalone and embedded. Each strategy has its advantages and disadvantages. In the former strategy, the language is build from the ground up, which consists of developing either a compiler or an interpreter. This strategy provides the language designer with a lot design freedom, but requires a cumbersome amount of work. In the latter strategy, the proposed \ac{dsl} is embedded in another language. Therefore, the \ac{dsl} inherits functionality from its host language. This inheritance often is desirable (e.g., a type checker) but sometimes might be undesirable (e.g., type coercion). This strategy frees its designer of building a new compiler.
 
 The semantics of a \ac{edsl} are given by its views (also called backends). Common views are evaluation, pretty printing, compilation, optimization and verification. There are two main techniques for building an \ac{edsl}: deep and shallow embedding.
 
@@ -40,7 +40,7 @@ var :: String -> Sem Int
 
 One advantage of shallow over deep embedding is that adding a new language construct is easy, given that each construct is just a function. Another advantage is that overloading can be achieved with the use of class constraints. In addition, static type checking was obtained without \acp{gadt}. 
 
-The biggest disadvantages of shallow embedding are based on the fact that all views will always be computed regardless of its need. First, there is no separation of concerns. Second, there is computational waste when not all views are necessary. Finally, adding a new view in the semantics becomes increasingly burdensome. Another disadvantage of shallow embedding is that variables still remain unchecked during compilation. Finally, since the language constructs are functions, they can not be inspected as in deeply \acp{edsl}.
+The biggest disadvantages of shallow embedding are based on the fact that all views are grouped in the same \ac{adt}. First, there is no separation of concerns. Second, there is computational waste when not all views are necessary. Finally, adding a new view in the semantics becomes increasingly burdensome. Another disadvantage of shallow embedding is that variables still remain unchecked during compilation. Finally, since the language constructs are functions, they can not be inspected as in deeply \acp{edsl}.
 
 \subsection{Shallow Embedding with Type Classes}\label{sec:class_based_edsl}
 
@@ -73,11 +73,11 @@ Class-based shallow embedding solves most of the problems previously faced with 
 
 Two problems remain. First, language constructs still can not be inspected. This is an inherent property of shallowly \acp{edsl} and unfortunately can not be eliminated. 
 
-Second, variables are still not checked at compile time. In order to solve this problem, we can leverage the fact that function arguments are well typed in the host language. A variable declaration is defined as a function where its argument represents the variable and the function body represents the remaining of the program. As a result, any usage of the variable in the function body is well typed. In order to avoid constructs that are not variables on the left-hand side of the attribution operator, the types \texttt{Var} and \texttt{Expr} were introduced~\cite{mtasks}. In some views, these types are phantom types. 
+Second, variables are still not checked at compile time. We use functions to solve this. Given that function arguments are well-typed in the host language, we can use them to represent typed variables. A variable declaration is defined as a function where its argument represents the variable and the function body represents the remaining of the program. As a result, any usage of the variable in the function body is well typed. In order to avoid constructs that are not variables on the left-hand side of the attribution operator, the types \texttt{Var} and \texttt{Expr} were introduced~\cite{mtasks}. In some views, these types are phantom types. 
 
 An example of a class-based shallowly \ac{edsl} with compile time variable checks can be seen on Listing \ref{shallow3}. \texttt{Eval} is an example of a view with a phantom type: the type variable \texttt{b}.
 
-\begin{lstlisting}[caption=A simple shallowly \ac{edsl} with compile time variable checks,captionpos=b,label=shallow3]
+\begin{lstlisting}[caption=A simple class-based shallowly \ac{edsl} with compile time variable checks,captionpos=b,label=shallow3]
 :: Eval a b = E a
 :: In a b = In infixl 0 a b
 :: Var = Var
