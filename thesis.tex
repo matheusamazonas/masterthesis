@@ -9,14 +9,13 @@
 \usepackage{listings}
 \usepackage{float} % Pictures
 \usepackage[backend=biber,style=numeric,maxbibnames=5]{biblatex}
-%\usepackage{courier} % Clean syntax highlighting
 \usepackage{subcaption} %subfigure
 \usepackage[export]{adjustbox} % subfigure
 \usepackage{graphicx} %subfigure
 \usepackage{lmodern}
 \usepackage{hyperref} %Clickable links
 
-
+% -------- Resources --------
 \addbibresource{thesis/thesis.bib}
 
 \input{clean.sty}
@@ -28,41 +27,51 @@
 
 \makeglossaries
 \input{thesis/acronyms.tex}
+% ----------------------------
 
-\urlstyle{tt}
-
+% --------- Commands ---------
 \newcommand{\projecttitle}{Developing Real Life, Task Oriented Applications for the Internet of Things}
 \newcommand{\rinus}{prof.~dr.~dr.h.c.~ir.~M.J.~Plasmeijer }
 \newcommand{\pieter}{dr.~P.W.M. Koopman}
 \newcommand{\mart}{M. Lubbers MSc.}
-
 \date{\today}
 \author{Matheus Amazonas Cabral de Andrade}
+\urlstyle{tt}
+% ----------------------------
+
 
 \begin{document}
 \frontmatter{}
 
+% -------- Title Page --------
 \maketitleru[
     layout=seventeen,
     title=Master's Thesis,
     subtitle=\projecttitle,
     others={{Supervisor:}{\rinus},{Daily Supervisor:}{\mart},{Second Reader:}{\pieter}}]
-    
 \clearpage
+% ----------------------------
 
+% --------- Abstract ---------
 \chapter*{\centering Abstract}
     \addcontentsline{toc}{chapter}{Abstract}
     \input{thesis/chapters/abstract}
+% ----------------------------
     
+% ----- Acknowledgements -----
 \chapter*{\centering Acknowledgements}
     \addcontentsline{toc}{chapter}{Acknowledgements}
     \input{thesis/chapters/acknowledgements}
+% ----------------------------
 
+% ---- Table of contents -----
 \tableofcontents
 \clearpage
+% ----------------------------
 
 \mainmatter{}
 
+% -------- Chapters ----------
 \chapter{Introduction}
     \input{thesis/chapters/introduction}
 
@@ -87,19 +96,28 @@
 \chapter{Related Work}
     \input{thesis/chapters/related}
 
-\clearpage
+% ----------------------------
 
 \backmatter{}
 
+% ------- Bibliography -------
+\cleardoublepage
 \nocite{*}
+\phantomsection
 \addcontentsline{toc}{chapter}{Bibliography}
 \printbibliography[]
+% ----------------------------
 
+% -------- Glossaries --------
+\cleardoublepage
 \printglossaries
+% ----------------------------
 
-
+% --------- Listings ---------
+\cleardoublepage
+\phantomsection
 \addcontentsline{toc}{chapter}{Listings}
 \lstlistoflistings
-
+% ----------------------------
 
 \end{document}
