@@ -3,7 +3,7 @@
 \section{iTasks}\label{itasks}
 iTasks is an \acs{edsl} that implements the \acs{top} paradigm. Its host language is the pure and lazy functional programming language \textit{Clean}~\cite{clean}. iTasks uses generic programming to automatically generate code for user-specified first-order data types whilst also allowing for specialization. Given an iTasks program, the system generates code for both the server and the client.
 
-An iTasks Task is a function that consumes a state and returns a \texttt{TaskValue} of type \texttt{a}, where \texttt{a} is the type of the task (represented by \texttt{Task a}). A \texttt{TaskValue} contains the current state of the value that a Task is processing. The possible states of a \texttt{TaskValue} are shown on Figure \ref{fig:task_value}. As we can see below, once a value stabilizes, it can not become unstable.
+An iTasks task is a function that transforms a state, reacts to events and returns an observable value. A task is represented by \texttt{Task a} and its observable value by \texttt{TaskValue a}, where \texttt{a} is the type of the task. A \texttt{TaskValue} contains the current state of the value that a Task is processing. The possible states of a \texttt{TaskValue} are shown on Figure \ref{fig:task_value}. As we can see below, once a value stabilizes, it can not become unstable.
 
 
 \begin{figure}[H]
@@ -96,7 +96,7 @@ The \texttt{>>=} (also called \textit{bind}) is an example of sequential combina
 
 \subsection{Parallel Combinators}
 
-Tasks can be executed in parallel using the \textit{parallel} combinator. All the other parallel combinators in the iTasks library are derived from it. Among them, the \texttt{-\&\&-} and the \texttt{-||-} are the most commonly used. The first executes two tasks in parallel and returns a tuple containing the result of both argument tasks. The \texttt{-||-} combinator executes two tasks in parallel and returns the task value of the first stable argument task. The type signatures of both combinators can be seen on Listing \ref{par_comb}.
+Tasks can be executed in parallel using the \textit{parallel} combinator. All the other parallel combinators in the iTasks library are derived from it. Among them, \texttt{-\&\&-} and  \texttt{-||-} are the most commonly used. The first executes two tasks in parallel and returns a tuple containing the result of both argument tasks. The \texttt{-||-} combinator executes two tasks in parallel and returns the task value of the first stable argument task. The type signatures of both combinators can be seen on Listing \ref{par_comb}.
 
 \begin{lstlisting}[caption=Parallel combinators,label=par_comb,captionpos=b]
 (-||-) infixr 3 :: (Task a) (Task a) -> Task a     | iTask a
@@ -109,12 +109,14 @@ Tasks can be executed in parallel using the \textit{parallel} combinator. All th
 Albeit task combinators are a powerful tool to 
 communicate values among tasks, some applications often need to perform ad hoc communication with the external world. \acp{sds} abstract from implementation details on how resources are accessed. A resource can be, for example, a database, a file, the system time or a shared value in memory. 
 
-Besides typed reading and writing, \acp{sds} provide a publish-subscribe system. If a task is observing an \ac{sds} that had been modified, the task is automatically notified on the change. This system allows for tasks to maintain up-to-date data without the need to constantly inspect the \ac{sds} for changes.
+One approach to create this abstract view on shared data is called lenses~\cite{lenses}. They are bidirectional transformations that provide an interface for reading and writing shared data. Lenses can be extended to allow change notifications: a view is notified when the underlying shared data was modified. Thus, a view always presents updated information. We call this ability of a view to listen for notifications \textit{observing}. When the shared data is relatively small and seldom updated, no problem arises. Although, if the data is represented by a large data structure that is often updated, broadcasting notifications might impact performance. 
 
-As it can be seen from Listing \ref{sds1}, an \texttt{SDS} has three type parameters. The first one is the type of the parametric lenses used on the notification system~\cite{parametric}. The second and third types are the read and write data types respectively. Note that they do not need to be the same type. A \texttt{ReadWriteShared} is an \ac{sds} where the parametric lens is of type \texttt{()} (void). As a consequence, a change in the shared will trigger all the tasks watching it. A \texttt{Shared} is a \texttt{ReadWriteShared} where read and write types are the same.
+Traditional lenses do not provide a way to read, update and observe parts of shared data. Parametric lenses are an extension to traditional lenses that allow that according to a \textit{focus} domain~\cite{parametric}. This focus domain is used to encode notification predicates that tell whether a change on the underlying shared source affects the current view. This way, change notifications can be sent only to the views that are affected by the change, reducing unnecessary notifications.
+
+\acp{sds} are implemented using parametric lenses. As it can be seen from Listing \ref{sds1}, an \texttt{SDS} has three type parameters. The first one is the type of the \textit{focus} domain. The second and third types are the read and write data types respectively. Note that they do not need to be the same type. A \texttt{ReadWriteShared} is an \ac{sds} where the focus domain is of type \texttt{()} (void). A \texttt{Shared} is a \texttt{ReadWriteShared} where read and write types are the same.
 
 % SDS functions
-There are four basic functions to operate on shares: \textit{get}, \textit{set}, \textit{update} and \textit{watch}. Their type signatures can be seen on Listing \ref{sds1}. The \texttt{get} operation simply fetches the current value of a share. Analogously, the \texttt{set} function sets a share's value. The \texttt{upd} operation sets a share's value based on its current value. The \texttt{watch} function waits for a notification of change from the share.
+There are four basic functions to operate on shares: \textit{get}, \textit{set}, \textit{update} and \textit{watch}. Their type signatures can be seen on Listing \ref{sds1}. They are all atomic operations: during a reading, no other operations are executed. The \texttt{get} operation simply fetches the current value of a share. Analogously, the \texttt{set} function sets a share's value. The \texttt{upd} operation sets a share's value based on its current value. The \texttt{watch} function waits until the current value of the shared changes.
 
 \begin{lstlisting}[caption=Shared Data Sources definitions,label=sds1,captionpos=b]
 :: SDS p r w = ...
@@ -127,4 +129,9 @@ upd   :: (r -> w) (ReadWriteShared r w)   -> Task w | iTask r & iTask w
 watch :: (ReadWriteShared r w)           -> Task r | iTask r
 \end{lstlisting}
 
-\acp{sds} can be composed to create new \acp{sds} using combinators defined in the iTasks library. In addition, interactive tasks equivalent to the ones described in Section \ref{interaction} are defined for \acp{sds}. 
+\acp{sds} can be composed to create new \acp{sds} using combinators defined in the iTasks library. In addition, interactive tasks equivalent to the ones described in Section \ref{interaction} are defined for the type \texttt{ReadWriteShared}. Their signatures can be seen on Listing \ref{sds2}. Both of these interactive tasks \textit{observe} the \ac{sds}. Therefore, changes on the \texttt{ReadWriteShared} will be automatically displayed.
+
+\begin{lstlisting}[caption=\ac{sds} interactive tasks,label=sds2,captionpos=b]
+viewSharedInformation ::   d [ViewOption r]     (ReadWriteShared r w) -> Task r | iTask r 
+updateSharedInformation :: d [UpdateOption r w] (ReadWriteShared r w) -> Task r | iTask r & iTask w
+\end{lstlisting}
