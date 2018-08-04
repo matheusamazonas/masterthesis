@@ -37,6 +37,8 @@
 \date{\today}
 \author{Matheus Amazonas Cabral de Andrade}
 \urlstyle{tt}
+\renewcommand\lstlistingname{List of Listings}
+\renewcommand\lstlistlistingname{List of Listings}
 % ----------------------------
 
 
@@ -115,8 +117,13 @@
 % --------- Listings ---------
 \cleardoublepage
 \phantomsection
-\addcontentsline{toc}{chapter}{Listings}
-\lstlistoflistings
+\begingroup
+\chapter{List of Lists}
+\let\clearpage\relax
+\let\cleardoublepage\relax
+\lstlistoflistings{}
+\listoffigures
+\endgroup
 % ----------------------------
 
 \end{document}
