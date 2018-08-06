@@ -1,4 +1,4 @@
-In some cases, interactions between the iTasks system and the real world could be automated. This is the case for tasks such as reading the room temperature or turning a LED on once a task is completed. Microcontrollers are perfect for this kind of task. They are cheap systems that great for control tasks that involve reading sensors (e.g., temperature, light) and controlling actuators (e.g., motors, LEDs). Due to hardware limitations, microcontrollers can not run iTasks tasks. As an alternative, the mTask \ac{edsl} was created. This \ac{dsl} allows the programming of microcontrollers in Clean using a TOP-like approach~\cite{micro,mtasks,martthesis}.
+In some cases, interactions between the iTasks system and the real world could be automated. This is the case for tasks such as reading the room temperature or turning a \acs{led} on once a task is completed. Microcontrollers are perfect for this kind of task. They are cheap systems that great for control tasks that involve reading sensors (e.g., temperature, light) and controlling actuators (e.g., motors, \acsp{led}). Due to hardware limitations, microcontrollers can not run iTasks tasks. As an alternative, the mTask \ac{edsl} was created. This \ac{dsl} allows the programming of microcontrollers in Clean using a TOP-like approach~\cite{micro,mtasks,martthesis}.
 
 The mTask \ac{dsl} is a type safe, class-based, multi-view \ac{edsl} (Section \ref{sec:class_based_edsl}). It currently has three views: C++ code generation, evaluation and interpretable bytecode generation. An overview of the views is given in Section \ref{sec:mtask_views}.
 
@@ -74,7 +74,7 @@ class assign v where
   (=.) infixr 2 :: (v t Upd) (v t p) -> v t Expr | isExpr p
 \end{lstlisting}
 
-\paragraph{Input and output} There are constructs to handle both analog and digital input and output. The classes \texttt{dIO} and \texttt{aIO} contain functions to handle digital and analog I/O, respectively. Both classes create updatables that can be used to read from and write to a pin. The \texttt{userLed} class contains functions to turn LEDs on an off. Input/output classes can be seen in Listing \ref{mtask_io}. 
+\paragraph{Input and output} There are constructs to handle both analog and digital input and output. The classes \texttt{dIO} and \texttt{aIO} contain functions to handle digital and analog I/O, respectively. Both classes create updatables that can be used to read from and write to a pin. The \texttt{userLed} class contains functions to turn \acsp{led} on an off. Input/output classes can be seen in Listing \ref{mtask_io}. 
 
 \begin{lstlisting}[caption=mTask I/O classes,captionpos=b,label=mtask_io]
 :: DigitalPin = D0 | D1 | D2 | D3 | D4 | D5 |D6 | D7 | D8 | D9 | D10 | D11 | D12 | D13

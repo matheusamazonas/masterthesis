@@ -1,13 +1,11 @@
 \section{Introduction}
-The \ac{iot} consists of a network of "things" (devices, computers, people, systems, etc) where its components interact with each other via the Internet. These components can exchange data, monitor and manage each other. \ac{iot} is a global, growing phenomenon. According to Gartner~\cite{iot_numbers}, there were 3.96 billion connected "things" in 2016 and by 2020, 12.863 billion devices are expected to be connected to the Internet. \ac{iot} is being used in a myriad of applications including house automation, fitness tracking, health care, warehouse monitoring, agriculture and industry manufacturing. \ac{iot} devices can be dedicated servers, personal computers, tablets, smartphones, smartwatches or compact devices operated by microcontrollers. Microcontrollers are small, cheap computers with limited resources and low power consumption commonly used to interface with the real world. They often gather data from sensors (movement, light, temperature, etc), act on actuators (motors, LEDs, swtiches, etc) and communicate with other devices.
-
-
-%often connected to sensors (movement, light, temperature, etc) and actuators (motors, LEDs, switches, etc). They are commonly used to interface with the real world on a 
-
 % Structure: 
 %   IoT ---
 %   TOP and iTasks
 % mTask
+The \ac{iot} consists of a network of "things" (devices, computers, people, systems, etc) that interact with each other via the Internet. These components can exchange data, monitor and manage each other. \ac{iot} is a global, growing phenomenon. According to Gartner, there were 3.96 billion connected "things" in 2016 and by 2020, 12.863 billion devices are expected to be connected to the Internet~\cite{iot_numbers}. \ac{iot} is being used in a myriad of applications including house automation, fitness tracking, health care, warehouse monitoring, agriculture and industry manufacturing. \ac{iot} devices can be dedicated servers, personal computers, tablets, smartphones, smartwatches or compact devices operated by microcontrollers. Microcontrollers are small, cheap computers with limited resources and low power consumption commonly used to interface with the real world. They often gather data from sensors (movement, light, temperature, etc), act on actuators (motors, \acsp{led}, swtiches, etc) and communicate with other devices.
+
+\ac{top} is a new programming paradigm used to develop online, collaborative applications. Its central concept, a \textit{Task}, can be used to model different types of work performed both by users and systems. \ac{top} provides a high level of abstraction, liberating the programmer from the burden of technical details, such as user interfaces. \ac{top} systems automatically generate as much assets as possible, turning it into a great tool for rapid prototyping. The iTasks~\cite{top} system implements \ac{top} in the functional programming language Clean~\cite{clean} as an \ac{edsl}. Given an iTasks program, the system automatically generates a web application that can be accessed via a web browser. Users can access this application to work on and inspect Tasks. The system has been proved useful in many fields, including incident response operations and navy vessels automation~\cite{incidone,navy}.
 
 
 \section{Research Question}
