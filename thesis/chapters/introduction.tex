@@ -9,9 +9,18 @@ The \ac{iot} consists of a network of "things" (devices, computers, people, syst
 
 
 \section{Research Question}
+Even though mTask was created to allow iTasks tasks to run on \acs{iot} devices, it has not been proved capable of running real life applications yet. The examples built during its development were simple demonstrations and were far from real life \acs{iot} applications. Given that, I propose the following research question:
+
+Is it possible to develop real life, \acs{iot} applications using mTask? If so, how can the development process be improved? If not, what are the challenges to solve to make it possible?
+
+I plan to tackle the research question by example. Namely, trying to develop a real life \acs{iot} application using mTask. The attempt to develop such an application should display mTask's capability to create real life applications while displaying new opportunities to improve the development process.
+
+The application I chose to develop tackles a popular problem in \acrshort{iot}: house automation. This application would be responsible for automating simple house management tasks such as turning the central heating system off when the room is warm, or opening up the curtains at a set time. The proposed application requires several \acrshort{iot} devices equipped with sensors (temperature, light, humidity, etc.) and actuators (\acsp{led}, motors, relays, etc.) spread across rooms. 
+
+
 \section{Report Structure}
 
-This report is structured as follows. Chapter \ref{chap:intro} contains the introduction, research question and report structure. Chapter \ref{chap:edsl} quickly introduces \acp{dsl} and presents different strategies to build \acp{edsl}. Chapter \ref{chap:top} introduces the concept of \ac{top} and the iTasks library. Chapter \ref{chap:mtask} presents the mTask \ac{edsl}, which was the research focus. Chapter \ref{chap:application} describes the real-life application developed during research. Chapter \ref{chap:dev} details the development process. Chapter \ref{chap:conclusion} concludes presenting insight about the development process, answering the research question and proposing future research. Chapter \ref{chap:related} lists related work.
+This report is structured as follows. Chapter \ref{chap:intro} contains the introduction, research question and report structure. Chapter \ref{chap:edsl} quickly introduces \acp{dsl} and presents different strategies to build \acp{edsl}. Chapter \ref{chap:top} introduces the concept of \ac{top} and the iTasks system. Chapter \ref{chap:mtask} presents the mTask \ac{edsl}, which was the research focus. Chapter \ref{chap:application} describes the real-life application developed during research. Chapter \ref{chap:dev} details the development process. Chapter \ref{chap:conclusion} concludes presenting insight about the development process, answering the research question and proposing future research. Chapter \ref{chap:related} lists related work.
 
 The source code for the real-life application developed during research can be accessed at \url{https://github.com/matheusamazonas/autohouse}.
 
