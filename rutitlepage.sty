@@ -48,12 +48,15 @@
 \newcommand*{\rutitlepage@otherslist}[1]{%
 \expandafter\rutitlepage@others#1}
 \def\rutitlepage@otherslist@,#1{\rutitlepage@otherslist{{#1}}}
+
+% ------ Seventeen ------
 \newcommand{\rutitle@layout@seventeen}[0]{
 \newgeometry{left=25mm,top=25mm,right=15mm,bottom=10mm,hmarginratio=1:1}
 \begin{titlepage}%
 \null\vfill%
 \parindent0pt
 {\Huge\bfseries\@rutitletitle}%
+\ifdefined\@rutitlecourse{\\[1\baselineskip]\large\@rutitlecourse}\\
 \ifdefined\@rutitlesubtitle{\\[2\baselineskip]\large\it\@rutitlesubtitle}\fi\\[4\baselineskip]
 {\Large\sc\@rutitleauthors}\\[\baselineskip]
 {\large\@rutitledate}
@@ -69,6 +72,8 @@
 \end{titlepage}
 \restoregeometry%
 }
+
+% ------ Traditional ------
 \newcommand{\rutitle@layout@traditional}[0]{
 \newgeometry{hmarginratio=1:1}
 \begin{titlepage}
