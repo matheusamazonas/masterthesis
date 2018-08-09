@@ -13,7 +13,7 @@
 \usepackage[export]{adjustbox} % subfigure
 \usepackage{graphicx} %subfigure
 \usepackage{lmodern}
-\usepackage{hyperref} %Clickable links
+\usepackage[hidelinks]{hyperref} %Clickable links
 
 % -------- Resources --------
 \addbibresource{thesis/thesis.bib}
@@ -25,6 +25,7 @@
     basicstyle=\ttfamily,
     frame=leftline}
 
+\glsenablehyper
 \makeglossaries
 \input{thesis/acronyms.tex}
 % ----------------------------
@@ -39,6 +40,7 @@
 \urlstyle{tt}
 \renewcommand\lstlistingname{List of Listings}
 \renewcommand\lstlistlistingname{List of Listings}
+\newcommand{\ignore}[1]{} % To suppress the unused glossary entrie's "Page 1"
 % ----------------------------
 
 
@@ -113,6 +115,11 @@
 
 % -------- Glossaries --------
 \printglossaries
+% Add unused entries:
+\forallglsentries{\thislabel}%
+{%
+  \ifglsused{\thislabel}{}{\glsadd[format=ignore]{\thislabel}}%
+}
 % ----------------------------
 
 % --------- Listings ---------
