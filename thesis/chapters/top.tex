@@ -14,7 +14,7 @@ An iTasks task is a function that transforms a state, reacts to events and retur
 \label{fig:task_value}
 \end{figure}
 
-A Task can be of any type, as long as it provides instances for the type classes in the \texttt{iTask} type class collection. This instance can be automatically derived or explicitly declared. Automatic derivation is available for any first-order type as long as it is not abstract. Basic types have instances already defined in the iTasks library. Explicit declaration allows the user to define custom instances of the \texttt{iTask} class collection if the default derived instance is not suitable. Moreover, it allows instances for extendable, abstract and the function types. 
+A Task can be of any type, as long as it provides instances for the type classes in the \texttt{iTask} type class collection. These instances can be automatically derived or explicitly declared. Automatic derivation is available for any first-order type as long as it is not abstract. Basic types have instances already defined in the iTasks library. Explicit declaration allows the user to define custom instances of the \texttt{iTask} class collection if the default derived instance is not suitable. Moreover, it allows instances for extendable, abstract and the function types. 
 
 \section{Interaction}\label{interaction}
 
@@ -36,7 +36,7 @@ Listing \ref{l_top2} displays examples of how to use the basic interactive tasks
 derive class iTask Location
 
 location :: Location
-location = { city="Omaha", state="Nebraska"}
+location = { city="Omaha", state="Nebraska" }
 
 enterLocation :: Task Location
 enterLocation = enterInformation "Enter the location" []
@@ -109,7 +109,7 @@ Tasks can be executed in parallel using the \textit{parallel} combinator. All th
 Albeit task combinators are a powerful tool to 
 communicate values among tasks, some applications often need to perform ad hoc communication with the external world. \acp{sds} abstract from implementation details on how resources are accessed. A resource can be, for example, a database, a file, the system time or a shared value in memory. 
 
-One approach to create this abstract view on shared data is called lenses~\cite{lenses}. They are bidirectional transformations that provide an interface for reading and writing shared data. Lenses can be extended to allow change notifications: a view is notified when the underlying shared data was modified. Thus, a view always presents updated information. We call this ability of a view to listen for notifications \textit{observing}. When the shared data is relatively small and seldom updated, no problem arises. Although, if the data is represented by a large data structure that is often updated, broadcasting notifications might impact performance. 
+One approach to create an abstract view on shared data is called a lens~\cite{lenses}. They are bidirectional transformations that provide an interface for reading and writing shared data. Lenses can be extended to allow change notifications: a view is notified when the underlying shared data was modified. Thus, a view always presents updated information. We call this ability of a view to listen for notifications \textit{observing}. When the shared data is relatively small and seldom updated, no problem arises. Although, if the data is represented by a large data structure that is often updated, broadcasting notifications might impact performance. 
 
 Traditional lenses do not provide a way to read, update and observe parts of shared data. Parametric lenses are an extension to traditional lenses that allow that according to a \textit{focus} domain~\cite{parametric}. This focus domain is used to encode notification predicates that tell whether a change on the underlying shared source affects the current view. This way, change notifications can be sent only to the views that are affected by the change, reducing unnecessary notifications.
 

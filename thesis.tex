@@ -8,12 +8,13 @@
 \usepackage[toc,acronym,shortcuts]{glossaries}
 \usepackage{listings}
 \usepackage{float} % Pictures
-\usepackage[backend=biber,style=numeric,maxbibnames=5]{biblatex}
+\usepackage[backend=biber,style=numeric,maxbibnames=5,firstinits=true]{biblatex}
 \usepackage{subcaption} %subfigure
 \usepackage[export]{adjustbox} % subfigure
 \usepackage{graphicx} %subfigure
 \usepackage{lmodern}
 \usepackage[hidelinks]{hyperref} %Clickable links
+\usepackage[capitalise]{cleveref}
 
 % -------- Resources --------
 \addbibresource{thesis/thesis.bib}
@@ -38,7 +39,6 @@
 \date{\today}
 \author{Matheus Amazonas Cabral de Andrade}
 \urlstyle{tt}
-\renewcommand\lstlistingname{List of Listings}
 \renewcommand\lstlistlistingname{List of Listings}
 \newcommand{\ignore}[1]{} % To suppress the unused glossary entrie's "Page 1"
 % ----------------------------
