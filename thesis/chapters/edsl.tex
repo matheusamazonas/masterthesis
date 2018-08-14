@@ -6,7 +6,7 @@ The semantics of a \acf{edsl} are given by its views (also called backends). Com
 
 \section{Deep Embedding}
 
-Building a deeply \ac{edsl} consists of representing language constructs as \acp{adt} in the host language. Views are functions that take the \ac{adt} as input and return another \ac{adt} that represents its semantics. An example of a simple deeply \ac{edsl} and its views (pretty printing and evaluation) can be seen on Listing \ref{deep1}.
+A deeply \ac{edsl} is represented in its host language as an \ac{adt}, where language constructs are modelled as data constructs. Views are functions that take the \ac{adt} as input and return another \ac{adt} that represents its semantics. An example of a simple deeply \ac{edsl} and its views (pretty printing and evaluation) can be seen on Listing \ref{deep1}.
 
 
 \begin{lstlisting}[caption=A simple deeply \ac{edsl} and its views,captionpos=b,label=deep1]
@@ -22,9 +22,9 @@ prettyPrint :: MyDSL -> [String]
 eval :: MyDSL -> Int
 \end{lstlisting}
 
-The biggest advantage of deep embedding is that adding a view to the \ac{dsl} is easy: simply create a function that transforms the \ac{adt}. One disadvantage is that extending the \ac{dsl} might require a lot of work, since new code has to be created for every new construct in all the views. Another disadvantage is its lack of static type safety. As seen on Listing \ref{deep1}, \texttt{MyDSL} allows operations on mixed data types, as addition on booleans and disjunction on integers. In addition, variables are checked at runtime instead of compile time.
+The biggest advantage of deep embedding is that adding a view to the \ac{dsl} is easy: simply create a function that transforms the \ac{adt}. One disadvantage is that extending the \ac{dsl} might require a lot of work, since new code has to be created for every new construct in all the views. Another disadvantage is its lack of static type safety. As seen on Listing \ref{deep1}, \texttt{MyDSL} allows operations on mixed data types, such as addition on booleans and disjunction on integers. 
 
-\acp{gadt} can be used to accomplish static type safety in deeply \acp{edsl}, but they do not enable compile time variable checks~\cite{gadts}. 
+\acp{gadt} can be used to accomplish static type safety in deeply \acp{edsl}, but Clean does not support them~\cite{gadts}. 
 
 \section{Shallow Embedding}
 Building a shallowly \ac{edsl} consists of representing the language constructs directly as its semantics. An example of a simple shallowly \ac{edsl} can be seen on Listing \ref{shallow1}. In this example, the \texttt{Sem} \ac{adt} contains both the evaluation (\texttt{a}) and the pretty printing (\texttt{[String]}) views.
@@ -71,9 +71,9 @@ instance myDSL Eval where
 
 Class-based shallow embedding solves most of the problems previously faced with deep and shallow embedding. The language is statically typed, the views are separated, adding a view is simple, extending the language with a new construct is easy and operators can be overloaded. 
 
-Two problems remain. First, language constructs still can not be inspected. This is an inherent property of shallowly \acp{edsl} and unfortunately can not be eliminated. 
+Two problems remain. First, language constructs still can not be inspected. This is an inherent property of shallowly \acp{edsl} and unfortunately cannot be eliminated. 
 
-Second, variables are still not checked at compile time. We use functions to solve this. Given that function arguments are well-typed in the host language, we can use them to represent typed variables. A variable declaration is defined as a function where its argument represents the variable and the function body represents the remaining of the program. As a result, any usage of the variable in the function body is well typed. In order to avoid constructs that are not variables on the left-hand side of the attribution operator, the types \texttt{Var} and \texttt{Expr} were introduced~\cite{mtasks}. In some views, these types are phantom types~\cite{phantom}. 
+Second, variables are still not checked at compile time. We use functions to solve this. This solution is not inherent to class-based deep embedding and can be used on regular deep embedding and on shallow embedding as well. Given that function arguments are well-typed in the host language, we can use them to represent typed variables. A variable declaration is defined as a function where its argument represents the variable and the function body represents the remaining of the program. As a result, any usage of the variable in the function body is well typed. In order to avoid constructs that are not variables on the left-hand side of the attribution operator, the types \texttt{Var} and \texttt{Expr} are introduced. In some views, these types are phantom types~\cite{phantom}. 
 
 An example of a class-based shallowly \ac{edsl} with compile time variable checks can be seen on Listing \ref{shallow3}. \texttt{Eval} is an example of a view with a phantom type: the type variable \texttt{b}.
 

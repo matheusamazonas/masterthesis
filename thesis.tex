@@ -5,7 +5,7 @@
 \usepackage[english]{babel}
 \usepackage{lipsum,etoolbox}
 \usepackage[nodayofweek]{datetime}
-\usepackage[toc,acronym,shortcuts]{glossaries}
+\usepackage[toc,acronym,shortcuts,nonumberlist]{glossaries}
 \usepackage{listings}
 \usepackage{float} % Pictures
 \usepackage[backend=biber,style=numeric,maxbibnames=5,firstinits=true]{biblatex}
@@ -115,11 +115,7 @@
 
 % -------- Glossaries --------
 \printglossaries
-% Add unused entries:
-\forallglsentries{\thislabel}%
-{%
-  \ifglsused{\thislabel}{}{\glsadd[format=ignore]{\thislabel}}%
-}
+\glsaddallunused
 % ----------------------------
 
 % --------- Listings ---------

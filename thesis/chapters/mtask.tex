@@ -11,7 +11,7 @@ class arith v where
     (+.) infixl 6 :: (v t p) (v t q) -> v t Expr     | type, +, t & isExpr p & isExpr q
 \end{lstlisting}
 
-Language constructs are of the form \texttt{v t p} where \texttt{v} is the view, \texttt{t} is the type of the construct and \texttt{p} is the construct's role. The \texttt{lit} function lifts a value to the mTask domain. The \texttt{+.} infix operator adds two expressions (represented by the \texttt{isExpr} class constraint) and returns another expression. The constraints \texttt{type} and \texttt{mTaskType} ensure that only mTask types can be used. The constructor role is an \ac{adt} that specifies whether the constructor is an updatable, an expression or a statement~\cite{mtasks,martthesis}. The definitions of the constructor roles and the \texttt{isExpr} class along with its instances can be seen in Listing \ref{mtask_roles}.
+Language constructs are of the form \texttt{v t p} where \texttt{v} is the view, \texttt{t} is the type of the construct and \texttt{p} is the construct's role. The \texttt{lit} function lifts a value to the mTask domain. The \texttt{+.} infix operator adds two expressions (represented by the \texttt{isExpr} class constraint) and returns another expression. The constraints \texttt{type} and \texttt{mTaskType} ensure that only mTask types can be used. The constructor role specifies whether the constructor is an updatable, an expression or a statement~\cite{mtasks,martthesis}. The definitions of the constructor roles and the \texttt{isExpr} class along with its instances can be seen in Listing \ref{mtask_roles}.
 
 \begin{lstlisting}[caption=mTask construction roles, captionpos=b,label=mtask_roles]
 :: Upd   = Upd

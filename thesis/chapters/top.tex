@@ -96,27 +96,27 @@ The \texttt{>>=} (also called \textit{bind}) is an example of sequential combina
 
 \subsection{Parallel Combinators}
 
-Tasks can be executed in parallel using the \textit{parallel} combinator. All the other parallel combinators in the iTasks library are derived from it. Among them, \texttt{-\&\&-} and  \texttt{-||-} are the most commonly used. The first executes two tasks in parallel and returns a tuple containing the result of both argument tasks. The \texttt{-||-} combinator executes two tasks in parallel and returns the task value of the first stable argument task. The type signatures of both combinators can be seen on Listing \ref{par_comb}.
+Tasks can be executed in parallel using the \textit{parallel} combinator. All the other parallel combinators in the iTasks library are derived from it. Among them, \texttt{-\&\&-} and  \texttt{-||-} are the most commonly used. The first executes two tasks in parallel and returns a tuple containing the result of both argument tasks. The \texttt{-||-} combinator executes two tasks in parallel, but behaves differently from the \texttt{-\&\&-} combinator. The value of the combined task depends on the stability of the argument tasks. If none of the tasks are stable, the combined task yields the last modified non-stable value. If one of the values becomes stable, the combinator yields it, preserving its stability. The type signatures of both combinators can be seen on Listing \ref{par_comb}.
 
 \begin{lstlisting}[caption=Parallel combinators,label=par_comb,captionpos=b]
-(-||-) infixr 3 :: (Task a) (Task a) -> Task a     | iTask a
 (-&&-) infixr 4 :: (Task a) (Task b) -> Task (a,b) | iTask a & iTask b
+(-||-) infixr 3 :: (Task a) (Task a) -> Task a     | iTask a
 \end{lstlisting}
 
 
 \section{Shared Data Sources}
 
 Albeit task combinators are a powerful tool to 
-communicate values among tasks, some applications often need to perform ad hoc communication with the external world. \acp{sds} abstract from implementation details on how resources are accessed. A resource can be, for example, a database, a file, the system time or a shared value in memory. 
+communicate values among tasks, some applications need to perform ad hoc communication with the external world. \acp{sds} abstract from implementation details on how resources are accessed. A resource can be, for example, a database, a file, the system time or a shared value in memory. 
 
-One approach to create an abstract view on shared data is called a lens~\cite{lenses}. They are bidirectional transformations that provide an interface for reading and writing shared data. Lenses can be extended to allow change notifications: a view is notified when the underlying shared data was modified. Thus, a view always presents updated information. We call this ability of a view to listen for notifications \textit{observing}. When the shared data is relatively small and seldom updated, no problem arises. Although, if the data is represented by a large data structure that is often updated, broadcasting notifications might impact performance. 
+One approach to create an abstract view on shared data is called a lens~\cite{lenses}. A lens is a bidirectional transformation that provides an interface for reading and writing shared data. Lenses can be extended to allow change notifications: a view is notified when the underlying shared data was modified. Thus, a view always presents updated information. We call this ability of a view to listen for notifications \textit{observing}. Although change notifications are useful, each notification has communication and performance costs. When the shared data is relatively small and seldom updated, no problem arises. Although, if the data is represented by a large data structure that is often updated, broadcasting notifications might impact performance. 
 
-Traditional lenses do not provide a way to read, update and observe parts of shared data. Parametric lenses are an extension to traditional lenses that allow that according to a \textit{focus} domain~\cite{parametric}. This focus domain is used to encode notification predicates that tell whether a change on the underlying shared source affects the current view. This way, change notifications can be sent only to the views that are affected by the change, reducing unnecessary notifications.
+This performance impact could be reduced if lenses were able to filter notifications based on which part of the underlying data was modified. Traditional lenses do not provide a mechanism to encode that information. Parametric lenses are an extension to traditional lenses that enable notification filtering according to a \textit{focus} domain~\cite{parametric}. This focus domain is used to encode notification predicates that tell whether a change on the underlying shared source affects the current view. This way, change notifications can be sent only to the views that are affected by the change, reducing unnecessary notifications.
 
 \acp{sds} are implemented using parametric lenses. As it can be seen from Listing \ref{sds1}, an \texttt{SDS} has three type parameters. The first one is the type of the \textit{focus} domain. The second and third types are the read and write data types respectively. Note that they do not need to be the same type. A \texttt{ReadWriteShared} is an \ac{sds} where the focus domain is of type \texttt{()} (void). A \texttt{Shared} is a \texttt{ReadWriteShared} where read and write types are the same.
 
 % SDS functions
-There are four basic functions to operate on shares: \textit{get}, \textit{set}, \textit{update} and \textit{watch}. Their type signatures can be seen on Listing \ref{sds1}. They are all atomic operations: during a reading, no other operations are executed. The \texttt{get} operation simply fetches the current value of a share. Analogously, the \texttt{set} function sets a share's value. The \texttt{upd} operation sets a share's value based on its current value. The \texttt{watch} function waits until the current value of the shared changes.
+There are four basic functions to operate on \acp{sds}: \textit{get}, \textit{set}, \textit{update} and \textit{watch}. Their type signatures can be seen on Listing \ref{sds1}. The \texttt{get} operation simply fetches the current value of an \ac{sds}. Analogously, the \texttt{set} function sets an \ac{sds}'s value. The \texttt{upd} operation sets the \ac{sds}'s value based on its current value. The \texttt{watch} function continuously reads the value of an \ac{sds}. The \texttt{get}, \texttt{set} and \texttt{update} operations are atomic: during a reading, no other operation is executed.
 
 \begin{lstlisting}[caption=Shared Data Sources definitions,label=sds1,captionpos=b]
 :: SDS p r w = ...
