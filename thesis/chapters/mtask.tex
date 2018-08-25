@@ -167,7 +167,7 @@ switch = { main =
 	)}
 	
 curtains :: Main (v () Stmt)
-curtains = sds \alarm=False In { main = 
+curtains = sds \alarm = False In { main = 
 	IF (aIO A0 >. lit 3) (
 		dIO D0 =. (lit True) :.
 		alarm =. lit True :.

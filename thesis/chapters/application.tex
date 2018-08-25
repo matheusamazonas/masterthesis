@@ -1,10 +1,45 @@
+The first step to answer the research question is to choose an application to develop. This chapter presents the criteria used in the selection process and the application chosen: home automation.
 
-\section{Selection Criteria}
+\section{Selection Criteria}\label{sec:selec_cri}
 
-\section{House Automation}
+The application developed during the research should ideally display the following characteristics:
+
+\paragraph{Suitable} The application should solve a problem that is suitable for mTasks. This narrows the choice to \ac{iot} applications that can be developed for one of the platforms that mTask supports.
+
+\paragraph{Non-trivial} The application should not solve a trivial problem --- e.g. a simple hallway  motion-activated light sensor. It should go beyond a purely reactive system. It does not have to solve a novel problem, but its development should be adequately challenging.
+
+\paragraph{Simple} It should be simple enough to be developed during this research. Since we are not aiming for a full-pledged application, some concerns as feature completeness, user experience design and security are not taken into account. Its source code should be neither too complex or big. Ideally, its entire code base would not contain more than 500 lines of code. 
+
+\paragraph{Interesting} It is not enough that the application is suitable and technically good. It should tackle an existing, interesting problem. The application should be well motivated.
+
+\paragraph{Significant} The application should somehow improve the environment it's inserted into. Examples are accelerating an assembly line, saving commute  time, improving one's health or well being or reducing operational cost.
+
+\paragraph{Comprehensible} Its domain and main features should be easily understandable by non-domain experts. Its functionality details and operational features might require specific knowledge, but the application should be easily described on a high level to someone who is not inserted in its domain. Comprehensibility is relevant because it improves the application and therefore the research's reachability. 
+
+\paragraph{Robust} The application should be able to handle errors to some extend. It should at least be able to detect and communicate device disconnection. Ideally, it would automatically migrate tasks from disconnected devices to available devices whenever possible. 
+
+\paragraph{Highly connected} It should support multiple devices simultaneously. These devices should be able to exchange information (e.g. sensor values) when suitable. Ideally, the devices would be connected wirelessly.
+
+\paragraph{Dynamic} The application should not be static. Given that we are exploring the interpreted version of mTask (Section \ref{sec:int_mtask}), we want to exploit its dynamic nature. The application domain should naturally allow dynamicity. Ideally, tasks would be sent to and removed from devices regularly.
+
+\paragraph{Diverse} It should use as many peripherals as possible. Given that mTasks targets microcontrollers, it is important that a diverse group of sensors and actuators is used. The application should not restrict itself to a couple of peripherals. 
+
+\paragraph{Extensive} The application should use mTask features extensively. Given that it is testing mTask's ability to develop applications, it is important that the application tests as many mTask features as possible. The more features are used by the application, the more confident we are about mTasks abilities.
+
+\section{Home Automation}
+
+Many potential \ac{iot} applications were considered to be developed during research. After a systematic selection process based on the selection criteria described on Section \ref{sec:selec_cri}, a home automation solution was chosen. A detailed analysis of why we chose this domain is presented on Section \ref{sec:app_analysis}.
+
+Home automation might refer to different levels of automation of home tasks. By definition, any tool or machine that automates a home task constitutes a home automation solution. Historically, home automation became popular with the advent of distributed electricity. Daily tasks as dishwashing and drying clothes were automated by appliances that today are common in many households around the world.
+
+In the last decades, home automation gained another meaning with the invention of electronic solutions that control virtually any electronic in a house. Lighting, temperature, entertainment systems and doors are the most common components controlled by home automation solutions. Frequently, these applications are composed by a central control unit with a user interface (e.g. computer, tablet, smartphone, wall control panel), a communication channel (e.g. Bluetooth, \acs{lan}, Internet, infrared) and devices to be controlled (e.g. lamp, air conditioning unit, doors, TV, appliances).
+
+Automated tasks might include simple tasks as turning a light on when someone enters the room, controlling the heater based on a target room temperature, locking the main door at a set time and closing the curtains based on the amount of natural light outside. They might also include more elaborated tasks as automatically turning the coffee maker on at 8:00 AM on work days, but only if somebody is home.
 
 \section{Application Description}
 \subsection{Behavior}
 \subsection{Devices}
 \subsection{Sensors}
 \subsection{Actuators}
+
+\section{Application Analysis}\label{sec:app_analysis}
