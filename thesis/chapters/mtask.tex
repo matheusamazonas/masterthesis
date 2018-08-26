@@ -111,7 +111,7 @@ Although the C++ code generation view works as expected, it poses a limitation. 
 
 To overcome that limitation, a new view of mTask was created~\cite{martthesis}. This view generates interpretable bytecode rather than C++ code. The bytecode can be interpreted by a runtime system in the device (the \textit{client}). This runtime system (the \textit{engine}), is written in C and can be compiled and uploaded using the Arduino IDE. Tasks and \acp{sds} are sent to the client dynamically. Therefore, devices are programmed once but can execute tasks dynamically. Additionally, this setting can be more robust than the static mTask. If the communication with a device fails, the server can dynamically send the tasks that were running on it to another suitable device. 
 
-\subsection{Communication Protocol}
+\subsection{Communication Protocol}\label{sec:mtask_com_prot}
 
 Devices can be connected either via serial communication or TCP. The server and the client communicate via a protocol based on messages. Incoming messages are of type \texttt{MTaskMSGSend} --- messages are always named from the server's perspective. There are messages for task addition and deletion, shutdown request, \ac{sds} addition and update and specification request. The definition of the \texttt{MTaskMSGSend} \ac{adt} can be seen in Listing \ref{msg_send}.
 

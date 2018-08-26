@@ -4,7 +4,7 @@ The first step to answer the research question is to choose an application to de
 
 The application developed during the research should ideally display the following characteristics:
 
-\paragraph{Suitable} The application should solve a problem that is suitable for mTasks. This narrows the choice to \ac{iot} applications that can be developed for one of the platforms that mTask supports.
+\paragraph{Suitable} The application should solve a problem that is suitable for mTask. This narrows the choice to \ac{iot} applications that can be developed for one of the platforms that mTask supports.
 
 \paragraph{Non-trivial} The application should not solve a trivial problem --- e.g. a simple hallway  motion-activated light sensor. It should go beyond a purely reactive system. It does not have to solve a novel problem, but its development should be adequately challenging.
 
@@ -12,19 +12,19 @@ The application developed during the research should ideally display the followi
 
 \paragraph{Interesting} It is not enough that the application is suitable and technically good. It should tackle an existing, interesting problem. The application should be well motivated.
 
-\paragraph{Significant} The application should somehow improve the environment it's inserted into. Examples are accelerating an assembly line, saving commute  time, improving one's health or well being or reducing operational cost.
+\paragraph{Significant} The application should somehow improve the environment it is inserted into. Examples are accelerating an assembly line, saving commute  time, improving one's health or well being or reducing operational cost.
 
 \paragraph{Comprehensible} Its domain and main features should be easily understandable by non-domain experts. Its functionality details and operational features might require specific knowledge, but the application should be easily described on a high level to someone who is not inserted in its domain. Comprehensibility is relevant because it improves the application and therefore the research's reachability. 
 
-\paragraph{Robust} The application should be able to handle errors to some extend. It should at least be able to detect and communicate device disconnection. Ideally, it would automatically migrate tasks from disconnected devices to available devices whenever possible. 
+\paragraph{Robust} The application should be able to handle errors to some extent. It should at least be able to detect and communicate device disconnection. Ideally, it would automatically migrate tasks from disconnected devices to available devices whenever possible. 
 
 \paragraph{Highly connected} It should support multiple devices simultaneously. These devices should be able to exchange information (e.g. sensor values) when suitable. Ideally, the devices would be connected wirelessly.
 
 \paragraph{Dynamic} The application should not be static. Given that we are exploring the interpreted version of mTask (Section \ref{sec:int_mtask}), we want to exploit its dynamic nature. The application domain should naturally allow dynamicity. Ideally, tasks would be sent to and removed from devices regularly.
 
-\paragraph{Diverse} It should use as many peripherals as possible. Given that mTasks targets microcontrollers, it is important that a diverse group of sensors and actuators is used. The application should not restrict itself to a couple of peripherals. 
+\paragraph{Diverse} It should use as many peripherals as possible. Since mTask targets microcontrollers, it is important that a diverse group of sensors and actuators is used. The application should not restrict itself to a couple of peripherals. 
 
-\paragraph{Extensive} The application should use mTask features extensively. Given that it is testing mTask's ability to develop applications, it is important that the application tests as many mTask features as possible. The more features are used by the application, the more confident we are about mTasks abilities.
+\paragraph{Extensive} The application should use mTask features extensively. Given that it is testing mTask's ability to develop applications, it is important that the application tests as many mTask features as possible. The more features are used by the application, the more confident we are about mTask's abilities.
 
 \section{Home Automation}
 
@@ -32,14 +32,74 @@ Many potential \ac{iot} applications were considered to be developed during rese
 
 Home automation might refer to different levels of automation of home tasks. By definition, any tool or machine that automates a home task constitutes a home automation solution. Historically, home automation became popular with the advent of distributed electricity. Daily tasks as dishwashing and drying clothes were automated by appliances that today are common in many households around the world.
 
-In the last decades, home automation gained another meaning with the invention of electronic solutions that control virtually any electronic in a house. Lighting, temperature, entertainment systems and doors are the most common components controlled by home automation solutions. Frequently, these applications are composed by a central control unit with a user interface (e.g. computer, tablet, smartphone, wall control panel), a communication channel (e.g. Bluetooth, \acs{lan}, Internet, infrared) and devices to be controlled (e.g. lamp, air conditioning unit, doors, TV, appliances).
+In the last decades, home automation gained another meaning with the invention of electronic solutions that control virtually any electronic in a house. Lighting, air conditioners, heaters, entertainment systems and doors are common components controlled by home automation solutions. Frequently, these applications are composed by a central control unit with a user interface (e.g. computer, tablet, smartphone, wall control panel), a communication channel (e.g. Bluetooth, \acs{lan}, Internet, infrared) and devices to be controlled (e.g. lamp, air conditioning unit, doors, TV, appliances).
 
-Automated tasks might include simple tasks as turning a light on when someone enters the room, controlling the heater based on a target room temperature, locking the main door at a set time and closing the curtains based on the amount of natural light outside. They might also include more elaborated tasks as automatically turning the coffee maker on at 8:00 AM on work days, but only if somebody is home.
+Automated tasks might be as simple as turning a light on when someone enters the room, controlling the heater based on a target room temperature, locking the main door at a set time and closing the curtains based on the amount of natural light outside. They might also be more elaborated as automatically turning the coffee maker on at 8:00 AM on work days, but only if somebody is home.
 
 \section{Application Description}
-\subsection{Behavior}
-\subsection{Devices}
+
+The home automation application proposed is called Autohouse. Its goal is to enable and manage the automation of a home (hereafter referred as \textit{smarthome}) using mTask. An Autohouse home is composed by rooms that can be added and removed by its user. Each room contain devices (called \textit{units} in the application) that execute tasks chosen by the user. 
+
+The smarthome management is done in the control panel, a web interface that can be accessed using a web browser. Multiple instances of the control panel can run simultaneously. There, the user has access to the main features of the application:
+
+\begin{itemize}
+    \item Manage home: add and remove rooms to the smarthome
+    \item Manage room: add and remove units to a room
+    \item Send task: send a new task to one of the available units
+    \item Stop task: delete a task that is currently running on a unit
+    \item Inspect unit: see which tasks are running on a unit
+\end{itemize}
+
+\subsection{Architecture}
+
+Autohouse is a centralized solution: a server (ideally located in the home) is the central communication hub for both users and devices. User communication is accomplished via the web control panel, which is hosted in the server. Device communication is accomplished via the mTask library and its communication protocol described in Section \ref{sec:mtask_com_prot}. Figure \ref{fig:autohouse_arch} displays an example architecture of Autohouse deployed on a home with 3 units. 
+
+\begin{figure}[H]
+\begin{center}
+\includegraphics[scale=1.0]{thesis/img/autohouse_arch.eps}
+\end{center}
+\caption{Autohouse Architecture}
+\label{fig:autohouse_arch}
+\end{figure}
+
+In Figure \ref{fig:autohouse_arch}, units are represented as diamonds, the server is represented as a rectangle and clients accessing the web control panel are represented as circles. Rooms are just an abstraction layer to ease the use of Autohouse and therefore are not represented in its architecture. Units are microcontrollers equipped with peripherals (sensors, actuators) and an with interface for wireless communication with the server. The server can be any computer with networking capabilities that is supported by Clean and that has enough resources to run the application. A client is a device accessing the control panel using a web browser. Note that the server itself may be a client, since it can access the control panel via a web browser. In addition, if the server is exposed to the Internet, the control panel can be accessed remotely. 
+
+Communication between the server and the units must be persistent (represented by the continuous line between them in Figure \ref{fig:autohouse_arch}). If the communication is interrupted, the server interprets it as a disconnection. Communication between the server and the clients can be transient (represented by the dotted line between them in Figure \ref{fig:autohouse_arch}). Since clients are just managing the application, their connection does not have to be persistent. 
+
+Following one of the criterion introduced in Section \ref{sec:selec_cri}, units should connect to the servers wirelessly. The mTask library supports two types of connections: serial and TCP. Although, which technology is used to establish these connections is irrelevant to the end user. Therefore, Autohouse is technology agnostic in regard to communication between units and the server. Units can, for example, establish a serial connection via Bluetooth or a TCP connection via WiFi. As a consequence, Autohouse does not enforce a wireless connection between the units and the server. The user decides which communication technology is more adequate to their needs.
+
+\subsection{Tasks}
+
+The main purpose of Autohouse is to send automation tasks to units so they can be executed without human supervision. Therefore, the tasks the application supports play a key role in Autohouse. The application should have a list of predefined tasks that are relevant to the house automation domain. The user could pick tasks form this default task list and select a unit to send it to. Initially, there should be no way for the user to add new tasks to the default task list.
+
+The default task list was not previously specified. Given that it was not known in advance which peripherals would be incorporated into Autohouse, creating a task list was not possible. Although, we had an idea of the types of tasks we aimed to implement in Autohouse. Some of these tasks are listed below, from simple reactive tasks to more elaborate ones:
+
+\begin{itemize}
+    \item Turn a light on when movement is detected
+    \item Turn a light off when the environment is bright enough
+    \item Turn the ceiling fan off when there is an object about to hit it
+    \item Open or close the curtains based on the brightness inside and outside
+    \item Manage the air conditioning unit and the heater based on a target room temperature and on the actual room temperature
+    \item Open the windows if the air quality inside is poor and if the outside temperature is acceptable
+    \item Turn the coffee maker on at 8:00 AM on work days, but only if somebody is home
+\end{itemize}
+
+The tasks that will be implemented into Autohouse will depend on available development time, peripheral support and mTask capability. The last condition is extremely relevant because it directly relates to the research question. If a task could not be implemented due to mTask limitations, we have a hint about how to improve mTask.
+
+\subsection{Devices}\label{sec:autohouse_devices}
+
+Three microcontroller-based platforms are supported by mTask: NodeMCU, STM32 and Arduino. We chose Arduino~\cite{arduino} as the main platform for Autohouse. Arduino is an open-source electronics platform which has single-board microcontrollers specifications and software to support them. We chose Arduino because of its open-source nature, popularity, well-established community, open-source code availability and cost.
+
+The Arduino platform currently has many boards with different specifications and purposes. We chose the Arduino Uno Rev3\footnote{Arduino Uno Rev3. Available at \url{https://store.arduino.cc/arduino-uno-rev3}. Accessed on August 26th 2018}  as the target device because of its popularity, extensibility (using shields\footnote{Arduino Shields. Available at \url{https://www.arduino.cc/en/Main/arduinoShields}. Accessed on August 26th 2018}) and its limited resources. The Arduino Uno is based on the ATmega328P microprocessor, which has only 2 KB of RAM. This memory limitation is a desired characteristic, given that we are testing whether mTask is suitable for microcontrollers, which might include devices with extremely limited resources. The Arduino Uno operates at a frequency of 16 MHz, has 6 analog pins, 14 digital pins, 32 KB of flash memory and a built-in \acs{led}. Its digital and analog pins are often used to interface with peripherals, including sensors and actuators. 
+
+Sensors and actuators are extremely relevant to Autohouse because they allow the application to interface with the real world without human interference. Examples of sensors are temperature, humidity and noise sensors. Examples of actuators are buttons, switches, \acsp{led} and motors.
+
 \subsection{Sensors}
+
+The sensors Autohouse plans to support are relevant to a home environment, both indoors and outdoors. Due to time limitations, not all sensors might be implemented into Autohouse during the research. Ideally, Autohouse would implement the following sensors, from high to low priority: temperature, humidity, light, movement, proximity (ultrasonic), noise, water and air quality sensors. 
+
 \subsection{Actuators}
+
+The actuators Autohouse plans to support are relevant to a home automation application. Due to time limitations, not all actuators might be implemented into Autohouse during the research. Ideally, Autohouse would implement the following actuators, from high to low priority: \acsp{led}, push down buttons, switches, servos and \acsp{lcd}.
 
 \section{Application Analysis}\label{sec:app_analysis}
