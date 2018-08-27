@@ -4,7 +4,7 @@ The first step to answer the research question is to choose an application to de
 
 The application developed during the research should ideally display the following characteristics:
 
-\paragraph{Suitable} The application should solve a problem that is suitable for mTask. This narrows the choice to \ac{iot} applications that can be developed for one of the platforms that mTask supports.
+\paragraph{Suitable} The application should solve a problem that is suitable for mTask. This narrows the choice to \ac{iot} applications that can be developed for platforms supported by mTask.
 
 \paragraph{Non-trivial} The application should not solve a trivial problem --- e.g. a simple hallway  motion-activated light sensor. It should go beyond a purely reactive system. It does not have to solve a novel problem, but its development should be adequately challenging.
 
@@ -36,7 +36,7 @@ In the last decades, home automation gained another meaning with the invention o
 
 Automated tasks might be as simple as turning a light on when someone enters the room, controlling the heater based on a target room temperature, locking the main door at a set time and closing the curtains based on the amount of natural light outside. They might also be more elaborated as automatically turning the coffee maker on at 8:00 AM on work days, but only if somebody is home.
 
-\section{Application Description}
+\section{Application Description}\label{sec:app_desc}
 
 The home automation application proposed is called Autohouse. Its goal is to enable and manage the automation of a home (hereafter referred as \textit{smarthome}) using mTask. An Autohouse home is composed by rooms that can be added and removed by its user. Each room contain devices (called \textit{units} in the application) that execute tasks chosen by the user. 
 
@@ -52,7 +52,7 @@ The smarthome management is done in the control panel, a web interface that can 
 
 \subsection{Architecture}
 
-Autohouse is a centralized solution: a server (ideally located in the home) is the central communication hub for both users and devices. User communication is accomplished via the web control panel, which is hosted in the server. Device communication is accomplished via the mTask library and its communication protocol described in Section \ref{sec:mtask_com_prot}. Figure \ref{fig:autohouse_arch} displays an example architecture of Autohouse deployed on a home with 3 units. 
+Autohouse is a centralized solution: a server (ideally located in the home) is the central communication hub for both users and devices. User communication is accomplished via the web control panel, which is hosted in the server. Device communication is accomplished via the mTask library and its communication protocol described in Section \ref{sec:mtask_com_prot}. Figure \ref{fig:autohouse_arch} displays an example architecture of Autohouse deployed on a home with three units. 
 
 \begin{figure}[H]
 \begin{center}
@@ -62,7 +62,7 @@ Autohouse is a centralized solution: a server (ideally located in the home) is t
 \label{fig:autohouse_arch}
 \end{figure}
 
-In Figure \ref{fig:autohouse_arch}, units are represented as diamonds, the server is represented as a rectangle and clients accessing the web control panel are represented as circles. Rooms are just an abstraction layer to ease the use of Autohouse and therefore are not represented in its architecture. Units are microcontrollers equipped with peripherals (sensors, actuators) and an with interface for wireless communication with the server. The server can be any computer with networking capabilities that is supported by Clean and that has enough resources to run the application. A client is a device accessing the control panel using a web browser. Note that the server itself may be a client, since it can access the control panel via a web browser. In addition, if the server is exposed to the Internet, the control panel can be accessed remotely. 
+In Figure \ref{fig:autohouse_arch}, units are represented as diamonds, the server is represented as a rectangle and clients accessing the web control panel are represented as circles. Rooms are just an abstraction layer to ease the use of Autohouse and therefore are not represented in its architecture. Units are microcontrollers equipped with peripherals (sensors, actuators) and with a communication interface. The server can be any computer with networking capabilities that is supported by Clean and that has enough resources to run the application. A client is a device accessing the control panel using a web browser. Note that the server itself may be a client, since it can access the control panel via a web browser. In addition, if the server is exposed to the Internet, the control panel can be accessed remotely. 
 
 Communication between the server and the units must be persistent (represented by the continuous line between them in Figure \ref{fig:autohouse_arch}). If the communication is interrupted, the server interprets it as a disconnection. Communication between the server and the clients can be transient (represented by the dotted line between them in Figure \ref{fig:autohouse_arch}). Since clients are just managing the application, their connection does not have to be persistent. 
 
@@ -77,7 +77,7 @@ The default task list was not previously specified. Given that it was not known 
 \begin{itemize}
     \item Turn a light on when movement is detected
     \item Turn a light off when the environment is bright enough
-    \item Turn the ceiling fan off when there is an object about to hit it
+    \item Turn the ceiling fan off when there is an object too close to it
     \item Open or close the curtains based on the brightness inside and outside
     \item Manage the air conditioning unit and the heater based on a target room temperature and on the actual room temperature
     \item Open the windows if the air quality inside is poor and if the outside temperature is acceptable
@@ -88,9 +88,9 @@ The tasks that will be implemented into Autohouse will depend on available devel
 
 \subsection{Devices}\label{sec:autohouse_devices}
 
-Three microcontroller-based platforms are supported by mTask: NodeMCU, STM32 and Arduino. We chose Arduino~\cite{arduino} as the main platform for Autohouse. Arduino is an open-source electronics platform which has single-board microcontrollers specifications and software to support them. We chose Arduino because of its open-source nature, popularity, well-established community, open-source code availability and cost.
+Three microcontroller-based platforms are supported by mTask: NodeMCU, STM32 and Arduino. We chose Arduino~\cite{arduino} as the main platform for Autohouse. Arduino is an open-source electronics platform which has single-board microcontrollers specifications and software to support them. Arduino was chosen because of its open-source nature, popularity, well-established community, open-source code availability and cost.
 
-The Arduino platform currently has many boards with different specifications and purposes. We chose the Arduino Uno Rev3\footnote{Arduino Uno Rev3. Available at \url{https://store.arduino.cc/arduino-uno-rev3}. Accessed on August 26th 2018}  as the target device because of its popularity, extensibility (using shields\footnote{Arduino Shields. Available at \url{https://www.arduino.cc/en/Main/arduinoShields}. Accessed on August 26th 2018}) and its limited resources. The Arduino Uno is based on the ATmega328P microprocessor, which has only 2 KB of RAM. This memory limitation is a desired characteristic, given that we are testing whether mTask is suitable for microcontrollers, which might include devices with extremely limited resources. The Arduino Uno operates at a frequency of 16 MHz, has 6 analog pins, 14 digital pins, 32 KB of flash memory and a built-in \acs{led}. Its digital and analog pins are often used to interface with peripherals, including sensors and actuators. 
+The Arduino platform currently has many boards with different specifications and purposes. We chose the Arduino Uno Rev3\footnote{Arduino Uno Rev3. Available at \url{https://store.arduino.cc/arduino-uno-rev3}. Accessed on August 26th 2018.}  as the target device because of its popularity, extensibility (using shields\footnote{Arduino Shields. Available at \url{https://www.arduino.cc/en/Main/arduinoShields}. Accessed on August 26th 2018.}) and its limited resources. The Arduino Uno is based on the ATmega328P microprocessor, which has only 2 KB of RAM. This memory limitation is a desired characteristic, given that we are testing whether mTask is suitable for microcontrollers, which might include devices with extremely limited resources. The Arduino Uno operates at a frequency of 16 MHz, has 6 analog pins, 14 digital pins, 32 KB of flash memory and a built-in \acs{led}. Its digital and analog pins are often used to interface with peripherals, including sensors and actuators. 
 
 Sensors and actuators are extremely relevant to Autohouse because they allow the application to interface with the real world without human interference. Examples of sensors are temperature, humidity and noise sensors. Examples of actuators are buttons, switches, \acsp{led} and motors.
 
@@ -103,3 +103,28 @@ The sensors Autohouse plans to support are relevant to a home environment, both 
 The actuators Autohouse plans to support are relevant to a home automation application. Due to time limitations, not all actuators might be implemented into Autohouse during the research. Ideally, Autohouse would implement the following actuators, from high to low priority: \acsp{led}, push down buttons, switches, servos and \acsp{lcd}.
 
 \section{Application Analysis}\label{sec:app_analysis}
+
+The selection process that chose Autohouse as the research application was guided by the selection criteria presented in Section \ref{sec:selec_cri}. In this section, the Autohouse choice is motivated by analyzing the application under those same criteria.
+
+\paragraph{Suitable} Autohouse is suitable for mTask. Its components are small devices connected to a server that (if connected to the internet) can be accessed anywhere. In addition, Autohouse targets Arduino Uno, a board supported by mTask.
+
+\paragraph{Non-trivial} It is not a trivial application. The complexity of Autohouse goes beyond a simple reactive system. It is an application with an user interface where its user can dynamically add devices and send automation tasks to such devices. Its tasks can be simple reactive tasks but can also contain complex logic based on input from different sensors and devices.
+
+\paragraph{Simple} Autohouse is  simple enough to be developed during the research. Thanks to the prototyping nature of iTasks, its development can abstract from many technical details and focus on design decisions. Since Autohouse is not a product that is meant to be commercialized, its development process will not focus on security.
+
+\paragraph{Interesting} Home automation is becoming increasingly popular and its industry is growing consistently\footnote{Global Home Automation Market Growth Opportunities 2017-2022 - Market is expected to reach an estimated \$75.2 billion. Available at \url{https://goo.gl/nWJDmu}. Accessed on August 27th 2018.}. There is no industry standard and the market is highly fragmented. Therefore, Autohouse solves an existing, interesting problem.
+
+\paragraph{Significant} Autohouse might improve many aspects of its user's life. For example, Autohouse tasks can save time (e.g. automatically opening the garage door when a car moves backwards). They can also save energy (e.g. automatically turn off the lights and electronics when nobody is home). They might also improve the user's well being (e.g. automatically regulate room temperature) and health (e.g. open the windows when the air quality inside is poor). In addition, tasks can be simply convenient (e.g. open the curtains when it is bright outside).
+
+\paragraph{Comprehensible} The home automation domain is comprehensible to most people. We all live in homes and can relate to most of the tasks Autohouse should offer. Therefore, no explanation of the application domain is required to comprehend it. 
+
+\paragraph{Robust} Autohouse is a robust application when it comes to device disconnection. If a unit is disconnected from the server, the system should migrate the tasks that were running on that unit to another, suitable unit. Although, the application is not fault tolerant when it comes to server disconnection. Given that the current version of iTasks is centralized, server fault tolerance is currently unachievable.
+
+\paragraph{Highly connected} Autohouse supports multiple simultaneous devices. In the home automation domain, having many devices simultaneously connected is not only common, but encouraged. Wireless connections are supported but as explained in Section \ref{sec:app_desc}, Autohouse does not enforce them. 
+
+\paragraph{Dynamic} The Autohouse system allows for dynamic addition and removal of devices. In addition, a user might send tasks to devices dynamically. Home automation is a domain that naturally requires dynamicity. It is expected that Autohouse users create and delete tasks on a daily basis.
+
+\paragraph{Diverse} Autohouse is planned to support eight different sensors and four actuators. Therefore, in total, twelve peripherals are planned to be integrated into the application. Although this number is small when compared to some commercial applications out there, we believe that it is enough to display Autohouse's diversity.
+
+\paragraph{Extensive} The application tests mTask features thoroughly. Regarding the mTask language, the automation tasks planned in Autohouse use all of the language constructs implemented by the mTask's interpreted view (Section \ref{sec:int_mtask}). In addition, it makes use of mTask functionality to connect to devices and to send tasks to it. Autohouse benefits from mTask abstraction layer over devices and does not handle them directly.
+
