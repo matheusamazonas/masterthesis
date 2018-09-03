@@ -1,4 +1,4 @@
-The first step to answer the research question is to choose an application to develop. This chapter presents the criteria used in the selection process and the application chosen: home automation.
+The first step to answer the research question is choosing an application to develop. This chapter presents the criteria used in the selection process and the application chosen: home automation.
 
 \section{Selection Criteria}\label{sec:selec_cri}
 
@@ -8,7 +8,7 @@ The application developed during the research should ideally display the followi
 
 \paragraph{Non-trivial} The application should not solve a trivial problem --- e.g. a simple hallway  motion-activated light sensor. It should go beyond a purely reactive system. It does not have to solve a novel problem, but its development should be adequately challenging.
 
-\paragraph{Simple} It should be simple enough to be developed during this research. Since we are not aiming for a full-pledged application, some concerns as feature completeness, user experience design and security are not taken into account. Its source code should be neither too complex or big. Ideally, its entire code base would not contain more than 500 lines of code. 
+\paragraph{Simple} It should be simple enough to be developed during this research. Since we are not aiming for a full-pledged application, some concerns as feature completeness, user experience design and security are not taken into account. Its source code should be neither too complex or big.
 
 \paragraph{Interesting} It is not enough that the application is suitable and technically good. It should tackle an existing, interesting problem. The application should be well motivated.
 
@@ -28,17 +28,17 @@ The application developed during the research should ideally display the followi
 
 \section{Home Automation}
 
-Many potential \ac{iot} applications were considered to be developed during research. After a systematic selection process based on the selection criteria described on Section \ref{sec:selec_cri}, a home automation solution was chosen. A detailed analysis of why we chose this domain is presented on Section \ref{sec:app_analysis}.
+Many potential \ac{iot} applications were considered to be developed during research. After a systematic selection process based on the selection criteria described on Section \ref{sec:selec_cri}, a home automation solution was chosen. A detailed analysis of why we chose this domain is presented in Section \ref{sec:app_analysis}.
 
 Home automation might refer to different levels of automation of home tasks. By definition, any tool or machine that automates a home task constitutes a home automation solution. Historically, home automation became popular with the advent of distributed electricity. Daily tasks as dishwashing and drying clothes were automated by appliances that today are common in many households around the world.
 
-In the last decades, home automation gained another meaning with the invention of electronic solutions that control virtually any electronic in a house. Lighting, air conditioners, heaters, entertainment systems and doors are common components controlled by home automation solutions. Frequently, these applications are composed by a central control unit with a user interface (e.g. computer, tablet, smartphone, wall control panel), a communication channel (e.g. Bluetooth, \acs{lan}, Internet, infrared) and devices to be controlled (e.g. lamp, air conditioning unit, doors, TV, appliances).
+In the last decades, home automation gained another meaning with the invention of electronic solutions that control virtually any electronic in a house. Lighting, air conditioners, heaters, entertainment systems and doors are common components controlled by home automation solutions. Frequently, these systems are composed by a central control unit with a user interface (e.g. computer, tablet, smartphone, wall control panel), a communication channel (e.g. Bluetooth, \acs{lan}, Internet, infrared) and devices to be controlled (e.g. lamp, air conditioning unit, doors, TV, appliances).
 
-Automated tasks might be as simple as turning a light on when someone enters the room, controlling the heater based on a target room temperature, locking the main door at a set time and closing the curtains based on the amount of natural light outside. They might also be more elaborated as automatically turning the coffee maker on at 8:00 AM on work days, but only if somebody is home.
+Automated tasks might be as simple as turning a light on when someone enters the room, controlling the heater based on a target room temperature, locking the main door at a set time and closing the curtains based on the amount of natural light outside. They might also be more elaborated as automatically turning the coffee maker on at 8:00 AM on work days, but only if somebody is at home.
 
 \section{Application Description}\label{sec:app_desc}
 
-The home automation application proposed is called Autohouse. Its goal is to enable and manage the automation of a home (hereafter referred as \textit{smarthome}) using mTask. An Autohouse home is composed by rooms that can be added and removed by its user. Each room contain devices (called \textit{units} in the application) that execute tasks chosen by the user. 
+The home automation application proposed is called Autohouse. Its goal is to enable and manage the automation of a home (hereafter referred to as \textit{smarthome}) using mTask. An Autohouse home is composed by rooms that can be added and removed by its user. Each room contain devices (called \textit{units} in the application) that execute tasks chosen by the user. 
 
 The smarthome management is done in the control panel, a web interface that can be accessed using a web browser. Multiple instances of the control panel can run simultaneously. There, the user has access to the main features of the application:
 
@@ -66,7 +66,7 @@ In Figure \ref{fig:autohouse_arch}, units are represented as diamonds, the serve
 
 Communication between the server and the units must be persistent (represented by the continuous line between them in Figure \ref{fig:autohouse_arch}). If the communication is interrupted, the server interprets it as a disconnection. Communication between the server and the clients can be transient (represented by the dotted line between them in Figure \ref{fig:autohouse_arch}). Since clients are just managing the application, their connection does not have to be persistent. 
 
-Following one of the criterion introduced in Section \ref{sec:selec_cri}, units should connect to the servers wirelessly. The mTask library supports two types of connections: serial and TCP. Although, which technology is used to establish these connections is irrelevant to the end user. Therefore, Autohouse is technology agnostic in regard to communication between units and the server. Units can, for example, establish a serial connection via Bluetooth or a TCP connection via WiFi. As a consequence, Autohouse does not enforce a wireless connection between the units and the server. The user decides which communication technology is more adequate to their needs.
+Following one of the criterion introduced in Section \ref{sec:selec_cri}, units should connect to the servers wirelessly. The mTask library supports two types of connections: Serial and TCP. Although, which technology is used to establish these connections is irrelevant to the end user. Therefore, Autohouse is technology agnostic in regard to communication between units and the server. Units can, for example, establish a serial connection via Bluetooth or a TCP connection via WiFi. As a consequence, Autohouse does not enforce a wireless connection between the units and the server. The user decides which communication technology is more adequate to their needs.
 
 \subsection{Tasks}
 
@@ -81,7 +81,7 @@ The default task list was not previously specified. Given that it was not known 
     \item Open or close the curtains based on the brightness inside and outside
     \item Manage the air conditioning unit and the heater based on a target room temperature and on the actual room temperature
     \item Open the windows if the air quality inside is poor and if the outside temperature is acceptable
-    \item Turn the coffee maker on at 8:00 AM on work days, but only if somebody is home
+    \item Turn the coffee maker on at 8:00 AM on work days, but only if somebody is at home
 \end{itemize}
 
 The tasks that will be implemented into Autohouse will depend on available development time, peripheral support and mTask capability. The last condition is extremely relevant because it directly relates to the research question. If a task could not be implemented due to mTask limitations, we have a hint about how to improve mTask.
@@ -108,11 +108,11 @@ The selection process that chose Autohouse as the research application was guide
 
 \paragraph{Suitable} Autohouse is suitable for mTask. Its components are small devices connected to a server that (if connected to the internet) can be accessed anywhere. In addition, Autohouse targets Arduino Uno, a board supported by mTask.
 
-\paragraph{Non-trivial} It is not a trivial application. The complexity of Autohouse goes beyond a simple reactive system. It is an application with an user interface where its user can dynamically add devices and send automation tasks to such devices. Its tasks can be simple reactive tasks but can also contain complex logic based on input from different sensors and devices.
+\paragraph{Non-trivial} It is not a trivial application. The complexity of Autohouse goes beyond a simple reactive system. It is an application with a user interface where its user can dynamically add devices and send automation tasks to such devices. Its tasks can be simple reactive tasks but can also contain complex logic based on input from different sensors and devices.
 
-\paragraph{Simple} Autohouse is  simple enough to be developed during the research. Thanks to the prototyping nature of iTasks, its development can abstract from many technical details and focus on design decisions. Since Autohouse is not a product that is meant to be commercialized, its development process will not focus on security.
+\paragraph{Simple} Autohouse is  simple enough to be developed during the research. Thanks to the prototyping nature of iTasks, its development can abstract from many technical details and focus on design decisions.
 
-\paragraph{Interesting} Home automation is becoming increasingly popular and its industry is growing consistently\footnote{Global Home Automation Market Growth Opportunities 2017-2022 - Market is expected to reach an estimated \$75.2 billion. Available at \url{https://goo.gl/nWJDmu}. Accessed on August 27th 2018.}. There is no industry standard and the market is highly fragmented. Therefore, Autohouse solves an existing, interesting problem.
+\paragraph{Interesting} Home automation is becoming increasingly popular and its industry is growing consistently\footnote{Global Home Automation Market Growth Opportunities 2017-2022 - Market is expected to reach an estimated \$75.2 billion. Available at \url{https://markets.businessinsider.com/news/stocks/global-home-automation-market-growth-opportunities-2017-2022-market-is-expected-to-reach-an-estimated-75-2-billion-1007431226}. Accessed on August 27th 2018.}. There is no industry standard and the market is highly fragmented. Therefore, Autohouse solves an existing, interesting problem.
 
 \paragraph{Significant} Autohouse might improve many aspects of its user's life. For example, Autohouse tasks can save time (e.g. automatically opening the garage door when a car moves backwards). They can also save energy (e.g. automatically turn off the lights and electronics when nobody is home). They might also improve the user's well being (e.g. automatically regulate room temperature) and health (e.g. open the windows when the air quality inside is poor). In addition, tasks can be simply convenient (e.g. open the curtains when it is bright outside).
 
