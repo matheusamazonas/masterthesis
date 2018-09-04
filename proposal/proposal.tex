@@ -4,14 +4,11 @@
 \usepackage{url}
 \usepackage{geometry}
 \usepackage[english]{babel}
+\usepackage[backend=biber,style=numeric]{biblatex}
+\usepackage{glossaries}
 
-\usepackage[
-backend=biber,
-style=numeric
-]{biblatex}
 \addbibresource{proposal.bib}
 
-\usepackage{glossaries}
 \makeglossaries
 \input{glossary.tex}
 
@@ -28,15 +25,17 @@ style=numeric
 \maketitleru[
     layout=seventeen,
     title=Master's Thesis Proposal,
+    course=Computing Science,
     subtitle=\projecttitle,
-    others={{Supervisors:}{\rinus \\ \mart}}]
+    others={{Supervisor:}{\rinus},{Daily Supervisor:}{\mart}}]
+\clearpage
 
 % Mention some basic information, such as start date, expected end date, supervisor and (preliminary) project title. Also you must mention your study programme: computing science or information science.
 \section{Basic Information}
 
 The Master's thesis will be conducted as part of my Master's in Computing Science (Software Science specialization). The research will be carried out in the iCIS's Department of Software Science, specifically in the iTasks research group.
 
-The project started on April 23rd 2018 and is expected to end on August 26th 2018. Its proposed title is "\projecttitle"
+The project started on April 23rd 2018 and is expected to end on September 28th 2018. Its proposed title is "\projecttitle"
 
 The project's supervisor is \rinus and the daily supervisor is \mart
 
