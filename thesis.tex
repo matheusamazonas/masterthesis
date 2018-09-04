@@ -8,7 +8,7 @@
 \usepackage[toc,acronym,shortcuts,nonumberlist]{glossaries}
 \usepackage{listings}
 \usepackage{float} % Pictures
-\usepackage[backend=biber,style=numeric,maxbibnames=5,firstinits=true]{biblatex}
+\usepackage[backend=biber,style=numeric,maxbibnames=5,giveninits]{biblatex}
 \usepackage{subcaption} %subfigure
 \usepackage[export]{adjustbox} % subfigure
 \usepackage{graphicx} %subfigure
@@ -110,7 +110,7 @@
 \nocite{*}
 \phantomsection
 \addcontentsline{toc}{chapter}{Bibliography}
-\printbibliography[]
+\printbibliography
 % ----------------------------
 
 % -------- Glossaries --------
