@@ -8,7 +8,7 @@ The application developed during the research should ideally display the followi
 
 \paragraph{Non-trivial} The application should not solve a trivial problem --- e.g. a simple hallway  motion-activated light sensor. It should go beyond a purely reactive system. It does not have to solve a novel problem, but its development should be adequately challenging.
 
-\paragraph{Simple} It should be simple enough to be developed during this research. Since we are not aiming for a full-pledged application, some concerns as feature completeness, user experience design and security are not taken into account. Its source code should be neither too complex or big.
+\paragraph{Simple} It should be simple enough to be developed during this research. Since building a full-pledged application is not the goal of the research, some concerns as feature completeness, user experience design and security are not taken into account. Its source code should be neither too complex or big.
 
 \paragraph{Interesting} It is not enough that the application is suitable and technically good. It should tackle an existing, interesting problem. The application should be well motivated.
 
@@ -20,15 +20,15 @@ The application developed during the research should ideally display the followi
 
 \paragraph{Highly connected} It should support multiple devices simultaneously. These devices should be able to exchange information (e.g. sensor values) when suitable. Ideally, the devices would be connected wirelessly.
 
-\paragraph{Dynamic} The application should not be static. Given that we are exploring the interpreted version of mTask (Section \ref{sec:int_mtask}), we want to exploit its dynamic nature. The application domain should naturally allow dynamicity. Ideally, tasks would be sent to and removed from devices regularly.
+\paragraph{Dynamic} The application should not be static. Given that the interpreted version of mTask (Section \ref{sec:int_mtask}) is being explored, its dynamic nature should be exploited. The application domain should naturally allow dynamicity. Ideally, tasks would be sent to and removed from devices regularly.
 
 \paragraph{Diverse} It should use as many peripherals as possible. Since mTask targets microcontrollers, it is important that a diverse group of sensors and actuators is used. The application should not restrict itself to a couple of peripherals. 
 
-\paragraph{Extensive} The application should use mTask features extensively. Given that it is testing mTask's ability to develop applications, it is important that the application tests as many mTask features as possible. The more features are used by the application, the more confident we are about mTask's abilities.
+\paragraph{Extensive} The application should use mTask features extensively. Given that it is testing mTask's capabilities, it is important that the application tests as many mTask features as possible. There is a correlation between the number of features used by the application and the certainty about mTask's abilities.
 
 \section{Home Automation}
 
-Many potential \ac{iot} applications were considered to be developed during research. After a systematic selection process based on the selection criteria described on Section \ref{sec:selec_cri}, a home automation solution was chosen. A detailed analysis of why we chose this domain is presented in Section \ref{sec:app_analysis}.
+Many potential \ac{iot} applications were considered to be developed during research. After a systematic selection process based on the selection criteria described on Section \ref{sec:selec_cri}, a home automation solution was chosen. A detailed analysis of why this domain was chosen is presented in Section \ref{sec:app_analysis}.
 
 Home automation might refer to different levels of automation of home tasks. By definition, any tool or machine that automates a home task constitutes a home automation solution. Historically, home automation became popular with the advent of distributed electricity. Daily tasks as dishwashing and drying clothes were automated by appliances that today are common in many households around the world.
 
@@ -38,7 +38,7 @@ Automated tasks might be as simple as turning a light on when someone enters the
 
 \section{Application Description}\label{sec:app_desc}
 
-The home automation application proposed is called Autohouse. Its goal is to enable and manage the automation of a home (hereafter referred to as \textit{smarthome}) using mTask. An Autohouse home is composed by rooms that can be added and removed by its user. Each room contain devices (called \textit{units} in the application) that execute tasks chosen by the user. 
+The home automation application proposed is called Autohouse. Its goal is to enable and manage the automation of a home (hereafter referred to as \textit{smarthome}) using mTask. A smarthome is composed by rooms that can be added and removed by its user. Each room contain devices (called \textit{units} in the application) that execute tasks chosen by the user. 
 
 The smarthome management is done in the control panel, a web interface that can be accessed using a web browser. Multiple instances of the control panel can run simultaneously. There, the user has access to the main features of the application:
 
@@ -70,7 +70,7 @@ Following one of the criterion introduced in Section \ref{sec:selec_cri}, units 
 
 \subsection{Tasks}
 
-The main purpose of Autohouse is to send automation tasks to units so they can be executed without human supervision. Therefore, the tasks the application supports play a key role in Autohouse. The application should have a list of predefined tasks that are relevant to the house automation domain. The user could pick tasks form this default task list and select a unit to send it to. Initially, there should be no way for the user to add new tasks to the default task list.
+The main purpose of Autohouse is to send automation tasks to units so they can be executed without human supervision. Therefore, the tasks the application supports play a key role in Autohouse. The application should have a list of predefined tasks that are relevant to the house automation domain. The user could pick tasks form this default task list and select a unit to send it to.
 
 The default task list was not previously specified. Given that it was not known in advance which peripherals would be incorporated into Autohouse, creating a task list was not possible. Although, we had an idea of the types of tasks we aimed to implement in Autohouse. Some of these tasks are listed below, from simple reactive tasks to more elaborate ones:
 
@@ -88,9 +88,11 @@ The tasks that will be implemented into Autohouse will depend on available devel
 
 \subsection{Devices}\label{sec:autohouse_devices}
 
-Three microcontroller-based platforms are supported by mTask: NodeMCU, STM32 and Arduino. We chose Arduino~\cite{arduino} as the main platform for Autohouse. Arduino is an open-source electronics platform which has single-board microcontrollers specifications and software to support them. Arduino was chosen because of its open-source nature, popularity, well-established community, open-source code availability and cost.
+Three platforms are supported by mTaks: Arduino, POSIX and Mbed. Arduino~\cite{arduino} was chosen as the main platform for Autohouse. Arduino is an open-source electronics platform which has single-board microcontrollers specifications and software to support them. It was chosen because of its open-source nature, popularity, well-established community and open-source code availability.
 
-The Arduino platform currently has many boards with different specifications and purposes. We chose the Arduino Uno Rev3\footnote{Arduino Uno Rev3. Available at \url{https://store.arduino.cc/arduino-uno-rev3}. Accessed on August 26th 2018.}  as the target device because of its popularity, extensibility (using shields\footnote{Arduino Shields. Available at \url{https://www.arduino.cc/en/Main/arduinoShields}. Accessed on August 26th 2018.}) and its limited resources. The Arduino Uno is based on the ATmega328P microprocessor, which has only 2 KB of RAM. This memory limitation is a desired characteristic, given that we are testing whether mTask is suitable for microcontrollers, which might include devices with extremely limited resources. The Arduino Uno operates at a frequency of 16 MHz, has 6 analog pins, 14 digital pins, 32 KB of flash memory and a built-in \acs{led}. Its digital and analog pins are often used to interface with peripherals, including sensors and actuators. 
+The Arduino platform currently has many boards with different specifications and purposes. The Arduino Uno Rev3\footnote{Arduino Uno Rev3. Available at \url{https://store.arduino.cc/arduino-uno-rev3}. Accessed on August 26th 2018.} was chosen as the target device because of its popularity, extensibility (using shields\footnote{Arduino Shields. Available at \url{https://www.arduino.cc/en/Main/arduinoShields}. Accessed on August 26th 2018.}), cost and limited resources. The Arduino Uno is based on the ATmega328P microprocessor, which has only 2 KB of RAM. This memory limitation is a desired characteristic, given that mTask's suitability for microcontrollers is being tested and that such devices might have extremely limited resources. The Arduino Uno operates at a frequency of 16 MHz, has 6 analog pins, 14 digital pins, 32 KB of flash memory and a built-in \acs{led}. Its digital and analog pins are often used to interface with peripherals, including sensors and actuators. 
+
+
 
 Sensors and actuators are extremely relevant to Autohouse because they allow the application to interface with the real world without human interference. Examples of sensors are temperature, humidity and noise sensors. Examples of actuators are buttons, switches, \acsp{led} and motors.
 
@@ -124,7 +126,7 @@ The selection process that chose Autohouse as the research application was guide
 
 \paragraph{Dynamic} The Autohouse system allows for dynamic addition and removal of devices. In addition, a user might send tasks to devices dynamically. Home automation is a domain that naturally requires dynamicity. It is expected that Autohouse users create and delete tasks on a daily basis.
 
-\paragraph{Diverse} Autohouse is planned to support eight different sensors and four actuators. Therefore, in total, twelve peripherals are planned to be integrated into the application. Although this number is small when compared to some commercial applications out there, we believe that it is enough to display Autohouse's diversity.
+\paragraph{Diverse} Autohouse is planned to support eight different sensors and four actuators. Therefore, in total, twelve peripherals are planned to be integrated into the application. Although this number is small when compared to some commercial applications out there, it is enough to display Autohouse's diversity.
 
 \paragraph{Extensive} The application tests mTask features thoroughly. Regarding the mTask language, the automation tasks planned in Autohouse use all of the language constructs implemented by the mTask's interpreted view (Section \ref{sec:int_mtask}). In addition, it makes use of mTask functionality to connect to devices and to send tasks to it. Autohouse benefits from mTask abstraction layer over devices and does not handle them directly.
 

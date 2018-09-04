@@ -3,7 +3,7 @@
 \section{iTasks}\label{itasks}
 The iTasks system is an \acs{edsl} that implements the \acs{top} paradigm. Its host language is the pure and lazy functional programming language \textit{Clean}~\cite{clean}. iTasks uses generic programming to automatically generate code for user-specified first-order data types whilst also allowing for specialization. Given an iTasks program, the system generates code for both the server and the client.
 
-An iTasks task is a function that transforms a state, reacts to events and returns an observable value. A task is represented by \texttt{Task a} and its observable value by \texttt{TaskValue a}, where \texttt{a} is the type of the task. A \texttt{TaskValue} contains the current state of the value that a Task is processing. The possible states of a \texttt{TaskValue} are shown on Figure \ref{fig:task_value}. As we can see below, once a value stabilizes, it can not become unstable.
+An iTasks task is a function that transforms a state, reacts to events and returns an observable value. A task is represented by \texttt{Task a} and its observable value by \texttt{TaskValue a}, where \texttt{a} is the type of the task. A \texttt{TaskValue} contains the current state of the value that a Task is processing. The possible states of a \texttt{TaskValue} are shown on Figure \ref{fig:task_value}. As seen below, once a value stabilizes, it can not become unstable.
 
 
 \begin{figure}[H]
@@ -18,7 +18,7 @@ A Task can be of any type, as long as it provides instances for the type classes
 
 \section{Interaction}\label{interaction}
 
-The iTasks library provides basic tasks for user interaction. Listing \ref{l_top1} shows the three basic interactive tasks: \texttt{enterInformation}, \texttt{viewInformation} and \texttt{updateInformation}. They create user interface elements to enter, view and update information respectively. As we can see in Listing \ref{l_top1}, these basic tasks include a class constraint on the type of the returned \texttt{Task}. This constraint enforces that the type \texttt{m} has an instance of the \texttt{iTask} type class. 
+The iTasks library provides basic tasks for user interaction. Listing \ref{l_top1} shows the three basic interactive tasks: \texttt{enterInformation}, \texttt{viewInformation} and \texttt{updateInformation}. They create user interface elements to enter, view and update information respectively. As seen in Listing \ref{l_top1}, these basic tasks include a class constraint on the type of the returned \texttt{Task}. This constraint enforces that the type \texttt{m} has an instance of the \texttt{iTask} type class. 
 
 \begin{lstlisting}[caption=iTasks basic interaction functions,captionpos=b,label=l_top1]
 enterInformation  :: d [EnterOption m]      -> Task m | iTask m
@@ -27,7 +27,7 @@ updateInformation :: d [UpdateOption m m] m -> Task m | iTask m
 \end{lstlisting}
 
 
-Listing \ref{l_top2} displays examples of how to use the basic interactive tasks. We introduce a new \ac{adt}, called \texttt{Location} and automatically derive its instance of the \texttt{iTask} type class. Following, we introduce a new example \texttt{Location}. Finally, we define new tasks in terms of the basic tasks presented in Listing \ref{l_top1}. 
+Listing \ref{l_top2} displays examples of how to use the basic interactive tasks. First, a new \ac{adt} called \texttt{Location} is introduced. Next, its instance of \texttt{iTask} is automatically derived. Following, a new example \texttt{Location} is introduced. Finally, new tasks are defined in terms of the basic tasks presented in Listing \ref{l_top1}. 
 
 
 \begin{lstlisting}[caption=Example of basic iTasks interaction functions,captionpos=b,label=l_top2]
@@ -77,7 +77,7 @@ Although the basic tasks introduced in Section \ref{interaction} allow the user 
 
 \subsection{Sequential Combinators}
 
-Tasks can be executed in sequence using the \texttt{>>*} combinator, also called the \textit{step} combinator. Its type signature can been seen on Listing \ref{seq_comb}. The step combinator takes a \texttt{Task a} and a list of task continuations as input. A task continuation defines a condition on when to execute another task. It is a predicate that runs on either user actions, task values or thrown exceptions.
+Tasks can be executed in sequence using the \texttt{>>*} combinator, also called the \textit{step} combinator. Its type signature can be seen on Listing \ref{seq_comb}. The step combinator takes a \texttt{Task a} and a list of task continuations as input. A task continuation defines a condition on when to execute another task. It is a predicate that runs on either user actions, task values or thrown exceptions.
 
 \begin{lstlisting}[caption=Sequential combinators,label=seq_comb,captionpos=b]
 (>>*) infixl 1 :: (Task a) [TaskCont a (Task b)] -> Task b | iTask a & iTask b
@@ -109,7 +109,7 @@ Tasks can be executed in parallel using the \textit{parallel} combinator. All th
 Albeit task combinators are a powerful tool to 
 communicate values among tasks, some applications need to perform ad hoc communication with the external world. \acp{sds} abstract from implementation details on how resources are accessed. A resource can be, for example, a database, a file, the system time or a shared value in memory. 
 
-One approach to create an abstract view on shared data is called a lens~\cite{lenses}. A lens is a bidirectional transformation that provides an interface for reading and writing shared data. Lenses can be extended to allow change notifications: a view is notified when the underlying shared data was modified. Thus, a view always presents updated information. We call this ability of a view to listen for notifications \textit{observing}. Although change notifications are useful, each notification has communication and performance costs. When the shared data is relatively small and seldom updated, no problem arises. Although, if the data is represented by a large data structure that is often updated, broadcasting notifications might impact performance. 
+One approach to create an abstract view on shared data is called a lens~\cite{lenses}. A lens is a bidirectional transformation that provides an interface for reading and writing shared data. Lenses can be extended to allow change notifications: a view is notified when the underlying shared data was modified. Thus, a view always presents updated information. This ability to listen for notifications is called \textit{observing}. Although change notifications are useful, each notification has communication and performance costs. When the shared data is relatively small and seldom updated, no problem arises. Although, if the data is represented by a large data structure that is often updated, broadcasting notifications might impact performance. 
 
 This performance impact could be reduced if lenses were able to filter notifications based on which part of the underlying data was modified. Traditional lenses do not provide a mechanism to encode that information. Parametric lenses are an extension to traditional lenses that enable notification filtering according to a \textit{focus} domain~\cite{parametric}. This focus domain is used to encode notification predicates that tell whether a change on the underlying shared source affects the current view. This way, change notifications can be sent only to the views that are affected by the change, reducing unnecessary notifications.
 
