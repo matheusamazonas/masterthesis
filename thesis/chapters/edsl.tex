@@ -1,4 +1,4 @@
-A \ac{gpl} is a computer language intended to be used in a wide range of domains. An example is the C++ programming language, which can be used in domains that vary from video games to web servers and systems programming. In contrast, a \acf{dsl} is a computer language that was designed to be used in a particular domain. Game Maker Language, \acs{html}, LaTeX and \acs{vhdl} are examples of \acp{dsl}. These languages, when compared to \acp{gpl}, offer a higher level of abstraction from their target domain.
+A \ac{gpl} is a computer language intended to be used in a wide range of domains. An example is the \gls{cpp} programming language, which can be used in domains that vary from video games to web servers and systems programming. In contrast, a \acf{dsl} is a computer language that was designed to be used in a particular domain. Game Maker Language, \acs{html}, LaTeX and \acs{vhdl} are examples of \acp{dsl}. These languages, when compared to \acp{gpl}, offer a higher level of abstraction from their target domain.
 
 A \ac{dsl} can be implemented using two different strategies: standalone and embedded. Each strategy has its advantages and disadvantages. In the former strategy, the language is built from the ground up, which consists of developing either a compiler or an interpreter. This strategy provides the language designer with a lot design freedom, but requires a cumbersome amount of work. In the latter strategy, the proposed \ac{dsl} is embedded in another language. Therefore, the \ac{dsl} inherits functionality from its host language. This inheritance often is desirable (e.g., a type checker) but sometimes might be undesirable (e.g., type coercion). This strategy frees its designer of building a new compiler.
 
@@ -24,7 +24,7 @@ eval :: MyDSL -> Int
 
 The biggest advantage of deep embedding is that adding a view to the \ac{dsl} is easy: simply create a function that transforms the \ac{adt}. One disadvantage is that extending the \ac{dsl} might require a lot of work, since new code has to be created for every new construct in all the views. Another disadvantage is its lack of static type safety. As seen on Listing \ref{deep1}, \texttt{MyDSL} allows operations on mixed data types, such as addition on booleans and disjunction on integers. 
 
-\acp{gadt} can be used to accomplish static type safety in deeply \acp{edsl}, but Clean does not support them~\cite{gadts}. 
+\acp{gadt} can be used to accomplish static type safety in deeply \acp{edsl}, but \gls{clean} does not support them~\cite{gadts}. 
 
 \section{Shallow Embedding}
 Building a shallowly \ac{edsl} consists of representing the language constructs directly as its semantics. An example of a simple shallowly \ac{edsl} can be seen on Listing \ref{shallow1}. In this example, the \texttt{Sem} \ac{adt} contains both the evaluation (\texttt{a}) and the pretty printing (\texttt{[String]}) views.
