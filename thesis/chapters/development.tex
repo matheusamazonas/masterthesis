@@ -1,6 +1,50 @@
 
 \section{Changes to mTask}
 \subsection{Variables}
+
+Since \gls{mTask} is an imperative language, it would benefit from mutable data features. Although there are no \gls{mTask} constructs to represent variables, \acp{sds} might be used as updatable data containers. In such a setting, an \ac{sds} is created for each desired variable. This trick brings updatable data storage to \gls{mTask}, but it prompts two problems. 
+
+First, there is no separation of concerns. Variables and \acp{sds} are by definition, different things. A variable is a \textit{local} updatable data storage in memory. An \ac{sds} is an abstraction layer over any kind of data that might be shared, including data in memory. Using an \ac{sds} locally goes against what a \textit{shared} data source represents. Second, \acp{sds} are sent to devices but they are not attached to a specific task. Additionally, on the current version of mTask, there is no way to establish whether an \ac{sds} belongs to a given task. As a consequence, they are never deleted from devices. Variables, on the other hand, are always bond to a specific task and could be removed with their correspondent task altogether, saving device memory. Thus, \gls{mTask} could benefit from a language construct for variables. 
+
+The \texttt{vari} class was created to fill this gap. It contains two functions: \texttt{vari} and \texttt{con}, representing variable and constant data storage respectively. Its definition can be seen in Listing \ref{vari_class}. From a language construct point of view, the \texttt{sds} and \texttt{vari} classes do not differ much. Both classes contain constructs that might be used as updatables and as expressions. But there are two differences between these classes. First, \texttt{vari} contains a construct for constant data: \texttt{con}. Second, \texttt{vari} functions expect a value of type \texttt{t} as its initial value (seen as the first argument of \texttt{In} in Listing \ref{vari_class}). The \texttt{sds} function expects a \texttt{Shared t} instead. The biggest difference between the \texttt{sds} and \texttt{vari} classes is evident on the interpreted view of \gls{mTask}. Variables belong to a task and will live as long as the task lives. \acp{sds} are not bound to a task and will live in the device indefinitely. 
+
+
+\begin{lstlisting}[caption=The \texttt{vari} class,captionpos=b,label=vari_class]
+:: Vari  = Vari
+instance isExpr Vari where ...
+instance isUpd Vari where ...
+
+class vari v where
+  vari :: ((v t Vari) -> In t (Main (v c s))) -> (Main (v c s)) 
+  con ::  ((v t Expr) -> In t (Main (v c s))) -> (Main (v c s))
+\end{lstlisting}
+
+Listing \ref{vari_example} displays an example of the usage of variables in \gls{mTask}, the task \texttt{blink}. This task blinks \texttt{LED1} based on the value of variable \texttt{v}. The variable \texttt{v} is created using the \texttt{vari} construct. Its value is updated using the \texttt{=.} infix operator, similarly to \acp{sds}. It cal also be used as an boolean expression, as the condition to an \texttt{IF} construct.
+
+\begin{lstlisting}[caption=Example of the usage of variables in mTask,captionpos=b,label=vari_example]
+blink :: Main (v () Stmt) | program v
+blink = vari \v=False In { main =
+	IF (v) (
+		ledOn (lit LED1)
+	) (
+		ledOff (lit LED1)
+	) :.
+	v =. Not v :. noOp
+	}
+\end{lstlisting}
+
+The addition of variables to the language required changes on \gls{mTask}'s communication protocol (Section \ref{sec:mtask_com_prot}). When a task is sent to a device, its variables must be sent as well. Therefore, a \texttt{MTTask} message must include the variables used by the given task. Variables are modelled in the \texttt{BCVariable} record. A variable contain an unique (within a task) identifier and its initial value. The \texttt{BCVariable} record and the change in the communication protocol can be seen in Listing \ref{vari_message}.
+
+\begin{lstlisting}[caption=Changes in mTask's communication protocol to accommodate task variables,captionpos=b,label=vari_message]
+:: BCVariable = { vid :: Int, vval :: BCValue }
+
+:: MTaskMSGSend
+	= MTTask Int MTaskInterval [BCVariable] String
+	 ...
+\end{lstlisting}
+
+Additionally, the simulator and the client engine were modified to implement task variables. When a task is received, its variables are saved into memory. During task execution, variable are fetched and assigned similarly to \acp{sds}. When a task terminates, its variables are removed from memory.
+
 \subsection{Peripherals}
 \subsection{Device Disconnection}
 \subsection{Simulator Improvements}

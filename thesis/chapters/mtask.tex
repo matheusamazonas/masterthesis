@@ -59,7 +59,7 @@ class retrn v where
   retrn :: v () Expr
 \end{lstlisting}
 
-\paragraph{\aclp{sds}} The \texttt{sds} class contains functions to create \aclp{sds}. The \texttt{sds} function is used to create updatable \acp{sds} and the \texttt{con} function is used to create constant \acp{sds}. Both use the technique described in Section \ref{sec:class_based_edsl} to guarantee a type-safe usage of \acp{sds}. The \texttt{sdspub} class contains a construct to publish \acp{sds}. The \texttt{assign} class contains a single function to enable assignment in \gls{mTask}. \ac{sds} classes can be seen in Listing \ref{mtask_sds}. Notice that the functions below enforce the construct role \texttt{Upd} to ensure that only updatables are used.
+\paragraph{\aclp{sds}}\label{sec:sds} The \texttt{sds} class contains functions to create \aclp{sds}. The \texttt{sds} function is used to create updatable \acp{sds} and the \texttt{con} function is used to create constant \acp{sds}. Both use the technique described in Section \ref{sec:class_based_edsl} to guarantee a type-safe usage of \acp{sds}. The \texttt{sdspub} class contains a construct to publish \acp{sds}. The \texttt{assign} class contains a single function to enable assignment in \gls{mTask}. \ac{sds} classes can be seen in Listing \ref{mtask_sds}. Notice that the functions below enforce the construct role \texttt{Upd} to ensure that only updatables are used.
 
 \begin{lstlisting}[caption=\gls{mTask} SDS classes,captionpos=b,label=mtask_sds]
 :: In a b = In infix 0 a b
