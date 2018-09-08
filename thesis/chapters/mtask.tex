@@ -113,7 +113,7 @@ To overcome that limitation, a new view of \gls{mTask} was created~\cite{martthe
 
 \subsection{Communication Protocol}\label{sec:mtask_com_prot}
 
-Devices can be connected either via serial communication or TCP. The server and the client communicate via a protocol based on messages. Incoming messages are of type \texttt{MTaskMSGSend} --- messages are always named from the server's perspective. There are messages for task addition and deletion, shutdown request, \ac{sds} addition and update and specification request. The definition of the \texttt{MTaskMSGSend} \ac{adt} can be seen in Listing \ref{msg_send}.
+Devices can be connected either via serial communication or \acs{tcp}. The server and the client communicate via a protocol based on messages. Incoming messages are of type \texttt{MTaskMSGSend} --- messages are always named from the server's perspective. There are messages for task addition and deletion, shutdown request, \ac{sds} addition and update and specification request. The definition of the \texttt{MTaskMSGSend} \ac{adt} can be seen in Listing \ref{msg_send}.
 
 \begin{lstlisting}[caption=Communication protocol: sent messages,captionpos=b,label=msg_send]
 :: BCValue = E.e: BCValue e & mTaskType e
@@ -153,6 +153,29 @@ The simulator provides a web interface where the user can inspect the communicat
 
 The simulator offers two modes: manual and automatic. Manual mode requires user interaction via the web interface to run. Manual simulation can be performed via either big or small steps. These two step options offer different levels of abstraction to the user. Big steps execute one entire engine loop at a time. Small steps execute each bytecode instruction individually. Automatic mode executes the simulator without the need of user interaction. It is particularly useful when the programmer needs to simulate a device but does not want to step manually through its execution. Many simulators on different modes can run simultaneously.
 
+\subsection{Devices}\label{sec:mtask_devices}
+
+The \gls{mTask} library provides functions to interact with devices. Their type signatures can be seen in Listing \ref{mtask_devices}. Some of these functions take an \texttt{MTaskDevice} as input (also seen in Listing \ref{mtask_devices}). This \acs{adt} holds an \gls{mTask}'s device information, including its data and channels. 
+
+\begin{lstlisting}[caption=Device interaction functions,captionpos=b,label=mtask_devices]
+:: Channels :== ([MTaskMSGRecv], [MTaskMSGSend], Bool)
+
+:: DeviceData = ...
+
+:: MTaskDevice = Device (Shared DeviceData) (Shared Channels)
+
+class channelSync a :: a (Shared Channels) -> Task ()
+
+withDevice :: a (MTaskDevice -> Task b) -> Task b | channelSync a
+
+liftmTask :: MTaskDevice MTaskInterval (Main (ByteCode a Stmt)) -> Task () 
+\end{lstlisting}
+
+The \texttt{channelSync} class is responsible for device communication and is implemented by every \gls{mTask} device type. It contains only one function --- also called \texttt{channelSync} --- 
+which synchronizes a device's channels with the actual device. The \texttt{withDevice} function takes a synchronizable device (any type with an instance of the \texttt{channelSync} class) and a function as input. This argument function is the actual \texttt{Task} to be performed with the device. The \texttt{withDevice} task performs three tasks in parallel: it synchronizes the device channels (using \texttt{channelSync}), processes incoming \texttt{MTaskMSGRecv} messages and executes its argument task. 
+
+The \texttt{liftmTask} function sends an \gls{mTask} task to the given device. Its first argument is the device to which the task will be sent. Its second arguments is the task interval. Its last argument is the actual \gls{mTask} task to be sent. The \texttt{liftmTask} task stabilizes whenever its argument task finishes executing on the device. 
+
 \section{Examples}
 
 Two examples of \gls{mTask} tasks can be seen in Listing \ref{mtask_examples}. The first example, \texttt{switch}, turns an LED on and off based on a switch connected to to digital pin \texttt{D0}. The second example, \texttt{curtains}, opens and closes curtains based on the room lighting. The curtains' controller is connected to digital pin \texttt{D0} and the light sensor is connected to analog pin \texttt{A0}. When the light sensor value is greater then 3, the curtains open. Otherwise, the curtains close. In addition, an alarm (represented by the \texttt{alarm} \ac{sds}) is triggered when the curtains open. Once the curtains open and the alarm is triggered, the task terminates.
@@ -177,4 +200,8 @@ curtains = sds \alarm = False In { main =
 		dIO D0 =. (lit False)
 	)}
 \end{lstlisting}
+
+
+
+
 

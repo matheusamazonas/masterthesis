@@ -23,7 +23,7 @@ Listing \ref{vari_example} displays an example of the usage of variables in \gls
 
 \begin{lstlisting}[caption=Example of the usage of variables in mTask,captionpos=b,label=vari_example]
 blink :: Main (v () Stmt) | program v
-blink = vari \v=False In { main =
+blink = vari \v = False In { main =
 	IF (v) (
 		ledOn (lit LED1)
 	) (
@@ -46,7 +46,26 @@ The addition of variables to the language required changes on \gls{mTask}'s comm
 Additionally, the simulator and the client engine were modified to support task variables. When a task is received, its variables are saved into memory. During task execution, variables are fetched and assigned similarly to \acp{sds}. When a task terminates, its variables are removed from memory.
 
 \subsection{Peripherals}
+\subsection{Device Requirements}
 \subsection{Device Disconnection}
+
+\gls{autohouse} should be robust regarding device disconnection by design (Section \ref{sec:app_analysis}). Ideally, the system would detect a device disconnection and migrate the device's tasks to another suitable device. There were two challenges to tackle in order to implement this feature. 
+
+First, \gls{mTask} does not recognize device disconnection for all of the device types it supports. Simulators never get disconnected. \acs{tcp} devices throw an \gls{iTasks} error when a disconnection is identified. This error is not caught by mTask and propagates upwards. Serial devices kill the application when disconnected. The library used by \gls{mTask} to connect to Serial devices (CleanSerial\footnote{CleanSerial on GitLab. Available at \url{git@gitlab.science.ru.nl:mlubbers/CleanSerial.git}. Accessed on Semtember 8th 2018}) halts execution when a device is disconnected. 
+
+In order to detect device disconnection, \gls{mTask} had to be modified. If the device communication fails, the \texttt{channelSync} task (Section \ref{sec:mtask_devices}) should throw an exception\footnote{An \gls{iTasks} Task yields either a value or an exception. The \gls{iTasks} standard library provides functions to create and handle exceptions.}. \acs{tcp} devices already throw an exception when communication fails and therefore require no change. Although simulators never disconnect from the system, simulating a disconnection would benefit testing. Hence, simulators were modified to support intentional disconnection. CleanSerial was modified to support device disconnection recognition. At this point, \gls{mTask} recognizes device disconnection, but does not communicate it to \gls{autohouse}. 
+
+Ideally, \gls{mTask} would communicate device disconnection through an error handler that would be provided by the application. Thus, the application would decide what task to perform in case of a device disconnection. As seen in Section \ref{sec:mtask_devices}, the \gls{mTask} library provides a single function to connect with a device: \texttt{withDevice}. This function is responsible (besides other tasks) to manage the connection to the device. It was modified to accommodate an exception handler. Listing \ref{with_device} displays the type signature of the original \texttt{withDevice} along with its new version, named \texttt{withDevice'} here.
+
+\begin{lstlisting}[caption=Change in mTask to allow device disconnection handler,captionpos=b,label=with_device]
+withDevice  :: a (MTaskDevice -> Task b)                    -> Task b | channelSync a
+
+withDevice' :: a (MTaskDevice -> Task b) (String -> Task ()) -> Task b | channelSync a
+\end{lstlisting}
+
+Conclusively, \gls{mTask} recognizes and provides an exception handler for device disconnection. \gls{autohouse} uses this feature to detect Unit disconnection and thus automatically migrate tasks from the disconnected device to a suitable one.
+
+
 \subsection{Simulator Improvements}
 
 The simulator (Section \ref{mtask_simulator}) proved to be an essential tool during the development of \gls{autohouse}. Although, it was clear that it could be improved to ease debug and testing of the application. 
