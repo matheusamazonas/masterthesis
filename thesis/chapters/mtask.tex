@@ -145,7 +145,7 @@ The client communicates with the server via messages of type \texttt{MTaskMSGRec
 
 The client runs a loop function that runs repeatedly until a \textit{shutdown} message is received. The loop consists of two pieces: checking for incoming messages and running the task scheduler. The first step is straightforward: it checks the input buffer and processes any messages that might be in it. The task scheduler runs tasks based on task intervals. Tasks can run once (\texttt{OneShot}), repeatedly based on an interval (\texttt{OnInterval}) or based on an interruption (\texttt{OnInterrupt}). The interpreter is responsible for the execution of a task's bytecode.
 
-\subsection{The Simulator}
+\subsection{The Simulator}\label{mtask_simulator}
 
 During my Research Internship, I developed an iTask simulator for the interpreted \gls{mTask}. The motivation behind it is the same as the simulator for the static \gls{mTask}: programs running in microprocessors are hard to debug. The simulator mimics the C engine in many aspects, including communication, task scheduling and instruction interpretation. 
 
