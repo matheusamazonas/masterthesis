@@ -47,6 +47,23 @@ Additionally, the simulator and the client engine were modified to support task 
 
 \subsection{Peripherals}
 \subsection{Device Requirements}
+
+Some tasks rely on certain peripherals to execute. For example, a task that regulates room temperature relies on a temperature sensor. Despite that, \gls{mTask} does not provide a mechanism to determine whether a task is compatible with a device. The \texttt{Requirements} view was created to bring this feature to \gls{mTask}. Its definition can be seen in Listing \ref{lis:requirements}. \texttt{Requirement} is a type constructor with two phantom type variables: \texttt{a} and \texttt{b}~\cite{phantom}. These type variables are required by the \gls{mTask} type classes. A \texttt{Requirement} is a wrapper around the device specification type \texttt{MTaskDeviceSpec}. 
+
+Given a \gls{mTask} construct, this view will return the minimum device specification necessary to support that construct. We can use that information do determine whether a device matches the minimum specification for a task and therefore, if it is compatible with it. The \texttt{match} function does exactly this. Given an \gls{mTask} program and a \texttt{Maybe MTaskDeviceSpec}, it yields whether the device is task is compatible with the device.
+
+\begin{lstlisting}[caption=The \texttt{Requirements} view,captionpos=b,label=lis:requirements]
+:: Requirements a b = Req MTaskDeviceSpec
+
+match :: (Main (Requirements a b)) (Maybe MTaskDeviceSpec) -> Bool
+
+instance arith Requirements ...
+instance UserLED Requirements ...
+...
+\end{lstlisting}
+
+Instances of the \gls{mTask} classes (including peripheral classes) are defined for \texttt{Requirement}. Therefore, given a task, an application can filter the available devices based on whether they are compatible with it. The opposite is also possible. Given a device, an application can filter tasks based on whether they are compatible with it.
+
 \subsection{Device Disconnection}
 
 \gls{autohouse} should be robust regarding device disconnection by design (Section \ref{sec:app_analysis}). Ideally, the system would detect a device disconnection and migrate the device's tasks to another suitable device. There were two challenges to tackle in order to implement this feature. 
@@ -63,8 +80,7 @@ withDevice  :: a (MTaskDevice -> Task b)                    -> Task b | channelS
 withDevice' :: a (MTaskDevice -> Task b) (String -> Task ()) -> Task b | channelSync a
 \end{lstlisting}
 
-Conclusively, \gls{mTask} recognizes and provides an exception handler for device disconnection. \gls{autohouse} uses this feature to detect Unit disconnection and thus automatically migrate tasks from the disconnected device to a suitable one.
-
+Consequently, \gls{mTask} recognizes and provides an exception handler for device disconnection. \gls{autohouse} uses this feature to detect Unit disconnection and thus automatically migrate tasks from the disconnected device to a suitable one.
 
 \subsection{Simulator Improvements}
 
