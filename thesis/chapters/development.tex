@@ -46,6 +46,38 @@ The addition of variables to the language required changes on \gls{mTask}'s comm
 Additionally, the simulator and the client engine were modified to support task variables. When a task is received, its variables are saved into memory. During task execution, variables are fetched and assigned similarly to \acp{sds}. When a task terminates, its variables are removed from memory.
 
 \subsection{Peripherals}
+
+The \gls{mTask} library already supported some of the peripherals \gls{autohouse} planned to use: \acsp{led}, analog and digital pins. Although, new peripherals (e.g. light, temperature and humidity sensors) had to be added to implement some of the proposed automation tasks. Following the natural development process of an \gls{mTask} application, these devices were first emulated using the simulator. As more devices were implemented, it was clear that the workflow required to add a new peripheral to the system could be improved.
+
+Adding a new device requires changes on different parts of \gls{mTask}. An overview of the necessary changes can be seen below.
+
+\begin{itemize}
+    \item A new class that represents the peripheral is added to the language. 
+    \item Depending o the peripheral, a new \ac{adt} is created to represent its values (e.g. \texttt{DigitalPin}).
+    \item New bytecode instructions are created.
+    \item Bytecode encodings are updated to support the new instruction and the possibly new \acsp{adt}.
+    \item The \texttt{MTaskDeviceSpec} record is updated to include a flag for the new peripheral
+    \item The simulator interpreter is updated to handle the new bytecode instruction
+    \item The \gls{cpp} client is updated to handle the new peripheral
+\end{itemize}
+
+The changes on the client \gls{cpp} code depended heavily on the type of peripheral being implemented. Changes on the \gls{clean} code though, were often similar. Previously, peripheral code was scattered around the \gls{mTask} library. Peripheral classes were inside the \texttt{Language} module along with possibly new \acsp{adt}. Instances of the peripheral classes for each \gls{mTask} view were in the respective view's module. The simulator interpreter contained peripheral code. Bytecode encodings for basic types were mixed with encodings for peripheral data types. Overall, adding a new peripheral was particularly cumbersome and extremely error-prone. Finally, there was no separation of concerns whatsoever.
+
+A new modular code architecture for peripherals was introduced to solve some of the problems described above. Each peripheral should be defined inside its own module. Its type class, \acsp{adt}, bytecode encodings and view instances are defined in the same module. The simulator does know have any peripheral-specific code anymore. Instead of explicit fields for each peripheral, tts state record (\texttt{SimState}) contains a list of \texttt{Peripheral}. This new data type is a wrapper around every \gls{mTask} peripheral. Its definition can be seen in Listing \ref{lis:peripheral}. 
+
+\begin{lstlisting}[caption=The \texttt{Peripheral} class,captionpos=b,label=lis:peripheral]
+:: Peripheral = E.e: Peripheral e & peripheral e
+
+class peripheral e | iTask e where
+	processInst :: BC e -> State SimState (e,Bool)
+\end{lstlisting}
+
+The \texttt{peripheral} class was created to enable the removal of peripheral-specific code from the simulator's interpreter. Its only function, \texttt{processInst} defines how a peripheral should interpret bytecode instructions (\texttt{BC}). Naturally, a peripheral should only interpret instructions that are relevant to it. The simulator's interpreter executes one instruction at a time. If an instruction belongs to \gls{mTask}'s core instruction set (excluding peripheral instructions), the instruction is executed directly. If the instruction does not belong to the core instruction set, it is presented to all simulator peripherals using the \texttt{processInst} function. Once a peripheral responds to an instruction (represented by the \texttt{Bool} on \texttt{processInst} returned value), the interpreter considers the instruction executed and stops looking for a peripheral to execute it. If no of the peripherals execute the instruction, an error (instruction unknown) is thrown. 
+
+The addition of new bytecode instructions remains outside of the peripheral module. Although technically it is possible to make \texttt{BC} an extendable \acs{adt}, the amount of work necessary to do so outweighed the benefits it could bring. 
+
+The development that followed the changes described above proved that the separation of concerns regarding peripheral code improved \gls{mTask}. Peripherals were added faster, with less code changes and less errors. Additionally, code maintainability increased substantially. Since peripheral code lays mostly in the same module, small changes can be performed faster and safer.
+
 \subsection{Device Requirements}
 
 Some tasks rely on certain peripherals to execute. For example, a task that regulates room temperature relies on a temperature sensor. Despite that, \gls{mTask} does not provide a mechanism to determine whether a task is compatible with a device. The \texttt{Requirements} view was created to bring this feature to \gls{mTask}. Its definition can be seen in Listing \ref{lis:requirements}. \texttt{Requirement} is a type constructor with two phantom type variables: \texttt{a} and \texttt{b}~\cite{phantom}. These type variables are required by the \gls{mTask} type classes. A \texttt{Requirement} is a wrapper around the device specification type \texttt{MTaskDeviceSpec}. 
@@ -62,7 +94,7 @@ instance UserLED Requirements ...
 ...
 \end{lstlisting}
 
-Instances of the \gls{mTask} classes (including peripheral classes) are defined for \texttt{Requirement}. Therefore, given a task, an application can filter the available devices based on whether they are compatible with it. The opposite is also possible. Given a device, an application can filter tasks based on whether they are compatible with it.
+Instances of the \gls{mTask} classes (including peripheral classes) are defined for \texttt{Requirement}. Therefore, given a task, an application can filter the available devices based on whether they are compatible with it. The opposite is also possible: given a device, an application can filter tasks based on whether they are compatible with it.
 
 \subsection{Device Disconnection}
 
