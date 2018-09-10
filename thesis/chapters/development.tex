@@ -1,10 +1,17 @@
+\section{Development Overview}
+\subsection{Application Architecture}
+\subsection{Using the Simulator}
+\subsection{Device Deployment}
+\subsubsection{Devices}
+\subsubsection{Peripherals}-
+\subsubsection{Communication}
 
 \section{Changes to mTask}
 \subsection{Variables}
 
 Since \gls{mTask} is an imperative language, it would benefit from mutable data features. Although there are no \gls{mTask} constructs to represent variables, \acp{sds} might be used as updatable data containers. In such a setting, an \ac{sds} is created for each desired variable. This trick brings updatable data storage to \gls{mTask}, but it prompts two problems. 
 
-First, there is no separation of concerns. Variables and \acp{sds} are by definition, different things. A variable is a \textit{local} updatable data storage in memory. An \ac{sds} is an abstraction layer over any kind of shared data, including data in memory. Using an \ac{sds} locally goes against what a \textit{shared} data source represents. Second, when \acp{sds} are sent to devices, they are not attached to a specific task. Also, on the current version of mTask, there is no way to establish whether an \ac{sds} belongs to a given task. As a consequence, \acp{sds} are never deleted from devices. Variables, on the other hand, are always bond to a specific task and could be removed with their correspondent task altogether, saving space in the device's memory. Thus, \gls{mTask} could benefit from a language construct for variables. 
+First, there is no separation of concerns. Variables and \acp{sds} are by definition, different things. A variable is a \textit{local} updatable data storage in memory. An \ac{sds} is an abstraction layer over any kind of shared data, including data in memory. Using an \ac{sds} locally goes against what a \textit{shared} data source represents. Second, when \acp{sds} are sent to devices, they are not attached to a specific task. Also, on the current version of \gls{mTask}, there is no way to establish whether an \ac{sds} belongs to a given task. As a consequence, \acp{sds} are never deleted from devices. Variables, on the other hand, are always bond to a specific task and could be removed with their correspondent task altogether, saving space in the device's memory. Thus, \gls{mTask} could benefit from a language construct for variables. 
 
 The \texttt{vari} class was created to fill this gap. It contains two functions: \texttt{vari} and \texttt{con}, representing variable and constant data storage respectively. Its definition can be seen in Listing \ref{vari_class}. From a language construct point of view, the \texttt{sds} and \texttt{vari} classes do not differ much. Both classes contain constructs that might be used as updatables and as expressions. But there are two differences between these classes. First, \texttt{vari} contains a construct for constant data: \texttt{con}. Second, \texttt{vari} functions expect a value of type \texttt{t} as its initial value (seen as the first argument of \texttt{In} in Listing \ref{vari_class}). The \texttt{sds} function expects a \texttt{Shared t} instead. The biggest difference between the \texttt{sds} and \texttt{vari} classes regards their behavior on the interpreted view of \gls{mTask}. Variables belong to a task and will live as long as the task lives. \acp{sds} are not bound to a task and will live in the device indefinitely. 
 
@@ -121,10 +128,5 @@ Sometimes, the developer might want to debug a task and inspect it closely. The 
 
 The ability to simulate peripheral values is crucial for program testing in \gls{mTask}. Tasks often rely on peripheral values and therefore can only be thoroughly tested if peripheral values can be simulated. Although, the simulator did not have such feature. The development of \gls{autohouse} showed how necessary this feature is for \gls{mTask} development. Hence, simulation of peripheral values was incorporated to the simulator. Values can be manually set via the simulator \acs{ui}, similarly to breakpoints. 
 
-\section{Prototyping Using the Simulator}
+\section{Task Migration}
 
-\section{Device Deployment}
-\subsection{Devices}
-\subsection{Communication}
-\subsection{Sensors}
-\subsection{Actuators}
