@@ -3,7 +3,9 @@
 \subsection{Using the Simulator}
 \subsection{Device Deployment}
 \subsubsection{Devices}
-\subsubsection{Peripherals}-
+
+\subsubsection{Peripherals}
+
 \subsubsection{Communication}
 
 \section{Changes to mTask}
@@ -52,7 +54,7 @@ The addition of variables to the language required changes on \gls{mTask}'s comm
 
 Additionally, the simulator and the client engine were modified to support task variables. When a task is received, its variables are stored. During task execution, variables are fetched and assigned similarly to \acp{sds}. When a task terminates, its variables are removed from the device.
 
-\subsection{Peripherals}
+\subsection{Peripheral Code}
 
 The \gls{mTask} library already supported some of the peripherals \gls{autohouse} planned to use: \acsp{led}, analog and digital pins. Although, new peripherals (e.g. light, temperature and humidity sensors) had to be added to implement some of the proposed automation tasks. Following the natural development process of an \gls{mTask} application, these peripherals were first emulated using the simulator. As more peripherals were implemented, it was clear that the workflow required to add a new peripheral to the system could be improved.
 
@@ -84,6 +86,13 @@ The \texttt{peripheral} class was created to enable the removal of peripheral-sp
 The addition of new bytecode instructions remains outside of the peripheral module. Although technically it is possible to extend the bytecode data type (\texttt{BC}) in seperate modules, the amount of work necessary to do so outweighed the benefits it could bring. 
 
 The development that followed the changes described above proved that the separation of concerns regarding peripheral code improved \gls{mTask}. Peripherals were added faster, with less code changes and less errors. Additionally, code maintainability increased substantially. Since peripheral code lays mostly in the same module, small changes can be performed faster and safer.
+
+\subsection{New Peripherals}\label{sec:new_peri}
+
+Previously, the interpreted \gls{mTask} supported the following peripherals: \acsp{led}, \acs{lcd} displays (for displaying numbers only), analog and digital pins. The standard \gls{autohouse} tasks required new peripheral support. The following peripherals were added to \gls{mTask}: DHT22 temperature and light sensor, HCSR04 ultrasonic sensor, digital light sensor, Grove analog light sensor (P) V1.1, \ac{pir} and servo. 
+
+The digital light sensor, the Grove analog light sensor and the \acs{pir} did not require an external library to be used. They data pin is connected to pins on the board and their values can be read using \gls{arduino}'s standard functions. An additional library was required to interface with the servo. The \gls{arduino} Servo library\footnote{Arduino Servo Library. Available at \url{https://www.arduino.cc/en/reference/servo}. Accessed on September 10th 2018.} was used. An additional library was also required to interface with the DHT22 sensor. Although there are libraries available out there, I decided to implement a small and simple one just for \gls{mTask}: DHTino\footnote{DHTino on GitHub. Available at \url{https://github.com/matheusamazonas/DHTino}. Accesses on September 10th 2018.}. This choice was motivated by the limited amount of flash memory (32 KB) on the \gls{arduino} Uno. Existing libraries support many different sensors and have many features that would not be used by \gls{mTask} libraries. As a consequence, these libraries would take too much flash memory space. Guided by the same motivation, the Ultrino\footnote{Ultrino on GitHub. Available at \url{https://github.com/matheusamazonas/Ultrino}. Accessed on September 10th 2018.} library was created to interface with the HCSR04 ultrasonic sensor.
+
 
 \subsection{Device Requirements}
 
