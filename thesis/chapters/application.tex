@@ -69,7 +69,7 @@ Communication between the server and the units must be persistent (represented b
 
 Following one of the criterion introduced in Section \ref{sec:selec_cri}, units should connect to the servers wirelessly. The \gls{mTask} library supports two types of connections: Serial and \acs{tcp}. Although, which technology is used to establish these connections is irrelevant to the end user. Therefore, Autohouse is technology agnostic in regard to communication between units and the server. Units can, for example, establish a serial connection via Bluetooth or a \acs{tcp} connection via WiFi. As a consequence, Autohouse does not enforce a wireless connection between the units and the server. The user decides which communication technology is more adequate to their needs.
 
-\subsection{Tasks}
+\subsection{Tasks}\label{sec:autohouse_tasks}.
 
 The main purpose of Autohouse is to send automation tasks to units so they can be executed without human supervision. Therefore, the tasks the application supports play a key role in Autohouse. The application has a list of predefined tasks that are relevant to the house automation domain. The user can pick tasks from this default task list and select a unit to send it to. The standard task list might be extended by adding new tasks to the \texttt{Programs} module. The \gls{autohouse} standard tasks are listed below.
 
@@ -114,7 +114,7 @@ The selection process that chose Autohouse as the research application was guide
 
 \paragraph{Interesting} Home automation is becoming increasingly popular and its industry is growing consistently\footnote{Global Home Automation Market Growth Opportunities 2017-2022 - Market is expected to reach an estimated \$75.2 billion. Available at \url{https://markets.businessinsider.com/news/stocks/global-home-automation-market-growth-opportunities-2017-2022-market-is-expected-to-reach-an-estimated-75-2-billion-1007431226}. Accessed on August 27th 2018.}. There is no industry standard and the market is highly fragmented. Therefore, Autohouse solves an existing, interesting problem.
 
-\paragraph{Significant} Autohouse might improve many aspects of its user's life. For example, Autohouse tasks can save time (e.g. automatically opening the garage door when a car moves backwards). They can also save energy (e.g. automatically turn off the lights and electronics when nobody is home). They might also improve the user's well being (e.g. automatically regulate room temperature) and health (e.g. open the windows when the air quality inside is poor). In addition, tasks can be simply convenient (e.g. open the curtains when it is bright outside).
+\paragraph{Significant} Autohouse might improve many aspects of its user's life. For example, Autohouse tasks can save time (e.g. automatically opening the garage door when a car moves backwards). They can also save energy (e.g. turn the hallway light off if no one is walking by). They might also improve the user's well being (e.g. automatically regulate room temperature). In addition, tasks can be simply convenient (e.g. open the curtains when it is bright outside).
 
 \paragraph{Comprehensible} The home automation domain is comprehensible to most people. We all live in homes and can relate to most of the tasks Autohouse offers. Therefore, no explanation of the application domain is required to comprehend it. 
 
