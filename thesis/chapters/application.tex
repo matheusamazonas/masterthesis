@@ -1,16 +1,18 @@
-The first step to answer the research question is choosing an application to develop. This chapter presents the criteria used in the selection process and the application chosen: home automation.
+The first step to answer the research question was choosing an application to develop. This chapter presents the criteria used in the selection process and the application chosen: home automation.
 
 \section{Selection Criteria}\label{sec:selec_cri}
 
-The application developed during the research should ideally display the following characteristics:
+The application developed during the research should ideally display characteristics inherent to \acs{iot} applications~\cite{survey,survey2,survey3}. Although, some of there characteristics --- energy consumption, performance and security --- were not considered during the research. This choice was made because the development of \gls{iTasks} overlooked these aspects. Additionally, some criteria were added based on the research question.
+
+The following criteria were used to choose an application:
 
 \paragraph{Suitable} The application should solve a problem that is suitable for \gls{mTask}. This narrows the choice to \ac{iot} applications that can be developed for platforms supported by \gls{mTask}.
 
-\paragraph{Non-trivial} The application should not solve a trivial problem --- e.g. a simple hallway  motion-activated light sensor. It should go beyond a purely reactive system. It does not have to solve a novel problem, but its development should be adequately challenging.
+\paragraph{Non-trivial} Trivial applications (e.g. an \acs{led} blinking) were previously developed~\cite{martthesis}. Therefore, the application should not solve a trivial problem --- e.g. a simple hallway  motion-activated light sensor. It should go beyond a purely reactive system. It does not have to solve a novel problem, but its development should be adequately challenging.
 
-\paragraph{Simple} It should be simple enough to be developed during this research. Since building a full-pledged application is not the goal of the research, some concerns as feature completeness, user experience design and security are not taken into account. Its source code should be neither too complex or big.
+\paragraph{Simple} Due to time constraints, it should be simple enough to be developed during this research. Since building a full-pledged application is not the goal of the research, some concerns as feature completeness, user experience design and security are not taken into account. Its source code should be neither too complex or big.
 
-\paragraph{Interesting} It is not enough that the application is suitable and technically good. It should tackle an existing, interesting problem. The application should be well motivated.
+\paragraph{Interesting} It is not enough that the application is suitable and technically good. It should tackle an existing, interesting problem. Ideally, a problem which users inserted into the application domain would be willing to pay for a solution.
 
 \paragraph{Significant} The application should somehow improve the environment it is inserted into. Examples are accelerating an assembly line, saving commute  time, improving one's health or well being or reducing operational cost.
 
@@ -40,7 +42,7 @@ Automated tasks might be as simple as turning a light on when someone enters the
 
 The home automation application proposed is called Autohouse. Its goal is to enable and manage the automation of a home (hereafter referred to as \textit{smarthome}) using \gls{mTask}. A smarthome is composed by rooms that can be added and removed by its user. Each room contain devices (called \textit{units} in the application) that execute tasks chosen by the user. 
 
-The smarthome management is done in the control panel, a web interface that can be accessed using a web browser. Multiple instances of the control panel can run simultaneously. There, the user has access to the main features of the application:
+A smarthome is managed via the control panel, a web interface that can be accessed using a web browser. Multiple instances of the control panel can run simultaneously. There, the user has access to the main features of the application:
 
 \begin{itemize}
     \item Manage home: add and remove rooms to the smarthome
