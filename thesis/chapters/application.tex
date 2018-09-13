@@ -1,8 +1,8 @@
-The first step to answer the research question was choosing an application to develop. This chapter presents the criteria used in the selection process and the application chosen: home automation.
+The first step to answer the research question was to choose an application to develop. This chapter presents the criteria used in the selection process and the application chosen: home automation.
 
 \section{Selection Criteria}\label{sec:selec_cri}
 
-The application developed during the research should ideally display characteristics inherent to \acs{iot} applications~\cite{survey,survey2,survey3}. Although, some of there characteristics --- energy consumption, performance and security --- were not considered during the research. This choice was made because the development of \gls{iTasks} overlooked these aspects. Additionally, some criteria were added based on the research question.
+The application developed during the research should ideally display characteristics inherent to \acs{iot} applications~\cite{survey,survey2,survey3}. Although, some of there characteristics --- energy consumption, performance and security --- were not considered during the research. These aspects were ignored because the development of \gls{iTasks} overlooked them. Additionally, some criteria were added based on the research question.
 
 The following criteria were used to choose an application:
 
@@ -10,7 +10,7 @@ The following criteria were used to choose an application:
 
 \paragraph{Non-trivial} Trivial applications (e.g. an \acs{led} blinking) were previously developed~\cite{martthesis}. Therefore, the application should not solve a trivial problem --- e.g. a simple hallway  motion-activated light sensor. It should go beyond a purely reactive system. It does not have to solve a novel problem, but its development should be adequately challenging.
 
-\paragraph{Simple} Due to time constraints, it should be simple enough to be developed during this research. Since building a full-pledged application is not the goal of the research, some concerns as feature completeness, user experience design and security are not taken into account. Its source code should be neither too complex or big.
+\paragraph{Simple} Due to time constraints, it should be simple enough to be developed during this research. Since building a full-pledged application is not the goal of the research, some concerns as feature completeness, user experience design and security are not taken into account. Its source code should not be too complex.
 
 \paragraph{Interesting} It is not enough that the application is suitable and technically good. It should tackle an existing, interesting problem. Ideally, a problem which users inserted into the application domain would be willing to pay for a solution.
 
@@ -40,16 +40,15 @@ Automated tasks might be as simple as turning a light on when someone enters the
 
 \section{Application Description}\label{sec:app_desc}
 
-The home automation application proposed is called Autohouse. Its goal is to enable and manage the automation of a home (hereafter referred to as \textit{smarthome}) using \gls{mTask}. A smarthome is composed by rooms that can be added and removed by its user. Each room contain devices (called \textit{units} in the application) that execute tasks chosen by the user. 
+The home automation application developed is called Autohouse. It enables and manages the automation of a home (hereafter referred to as \textit{smarthome}) using \gls{mTask}. A smarthome is composed by rooms that can be added and removed by its user. Each room contain devices (called \textit{units} in the application) that execute tasks chosen by the user. 
 
 A smarthome is managed via the control panel, a web interface that can be accessed using a web browser. Multiple instances of the control panel can run simultaneously. There, the user has access to the main features of the application:
 
 \begin{itemize}
-    \item Manage home: add and remove rooms to the smarthome
-    \item Manage room: add and remove units to a room
-    \item Send task: send a new task to one of the available units
-    \item Stop task: delete a task that is currently running on a unit
-    \item Inspect unit: see which tasks are running on a unit
+    \item Manage home: add and remove rooms to the smarthome.
+    \item Manage room: add and remove units to a room.
+    \item Send task: send a new task to one of the available units.
+    \item Inspect unit: see which tasks are running on a unit.
 \end{itemize}
 
 \subsection{Architecture}
@@ -72,21 +71,18 @@ Following one of the criterion introduced in Section \ref{sec:selec_cri}, units 
 
 \subsection{Tasks}
 
-The main purpose of Autohouse is to send automation tasks to units so they can be executed without human supervision. Therefore, the tasks the application supports play a key role in Autohouse. The application should have a list of predefined tasks that are relevant to the house automation domain. The user could pick tasks form this default task list and select a unit to send it to.
-
-The default task list was not previously specified. Given that it was not known in advance which peripherals would be incorporated into Autohouse, creating a task list was not possible. Although, we had an idea of the types of tasks we aimed to implement in Autohouse. Some of these tasks are listed below, from simple reactive tasks to more elaborate ones:
+The main purpose of Autohouse is to send automation tasks to units so they can be executed without human supervision. Therefore, the tasks the application supports play a key role in Autohouse. The application has a list of predefined tasks that are relevant to the house automation domain. The user can pick tasks from this default task list and select a unit to send it to. The standard task list might be extended by adding new tasks to the \texttt{Programs} module. The \gls{autohouse} standard tasks are listed below.
 
 \begin{itemize}
-    \item Turn a light on when movement is detected
-    \item Turn a light off when the environment is bright enough
-    \item Turn the ceiling fan off when there is an object too close to it
-    \item Open or close the curtains based on the brightness inside and outside
-    \item Manage the air conditioning unit and the heater based on a target room temperature and on the actual room temperature
-    \item Open the windows if the air quality inside is poor and if the outside temperature is acceptable
-    \item Turn the coffee maker on at 8:00 AM on work days, but only if somebody is at home
+    \item Control a light based on a switch. 
+    \item Turn a light on when movement is detected.
+    \item Lock a door when it gets dark.
+    \item Open the garage door if a car is reversing.
+    \item Turn a fan on when it gets humid enough, but turn it off when something is about to hit it.
+    \item Open and close windows based on a target temperature range.
+    \item Open and close curtains based on the amount of light in the room.
+    \item Manage the air conditioning unit and the heater based on a target room temperature and on the actual room temperature.
 \end{itemize}
-
-The tasks that will be implemented into Autohouse will depend on available development time, peripheral support and \gls{mTask} capability. The last condition is extremely relevant because it directly relates to the research question. If a task could not be implemented due to \gls{mTask} limitations, we have a hint about how to improve \gls{mTask}.
 
 \subsection{Devices}\label{sec:autohouse_devices}
 
@@ -96,15 +92,15 @@ The \gls{arduino} platform currently has many boards with different specificatio
 
 
 
-Sensors and actuators are extremely relevant to Autohouse because they allow the application to interface with the real world without human interference. Examples of sensors are temperature, humidity and noise sensors. Examples of actuators are buttons, switches, \acsp{led} and motors.
+Sensors and actuators are extremely relevant to Autohouse because they allow the application to interface with the real world without human interference. Examples of sensors are temperature, humidity and movement sensors. Examples of actuators are buttons, switches, \acsp{led} and motors.
 
 \subsection{Sensors}
 
-The sensors Autohouse plans to support are relevant to a home environment, both indoors and outdoors. Due to time limitations, not all sensors might be implemented into Autohouse during the research. Ideally, Autohouse would implement the following sensors, from high to low priority: temperature, humidity, light, movement, proximity (ultrasonic), noise, water and air quality sensors. 
+\gls{autohouse} relies on the interpreted \gls{mTask} and its \gls{arduino} client for peripheral support. Therefore, it supports the same sensors the \gls{arduino} client does. Digital and analog pins can be controlled explicitly, but \gls{mTask} also provides native support for some sensors. Namely, for the DHT22 temperature and humidity sensor, the HCSR04 ultrasonic sensor, digital light sensor, Grove analog light sensor (P) V1.1 and \ac{pir}. Native sensor support allows programming in a high level of abstraction, in which sensor values represent their semantics. For example, reading from a temperature sensor returns a \texttt{Temperature}, an \acs{adt} that represents temperature in Celcius. Some of these sensors were not previously supported by \gls{mTask}. Section \ref{sec:new_peri} describes how these peripherals were incorporated into \gls{mTask}.
 
 \subsection{Actuators}
 
-The actuators Autohouse plans to support are relevant to a home automation application. Due to time limitations, not all actuators might be implemented into Autohouse during the research. Ideally, Autohouse would implement the following actuators, from high to low priority: \acsp{led}, push down buttons, switches, servos and \acsp{lcd}.
+Similarly to sensors, \gls{autohouse} relies on the interpreted \gls{mTask} and its \gls{arduino} client for actuator support. Some actuators (e.g. switches, buttons) can be directly controlled through pins and therefore do not require custom support. Other actuators, though, require custom support to be practically used. The interpreted \gls{mTask} provides native support for \acs{lcd} displays (to print integers only), \acsp{led} and servos. Servos were not previously supported by \gls{mTask}. Section \ref{sec:new_peri} describes how servos were incorporated into \gls{mTask}.
 
 \section{Application Analysis}\label{sec:app_analysis}
 
@@ -114,21 +110,21 @@ The selection process that chose Autohouse as the research application was guide
 
 \paragraph{Non-trivial} It is not a trivial application. The complexity of Autohouse goes beyond a simple reactive system. It is an application with a user interface where its user can dynamically add devices and send automation tasks to such devices. Its tasks can be simple reactive tasks but can also contain complex logic based on input from different sensors and devices.
 
-\paragraph{Simple} Autohouse is  simple enough to be developed during the research. Thanks to the prototyping nature of \gls{iTasks}, its development can abstract from many technical details and focus on design decisions.
+\paragraph{Simple} Autohouse was simple enough to be developed during the research. Thanks to the prototyping nature of \gls{iTasks}, its development could abstract from many technical details and focus on design decisions.
 
 \paragraph{Interesting} Home automation is becoming increasingly popular and its industry is growing consistently\footnote{Global Home Automation Market Growth Opportunities 2017-2022 - Market is expected to reach an estimated \$75.2 billion. Available at \url{https://markets.businessinsider.com/news/stocks/global-home-automation-market-growth-opportunities-2017-2022-market-is-expected-to-reach-an-estimated-75-2-billion-1007431226}. Accessed on August 27th 2018.}. There is no industry standard and the market is highly fragmented. Therefore, Autohouse solves an existing, interesting problem.
 
 \paragraph{Significant} Autohouse might improve many aspects of its user's life. For example, Autohouse tasks can save time (e.g. automatically opening the garage door when a car moves backwards). They can also save energy (e.g. automatically turn off the lights and electronics when nobody is home). They might also improve the user's well being (e.g. automatically regulate room temperature) and health (e.g. open the windows when the air quality inside is poor). In addition, tasks can be simply convenient (e.g. open the curtains when it is bright outside).
 
-\paragraph{Comprehensible} The home automation domain is comprehensible to most people. We all live in homes and can relate to most of the tasks Autohouse should offer. Therefore, no explanation of the application domain is required to comprehend it. 
+\paragraph{Comprehensible} The home automation domain is comprehensible to most people. We all live in homes and can relate to most of the tasks Autohouse offers. Therefore, no explanation of the application domain is required to comprehend it. 
 
-\paragraph{Robust} Autohouse is a robust application when it comes to device disconnection. If a unit is disconnected from the server, the system should migrate the tasks that were running on that unit to another, suitable unit. The application does not support server fault tolerance. Although the distributed version of \gls{iTasks} could have been used, Autohouse runs on the single server version instead~\cite{distributed}.
+\paragraph{Robust} Autohouse is a robust application when it comes to device disconnection. If a unit is disconnected from the server, the system migrates the tasks that were running on that unit to another, suitable unit. The application does not support server fault tolerance. Although the distributed version of \gls{iTasks} could have been used, Autohouse runs on the single server version instead~\cite{distributed}.
 
 \paragraph{Highly connected} Autohouse supports multiple simultaneous devices. In the home automation domain, having many devices simultaneously connected is not only common, but encouraged. Wireless connections are supported but as explained in Section \ref{sec:app_desc}, Autohouse does not enforce them. 
 
 \paragraph{Dynamic} The Autohouse system allows for dynamic addition and removal of devices. In addition, a user might send tasks to devices dynamically. Home automation is a domain that naturally requires dynamicity. It is expected that Autohouse users create and delete tasks on a daily basis.
 
-\paragraph{Diverse} Autohouse is planned to support eight different sensors and four actuators. Therefore, in total, twelve peripherals are planned to be integrated into the application. Although this number is small when compared to some commercial applications out there, it is enough to display Autohouse's diversity.
+\paragraph{Diverse} Autohouse supports five different sensors and three actuators. Therefore, in total, eight peripherals are integrated into the application. Although this number is small when compared to some commercial applications out there, it is enough to display Autohouse's diversity.
 
-\paragraph{Extensive} The application tests \gls{mTask} features thoroughly. Regarding the \gls{mTask} language, the automation tasks planned in Autohouse use all of the language constructs implemented by the \gls{mTask}'s interpreted view (Section \ref{sec:int_mtask}). In addition, it makes use of \gls{mTask} functionality to connect to devices and to send tasks to it. Autohouse benefits from \gls{mTask} abstraction layer over devices and does not handle them directly.
+\paragraph{Extensive} The application tests \gls{mTask} features thoroughly. Regarding the \gls{mTask} language, \gls{autohouse}'s default tasks use all of the language constructs implemented by the \gls{mTask}'s interpreted view (Section \ref{sec:int_mtask}). In addition, it makes use of \gls{mTask} functionality to connect to devices and to send tasks to it. Autohouse benefits from \gls{mTask} abstraction layer over devices and does not handle them directly.
 
