@@ -168,3 +168,24 @@ The ability to simulate peripheral values is crucial for program testing in \gls
 
 \section{Task Migration}\label{sec:task_migration}
 
+In case of device disconnection, the application should migrate the unit's tasks to another suitable one. The \gls{mTask} library offers means to connect and send task to devices, but not to manage them. The application using \gls{mTask} is responsible for device management. Therefore, automatic task migration was implemented entirely in \gls{autohouse} and required no changes to \gls{mTask} whatsoever.
+
+First, the feature behavior was defined. Although automatic task migration might me helpful, not tall tasks should be automatically migrated. For example, some tasks that are suitable for a hallway unit (e.g. motion-activated light switch) might not be suitable for a bedroom unit. Therefore, different migration strategies were created. These strategies are represented in the \texttt{Migration} \acs{adt}, seen in Listing \ref{migration_types}. 
+
+\begin{lstlisting}[caption=Task migration strategies of \gls{autohouse},captionpos=b,label=migration_types]
+:: Migration = DoNotMigrate | SameRoom | AnyRoom
+\end{lstlisting}
+
+Tasks with \texttt{DoNotMigrate} migration strategy never migrate to another unit. Tasks with the \texttt{SameRoom} strategy migrate only to units within the same room of its original unit. Tasks with \texttt{AnyRoom} strategy migrate to any other unit in the smarthome. When a task is being migrated, other units are checked for compatibility (based on the task's strategy, following no particular order) and once a compatible unit is found, the task is sent to it. The \gls{autohouse} user is responsible for determining a task's migration strategy when sending it to a unit.
+
+The application has to save enough task data to migrate a task in case of a device disconnection. The \gls{mTask}'s \texttt{liftmTask} function (Section \ref{sec:mtask_devices}) is used to send tasks to devices. Besides the device itself, this function takes a task interval and an \gls{mTask} task as input. Therefore, this is all the information the application needs to send a task to a device. \gls{autohouse}'s default tasks have a unique id that can be used to retrieve the task from the default task list. Thus, the application only needs to store the task index and its interval (\texttt{MTaskInterval}) in order to migrate it. 
+
+Some \gls{autohouse} tasks require user-provided arguments to work. For example, a user must provide an initial target temperature for a thermostat task before sending it to a device. If such a task is being migrated, the application should be able to restore the task arguments as well. \gls{autohouse} stores task arguments along with the task index and interval. A task's index and arguments are stored in the \texttt{ProgramData} data type. All the information necessary to migrate an \gls{autohouse} program lays in the \texttt{ProgramInstance} data type. Both data types can be seen on Listing \ref{migration_data}.
+
+\begin{lstlisting}[caption=Task migration data,captionpos=b,label=migration_data]
+:: ProgramData :== (Int, [Dynamic])   // (index, arguments)
+
+:: ProgramInstance :== (ProgramData, MTaskInterval, Migration)
+\end{lstlisting}
+
+A unit contains a list of \texttt{ProgramInstance}s. Each list element represents one task running on the unit and can be used to migrate its respective task to a new device. If a unit disconnects, the application goes through the unit's \texttt{ProgramInstance} list and migrates the tasks accordingly. Automatic task migration was tested using simulators and physical devices and it worked as expected.
