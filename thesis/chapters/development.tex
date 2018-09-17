@@ -138,7 +138,7 @@ instance UserLED Requirements
 
 Instances of \gls{mTask} classes (including peripheral classes) are defined for \texttt{Requirement}. Therefore, given a \gls{mTask} task, an application can filter the available devices based on whether they are compatible with it. The opposite is also possible: given a device, an application can filter tasks based on whether they are compatible with it.
 
-\subsection{Device Disconnection}
+\subsection{Device Disconnection}\label{sec:dev_disc}
 
 By design, \gls{autohouse} should be robust regarding device disconnection (Section \ref{sec:app_analysis}). Ideally, the system would detect a device disconnection and migrate the device's tasks to another suitable device. There were two challenges to tackle in order to implement this feature. 
 
@@ -165,6 +165,13 @@ Sometimes, the developer might want to debug a task and inspect it closely. The 
 The ability to simulate peripheral values is crucial for program testing in \gls{mTask}. Tasks often rely on peripheral values and therefore can only be thoroughly tested if peripheral values can be simulated. Although, the simulator did not have such feature. The development of \gls{autohouse} showed how necessary this feature is for \gls{mTask} development. Hence, simulation of peripheral values was incorporated into the simulator. Values can be manually set via the simulator \acs{ui}, similarly to breakpoints. 
 
 \section{Limitations of mTask}\label{sec:limitations}
+Some of the limitatios of \gls{mTask} that surfaced during the development of \gls{autohouse} were not overcome. First, \acsp{sds} can not be removed from a device. There is no message in \gls{mTask}'s communication protocol (Section \ref{sec:mtask_com_prot}) to request \acs{sds} deletion. Since a \acs{sds} is not bound to a task, once it is sent to a device, it lives there indefinitely. As a consequence, a device can accumulate unused \acsp{sds} over time, possibly filling the device's memory with dangling \acsp{sds}. Ideally, \acsp{sds} would always be bound to a task. Thus, they would be removed along with its task, eliminating dangling \acsp{sds}. 
+
+Second, there is a communication loop on \acs{sds} updates. The \gls{mTask} library automatically synchronizes \acsp{sds} between server and devices. Whenever a device publishes an \ac{sds} value, a message is sent to the server, which updates the actual \acs{sds}. Also, the server observes a \acs{sds} and whenever it is modified, it sends an update message to every device that uses that \acs{sds}. Hence, the server ensures \acs{sds} synchronization. A problem arises because the server is not aware of who is updating an \ac{sds}. Therefore, it might send an update message to the same device that published the \ac{sds} value, creating a communication loop. This behavior is not desirable because it generates unnecessary communication between the server and the devices. Additionally, it might create unexpected behavior. Ideally, the server would identify who is updating the \acs{sds} and avoid sending an update message to the device that trigerred it.
+
+Additionally, \gls{mTask} does not communicate whether a device connection request (a call to \texttt{withDevice}) was successful. If the connection is not established, the connection error handler (Section \ref{sec:dev_disc}) is invoked. Although this prevents application termination due to uncaught errors, it is not optimal. Ideally, a call to \texttt{withDevice} would communicate a successful connection. The application using \gls{mTask} might want to wait for a successful device connection to perform some tasks. For example, \gls{autohouse} could wait for a successful connection callback to store the unit data in the application \acs{sds}. Since it can not detect the status of the connection request, it stores the unit data before trying to connect. As a consequence, if a connection request to a device fails (e.g. the device does not exist), an invalid unit will live in the application's device list. 
+
+Similarly to the device communication limitation described above, an application using \gls{mTask} never knows whether a task sent to a device was acknowledged. Ideally, a call to \texttt{liftmTask} would communicate task acknowledgement. 
 
 \section{Task Migration}\label{sec:task_migration}
 
@@ -178,14 +185,15 @@ First, the feature behavior was defined. Although automatic task migration might
 
 Tasks with \texttt{DoNotMigrate} migration strategy never migrate to another unit. Tasks with the \texttt{SameRoom} strategy migrate only to units within the same room of its original unit. Tasks with \texttt{AnyRoom} strategy migrate to any other unit in the smarthome. When a task is being migrated, other units are checked for compatibility (based on the task's strategy, following no particular order) and once a compatible unit is found, the task is sent to it. The \gls{autohouse} user is responsible for determining a task's migration strategy when sending it to a unit.
 
-The application has to save enough task data to migrate a task in case of a device disconnection. The \gls{mTask}'s \texttt{liftmTask} function (Section \ref{sec:mtask_devices}) is used to send tasks to devices. Besides the device itself, this function takes a task interval and an \gls{mTask} task as input. Therefore, this is all the information the application needs to send a task to a device. \gls{autohouse}'s default tasks have a unique id that can be used to retrieve the task from the default task list. Thus, the application only needs to store the task index and its interval (\texttt{MTaskInterval}) in order to migrate it. 
+The application has to save enough task data to migrate a task in case of a device disconnection. The \gls{mTask}'s \texttt{liftmTask} function (Section \ref{sec:mtask_devices}) is used to send tasks to devices. Besides the device itself, this function takes a task interval and an \gls{mTask} task as input. Therefore, this is all the information the application needs to send a task to a device. \gls{autohouse}'s default tasks have a unique id that can be used to retrieve the task from the default task list. Thus, the application should only need to store the task index and its interval (\texttt{MTaskInterval}) in order to migrate it. 
 
-Some \gls{autohouse} tasks require user-provided arguments to work. For example, a user must provide an initial target temperature for a thermostat task before sending it to a device. If such a task is being migrated, the application should be able to restore the task arguments as well. \gls{autohouse} stores task arguments along with the task index and interval. A task's index and arguments are stored in the \texttt{ProgramData} data type. All the information necessary to migrate an \gls{autohouse} program lays in the \texttt{ProgramInstance} data type. Both data types can be seen on Listing \ref{migration_data}.
+But storing the task id and interval is not enough. Some \gls{autohouse} tasks require user-provided arguments to work. For example, a user must provide an initial target temperature to a thermostat task before sending it to a device. If such a task is being migrated, the application should be able to restore the task arguments as well. \gls{autohouse} stores task arguments along with the task index and interval. All the information necessary to migrate an \gls{autohouse} program lays in the \texttt{ProgramInstance} data type, seen on Listing \ref{migration_data}.
 
 \begin{lstlisting}[caption=Task migration data,captionpos=b,label=migration_data]
-:: ProgramData :== (Int, [Dynamic])   // (index, arguments)
-
-:: ProgramInstance :== (ProgramData, MTaskInterval, Migration)
+:: ProgramInstance = { pIx   :: Int,
+                       pArgs :: [Dynamic],
+                       pInt  :: MTaskInterval,
+                       pMig  :: Migration }
 \end{lstlisting}
 
 A unit contains a list of \texttt{ProgramInstance}s. Each list element represents one task running on the unit and can be used to migrate its respective task to a new device. If a unit disconnects, the application goes through the unit's \texttt{ProgramInstance} list and migrates the tasks accordingly. Automatic task migration was tested using simulators and physical devices and it worked as expected.
