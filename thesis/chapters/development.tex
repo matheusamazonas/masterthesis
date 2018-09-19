@@ -173,6 +173,8 @@ Additionally, \gls{mTask} does not communicate whether a device connection reque
 
 Similarly to the device communication limitation described above, an application using \gls{mTask} never knows whether a task sent to a device was acknowledged. Ideally, a call to \texttt{liftmTask} would communicate task acknowledgement. 
 
+Finally, \gls{mTask} does not support floating-point arithmetic. Some sensors data (e.g. DHT22 temperature and humidity sensor) is represented using floating-points and could not be directly translated into \gls{mTask} bytecode values. As a workaround, the \gls{arduino} client uses integers to represent floating-points, with a precision of two decimals. 
+
 \section{Task Migration}\label{sec:task_migration}
 
 In case of device disconnection, the application should migrate the unit's tasks to another suitable one. The \gls{mTask} library offers means to connect and send task to devices, but not to manage them. The application using \gls{mTask} is responsible for device management. Therefore, automatic task migration was implemented entirely in \gls{autohouse} and required no changes to \gls{mTask} whatsoever.
