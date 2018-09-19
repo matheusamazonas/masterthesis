@@ -1,4 +1,11 @@
-
 \section{Discussion}
 \section{Future Work}
 \section{Conclusion}
+
+The research reported in this documented tested \gls{mTask}'s ability to develop real-life \acs{iot} applications. The research question was tackled by example: the \gls{autohouse} application intended to assess \gls{mTask}'s capabilities. The application is a home automation system that allows users to dynamically manage automation tasks running on devices spread across different rooms. 
+
+Limitations of \gls{mTask} surfaced during the development of \gls{autohouse}. Some limitations were overcome by changing the \gls{mTask} and CleanSerial libraries. Task variables were added to the language. Device disconnection recognition was implemented, allowing the application to automatically migrate tasks when a device is lost. A new view was added to the \ac{edsl} which generates minimum device requirements for a \gls{mTask} task. This view can be used to filter available devices based on whether they support a given task. Six new peripherals were added to the \gls{mTask} language and to the \gls{arduino} client. Peripheral code was restructured, easing the addition of new peripherals, increasing code maintainability and bringing a better separation of concerns between the language core constructs and peripheral constructs. Finally, the simulator for the interpreted \gls{mTask} was modified to support the setting of peripheral values and breakpoints, which improved testing and debugging considerably.
+
+Other limitations could not be overcome during this research. \acsp{sds} are never removed from devices and live there indefinitely. There is a communication loop between devices and server whenever a device publishes an \acs{sds}. The \gls{mTask} library does not communicate neither device connection success nor task acknowledgment. Although these limitations were not overcome, they did not stop the development of \gls{autohouse}. 
+
+The \gls{mTask} \acs{edsl} and library were successfully used to develop a real-life \acs{iot} application: the home automation system \gls{autohouse}. Some of the limitations unearthed during the development process were overcome and some remain. Finally, it is clear what the next steps to improve \gls{mTask} are.
