@@ -1,5 +1,31 @@
-\section{Discussion}
-\section{Future Work}
+\section{Discussion and Future Work}
+
+\subsection{mTask}
+
+The \gls{autohouse} application was successfully developed using \gls{mTask}, but some aspects still have to be analyzed. The tests performed during development were limited to five \gls{arduino} boards running a maximum of three simultaneous tasks for a maximum duration of one hour. It is unknown how \gls{mTask} performs running more than five simultaneous devices. Given that the number of devices in \acs{iot} applications can escalate quickly, it is important to assess how \gls{mTask} escalates in regard to the number of connected devices. Similarly, given that \acs{iot} applications often run continuously, it would be important to perform tests with tasks running for longer periods of time. Another characteristic of \acs{iot} solutions is lower power consumption~\cite{survey,survey2,survey3}. Although, no power consumption analysis of \gls{mTask} applications was performed. Assessing \gls{mTask}'s power consumption, scalability and behavior over long periods is suggested as future research. 
+
+Ideally, the limitations of \gls{mTask} described in Section \ref{sec:limitations} should be eliminated. First, \acsp{sds} and tasks should be sent in a bundle. Thus, they would be removed altogether, eliminating dangling \acsp{sds}. Second, \gls{mTask} would avoid sending update messages to the exact same device which triggered the \acs{sds} update. Lastly, the \gls{mTask} library would provide callbacks to signal successful device connection and task acknowledgment. Solving these problems is also proposed as future research.
+
+The Raspberry Pi\footnote{Raspberry Pi. Available at \url{https://www.raspberrypi.org}. Accessed on September 19th 2018} is a compact \acs{arm} computer often used in \acs{iot} projects both as a device and as a server. It would be interesting to see whether the Raspberry Pi is capable of running an \gls{mTask} application. Also, since the Pi hardware is Linux compatible, it might host a \gls{mTask} \acs{posix} client. Testing with the Raspberry Pi is suggested as future research.
+
+The \gls{mTask} \acs{edsl} was created to bring \acs{iot} devices to the \gls{iTasks} environment. Although, its language is imperative and the system is not task-centred. Also, tasks cannot be combined as in \gls{iTasks}, limiting \gls{mTask}'s expressiveness. Naturally \gls{iTasks} and \gls{mTask} differ on some aspects, but ideally, the gap between them would be minimal, both in syntax and semantics. Current research has been performed to bridge this gap. A functional, task-centred version of \gls{mTask} has been proposed~\cite{micro}. Parallel and sequential task combinators were introduced, improving \gls{mTask}'s expressiveness. Due to time constraints, this version of \gls{mTask} could not be used in this research. Assessing the abilities of this new version of \gls{mTask} is proposed as future research.
+
+\subsection{Autohouse}
+
+Although \gls{autohouse} is not the research focus, it would be interesting to extend the application to push the boundaries of \gls{mTask}. 
+
+Currently, devices have no information about what its peripherals represent. For example, a servo can be used to control curtains or to lock a door. The user might know what which peripheral represents when sending a new task do a device, but the migration algorithm does not. As a consequence, a task might migrate to a compatible device with a peripheral that controls a different object than the intended one. For example, a task that uses a servo to automatically close curtains might migrate to a device that uses its servo to lock a door. Ideally, the application user would attribute tags to its peripherals. The migration algorithm would take that information into consideration when migrating tasks.
+
+Existing open-source home automation systems support many platforms, offer a myriad of features and focus on aspects (e.g. security, performance, user experience) that \gls{mTask} does not. Although, there are some fundamental differences between these systems and \gls{autohouse}. A brief comparison follows.
+
+The openHAB\footnote{openHAB. Available at \url{https://www.openhab.org}. Accessed on September 19th 2018.} is an open-source home automation integration platform. Instead of controlling devices running a custom firmware, openHAB integrates existing automation system from different manufacturers. Therefore, \gls{autohouse} and openHAB operate in different abstraction levels.
+
+Home Assistant\footnote{Home Assistant. Available at \url{https://www.home-assistant.io}. Accessed on September 19th 2018.} is an open-source automation system that supports many automation platforms including \gls{arduino}. Users can configure automation tasks using \gls{yaml} files. Although it supports \gls{arduino}, the server uses Firmata protocol (Chapter \ref{chap:related}) to control the devices. Therefore, evaluation of automation tasks is performed on the server, not on the clients. As a consequence, if the connection  between server and clients fails, the devices stop performing tasks. In \gls{autohouse}, devices keep executing tasks if communication is interrupted.
+
+Blynk\footnote{Blynk. Available at \url{https://www.blynk.cc}. Accessed on September 19th 2018.} and Thinger.io \footnote{Thinger.io. Available at \url{https://thinger.io}. Accessed on September 19th 2018} are \ac{iot} platforms in which devices (e.g. \gls{arduino}, \gls{mbed}, Raspberry Pi\footnote{Raspberry Pi. Available on \url{https://www.raspberrypi.org}. Accessed on September 19th 2018}) can be controlled via \gls{ios} and \gls{android} apps. Unlike in \gls{autohouse}, new tasks can not be sent to the devices dynamically. 
+
+As seen above, \gls{mTask}'s microcontroller support and dynamic nature brings a set of features to \gls{autohouse} that none of the analyzed home automation systems possesses.
+
 \section{Conclusion}
 
 The research reported in this documented tested \gls{mTask}'s ability to develop real-life \acs{iot} applications. The research question was tackled by example: the \gls{autohouse} application intended to assess \gls{mTask}'s capabilities. The application is a home automation system that allows users to dynamically manage automation tasks running on devices spread across different rooms. 
