@@ -16,15 +16,6 @@ Although \gls{autohouse} is not the research focus, it would be interesting to e
 
 Currently, devices have no information about what its peripherals represent. For example, a servo can be used to control curtains or to lock a door. The user might know what which peripheral represents when sending a new task to a device, but the migration algorithm does not. As a consequence, a task might migrate to a compatible device with a peripheral that controls a different object than the intended one. For example, a task that uses a servo to automatically close curtains might migrate to a device that uses its servo to lock a door. Ideally, the application user would attribute tags to its peripherals. The migration algorithm would take that information into consideration when migrating tasks.
 
-Existing open-source home automation systems support many platforms, offer a myriad of features and focus on aspects (e.g. security, performance, user experience) that \gls{mTask} does not. Although, there are some fundamental differences between these systems and \gls{autohouse}. A brief comparison follows.
-
-The openHAB\footnote{openHAB. Available at \url{https://www.openhab.org}. Accessed on September 19th 2018.} is an open-source home automation integration platform. Instead of controlling devices running a custom firmware, openHAB integrates existing automation system from different manufacturers. Therefore, \gls{autohouse} and openHAB operate in different abstraction levels.
-
-Home Assistant\footnote{Home Assistant. Available at \url{https://www.home-assistant.io}. Accessed on September 19th 2018.} is an open-source automation system that supports many automation platforms including \gls{arduino}. Users can configure automation tasks using \gls{yaml} files. Although it supports \gls{arduino}, the server uses Firmata protocol (Chapter \ref{chap:related}) to control the devices. Therefore, evaluation of automation tasks is performed on the server, not on the clients. As a consequence, if the connection  between server and clients fails, the devices stop performing tasks. In \gls{autohouse}, devices keep executing tasks if communication is interrupted.
-
-Blynk\footnote{Blynk. Available at \url{https://www.blynk.cc}. Accessed on September 19th 2018.} and Thinger.io \footnote{Thinger.io. Available at \url{https://thinger.io}. Accessed on September 19th 2018} are \ac{iot} platforms in which devices (e.g. \gls{arduino}, \gls{mbed}, Raspberry Pi\footnote{Raspberry Pi. Available on \url{https://www.raspberrypi.org}. Accessed on September 19th 2018}) can be controlled via \gls{ios} and \gls{android} apps. Unlike in \gls{autohouse}, new tasks can not be sent to the devices dynamically. 
-
-As seen above, \gls{mTask}'s microcontroller support and dynamic nature brings a set of features to \gls{autohouse} that none of the analyzed home automation systems possesses.
 
 \section{Conclusion}
 
