@@ -1,0 +1,253 @@
+\documentclass[department=icis, notes={show notes}, slidesperpage=1, official=true,showdate=true,slidenumbers=relative]{beamerruhuisstijl}
+
+\usepackage[british]{babel}
+\usepackage{graphicx,hyperref,url}
+\usepackage{amsmath,amssymb,amsfonts}
+\usepackage{listings}  
+\usepackage{enumitem}
+\usepackage{courier}
+
+\setitemize{noitemsep,topsep=0pt,parsep=0pt,partopsep=0pt,itemsep=1pt,label=$\bullet$}
+\lstset{language=clean,showstringspaces=false,basicstyle=\footnotesize\ttfamily}
+
+
+\newcommand{\projecttitle}{Developing Real Life, Task Oriented Applications for the Internet of Things}
+\newcommand{\rinus}{prof.~dr.~dr.h.c.~ir.~M.J.~Plasmeijer }
+\newcommand{\pieter}{dr.~P.W.M. Koopman}
+\newcommand{\mart}{M. Lubbers MSc.}
+
+\author{Matheus Amazonas Cabral de Andrade}
+\title[]{\projecttitle}
+\subtitle{Master's Thesis Presentation}
+\institute[Radboud University Nijmegen]{Institute for Computing and Information Sciences \\
+  Radboud University Nijmegen}
+\date{\today}
+
+
+\begin{document}
+
+\begin{frame}[plain]
+  \titlepage
+\end{frame}
+
+\begin{frame}
+  \frametitle{Outline}
+
+  \tableofcontents
+\end{frame}
+
+\section{Introduction}
+\begin{frame}[fragile]
+  \frametitle{Introduction}
+    \begin{itemize}
+        \setlength\itemsep{1em}
+        \item mTask
+        \begin{itemize}[label=$\diamond$]
+            \item IoT
+            \item C Code back end
+            \item Current version
+        \end{itemize}
+        \item The interpreter back end
+        \begin{itemize}[label=$\diamond$]
+            \item Motivation
+            \item Platforms
+        \end{itemize}
+        \item The simulator
+        \begin{itemize}[label=$\diamond$]
+            \item Motivation
+            \item Only for the interpreted mTask
+            \item Build in iTasks
+        \end{itemize}
+    \end{itemize}
+\end{frame}
+
+\section{Interpreted mTask}
+\begin{frame}[fragile]
+  \frametitle{Interpreted mTask}
+  \begin{itemize}
+      \setlength\itemsep{1em}
+      \item Task scheduling
+      \item SDS
+      \begin{itemize}[label=$\diamond$]
+          \item iTasks SDS
+      \end{itemize}
+      \item Communication channels
+      \item Bytecode
+      \item TCP and serial
+  \end{itemize}
+\end{frame}
+
+\section{The Simulator}
+\begin{frame}[fragile]
+  \frametitle{The Simulator}
+  \begin{itemize}
+      \setlength\itemsep{1em}
+      \item Mimic a device
+      \item Manual and automatic modes
+      \item Web (iTasks) UI for debugging
+      \item Standalone
+      \begin{itemize}[label=$\diamond$]
+          \item Simulator UI is optional for automatic mode
+          \item Standalone TCP implementation
+      \end{itemize}
+      \item Multiple simulators
+  \end{itemize}
+\end{frame}
+
+\begin{frame}[fragile]
+  \frametitle{Implementation - ADTs}
+  \begin{lstlisting}
+:: SimSettings = SimSettings MTaskDeviceSpec SimMode Real
+
+:: SimTask = {
+	tid :: Int,
+	interval :: MTaskInterval,
+	lastRun :: Int,
+	length :: Int,
+	bcIx :: Int }
+	
+:: MTaskInterval = 
+      OneShot
+    | OnInterval Int
+    | OnInterrupt Int 
+  \end{lstlisting}
+\end{frame}
+
+\begin{frame}[fragile]
+  \frametitle{Implementation - ADTs}
+  \begin{lstlisting}
+:: SimState = { 
+	sclock :: Int,
+	mSize :: Int, 
+	mem :: [BC],
+	sSize :: Int,
+	stack :: [BCValue],
+	pc :: Int,
+	tsks :: [SimTask],
+	dsds  :: [(Int, BCValue)],
+	apins :: [(AnalogPin, Int)], 
+	dpins :: [(DigitalPin, Bool)],
+	leds :: [(UserLED,Bool)],
+	shb :: Maybe Heartbeat,
+	ssp02 :: Maybe SP02,
+	lcd :: Maybe SimLCD,
+	taskHead :: Int,
+	taskNext :: Int,
+	lastTaskId :: Int }
+  \end{lstlisting}
+\end{frame}
+
+\begin{frame}[fragile]
+  \frametitle{Main Idea}
+  \begin{itemize}
+      \setlength\itemsep{1em}
+      \item Looping
+      \item Process channels \texttt{->} execute tasks
+      \item Automatic vs. Manual
+      \item Manual: small and big step
+      \item The simulator interpreter
+      \item Data sharing
+      \begin{itemize}[label=$\diamond$]
+          \item \texttt{Shared [(MTaskDevice, SimSettings)]}
+          \item Crucial for debugging and for the manual mode
+      \end{itemize}
+  \end{itemize}
+\end{frame}
+
+\begin{frame}[fragile]
+  \frametitle{Debugging UI}
+  \begin{itemize}
+      \setlength\itemsep{1em}
+      \item Channels + SimState + Stepping
+      \item Optional for automatic, mandatory for manual
+      \item \texttt{viewSims :: Task ()}
+      \item Access the simulators \texttt{Shared}
+      \item Just a Task, publishing is easy
+  \end{itemize}
+\end{frame}
+
+\section{Example}
+\begin{frame}[fragile]
+  \frametitle{Example - Factorial - The mTask Program}
+  \begin{lstlisting}
+factorial :: (Shared Int) Int -> Main (ByteCode () Stmt)
+factorial si i = sds \y=i In lowerSds \x=si 
+    In {main =
+    IF (y <=. lit 1) (
+		pub x :. retrn
+	) (
+		x =. x *. y :.
+		y =. y -. lit 1
+	)}
+    \end{lstlisting}
+\end{frame}
+
+% Maybe this slide is too much. It shows the interpreted mTask, not the simulator. Also, it's a lot of code.
+\begin{frame}[fragile]
+  \frametitle{Example - Factorial - The Task}
+  \begin{lstlisting}
+facTask :: Task ()
+facTask = withShared 1 \resultShare->
+  withDevice dev \device->
+    enterInformation "Factorial of what?" []
+      >>= \i->liftmTask (device, OnInterval 100)
+                        (factorial resultShare i)
+      ||- viewSharedInformation "Result" [] resultShare
+    >>* [OnAction (Action "Stop") $ always $ return ()]
+where
+  dev = let spec = {defaultValue & 
+                    stackSize = 1024, 
+                    bytesMemory = 2048, 
+                    resolveLabels = False}
+        in SimSettings spec Automatic 50.0
+    \end{lstlisting}
+\end{frame}
+
+\begin{frame}[fragile]
+  \frametitle{Example - Factorial - Start}
+  \begin{lstlisting}
+Start w = startEngine [
+    publish "/" $ const $ 
+        (viewSharedInformation "Devices" [] realDeviceStore 
+        ||- facTask),
+    publish ("/simulators") \$ const viewSims] w
+    \end{lstlisting}
+\end{frame}
+
+\section{Demo}
+\begin{frame}[plain,c]
+  \frametitle{}
+  \begin{center}
+    \Huge Demo
+  \end{center}
+\end{frame}
+
+\section{What's Next?}
+\begin{frame}[fragile]
+  \frametitle{What's Next?}
+  \begin{itemize}
+      \setlength\itemsep{1em}
+      \item Adapt to new mTask
+      \item Simulator for (automated) testing
+      \item Test for similarity with devices (Gast?)
+      \item OnInterrupt tasks 
+  \end{itemize}
+\end{frame}
+
+\begin{frame}[plain,c]
+  \frametitle{}
+  \begin{center}
+    \Huge Questions?
+  \end{center}
+\end{frame}
+
+
+\begin{frame}[plain,c]
+  \frametitle{}
+
+  \begin{center}
+    \Huge Thank you
+  \end{center}
+\end{frame}
+
+\end{document}
