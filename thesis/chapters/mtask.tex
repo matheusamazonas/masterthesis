@@ -178,7 +178,7 @@ The \texttt{liftmTask} function sends an \gls{mTask} task to the given device. I
 
 \section{Examples}
 
-Two examples of \gls{mTask} tasks can be seen in Listing \ref{mtask_examples}. The first example, \texttt{switch}, turns an LED on and off based on a switch connected to to digital pin \texttt{D0}. The second example, \texttt{curtains}, opens and closes curtains based on the room lighting. The curtains' controller is connected to digital pin \texttt{D0} and the light sensor is connected to analog pin \texttt{A0}. When the light sensor value is greater then 3, the curtains open. Otherwise, the curtains close. In addition, an alarm (represented by the \texttt{alarm} \ac{sds}) is triggered when the curtains open. Once the curtains open and the alarm is triggered, the task terminates.
+Two examples of \gls{mTask} tasks can be seen in Listing \ref{mtask_examples}. The first example, \texttt{switch}, turns an LED on and off based on a switch connected to digital pin \texttt{D0}. The second example, \texttt{curtains}, opens and closes curtains based on the room lighting. The curtains' controller is connected to digital pin \texttt{D0} and the light sensor is connected to analog pin \texttt{A0}. When the light sensor value is greater then 3, the curtains open. Otherwise, the curtains close. In addition, an alarm (represented by the \texttt{alarm} \ac{sds}) is triggered when the curtains open. Once the curtains open and the alarm is triggered, the task terminates.
 
 \begin{lstlisting}[caption=Examples of mTask tasks,captionpos=b,label=mtask_examples]
 switch :: Main (v () Stmt) 
@@ -192,7 +192,7 @@ switch = { main =
 curtains :: Main (v () Stmt)
 curtains = sds \alarm = False In { main = 
 	IF (aIO A0 >. lit 3) (
-		dIO D0 =. (lit True) :.
+		dIO D0 =. lit True :.
 		alarm =. lit True :.
 		pub alarm :.
 		retrn
