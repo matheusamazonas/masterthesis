@@ -30,10 +30,16 @@
   \titlepage
 \end{frame}
 
-\begin{frame}
-  \frametitle{Outline}
-
-  \tableofcontents
+\begin{frame}[fragile]
+    \frametitle{Master's Thesis}
+    \begin{itemize}
+        \setlength\itemsep{1em}
+        \item Master's in Computing Science (Software Science)
+        \item iCIS's Software Science Department
+        \item Project Supervisor: \rinus
+        \item Daily Supervisor: \mart
+        \item Second Reader: \pieter
+    \end{itemize}
 \end{frame}
 
 \section{Introduction}
@@ -41,140 +47,54 @@
   \frametitle{Introduction}
     \begin{itemize}
         \setlength\itemsep{1em}
-        \item mTask
+        \item{Task-Oriented Programming (TOP)}
         \begin{itemize}[label=$\diamond$]
-            \item IoT
-            \item C Code back end
-            \item Current version
+            \item High level of abstraction
+            \item Clean implementation: iTasks
+            \item Many platforms
         \end{itemize}
-        \item The interpreter back end
+        \item{Internet of Things (IoT)}
         \begin{itemize}[label=$\diamond$]
-            \item Motivation
-            \item Platforms
-        \end{itemize}
-        \item The simulator
-        \begin{itemize}[label=$\diamond$]
-            \item Motivation
-            \item Only for the interpreted mTask
-            \item Build in iTasks
+            \item Microcontrollers
+            \item Internet
+            \item Ubiquitous
+            \item But no TOP
         \end{itemize}
     \end{itemize}
 \end{frame}
 
-\section{Interpreted mTask}
+
+\section{mTask}
 \begin{frame}[fragile]
-  \frametitle{Interpreted mTask}
+  \frametitle{mTask}
   \begin{itemize}
       \setlength\itemsep{1em}
-      \item Task scheduling
-      \item SDS
+      \item Embedded Domain Specific Language
+      \item Motivation
+      \item Two views
       \begin{itemize}[label=$\diamond$]
-          \item iTasks SDS
+          \item Code
+          \item Interpret
       \end{itemize}
-      \item Communication channels
-      \item Bytecode
-      \item TCP and serial
-  \end{itemize}
-\end{frame}
-
-\section{The Simulator}
-\begin{frame}[fragile]
-  \frametitle{The Simulator}
-  \begin{itemize}
-      \setlength\itemsep{1em}
-      \item Mimic a device
-      \item Manual and automatic modes
-      \item Web (iTasks) UI for debugging
-      \item Standalone
+      \item The Interpreted View
       \begin{itemize}[label=$\diamond$]
-          \item Simulator UI is optional for automatic mode
-          \item Standalone TCP implementation
+          \item Motivation
+          \item Client
+          \item Simulator
       \end{itemize}
-      \item Multiple simulators
-  \end{itemize}
-\end{frame}
-
-\begin{frame}[fragile]
-  \frametitle{Implementation - ADTs}
-  \begin{lstlisting}
-:: SimSettings = SimSettings MTaskDeviceSpec SimMode Real
-
-:: SimTask = {
-	tid :: Int,
-	interval :: MTaskInterval,
-	lastRun :: Int,
-	length :: Int,
-	bcIx :: Int }
-	
-:: MTaskInterval = 
-      OneShot
-    | OnInterval Int
-    | OnInterrupt Int 
-  \end{lstlisting}
-\end{frame}
-
-\begin{frame}[fragile]
-  \frametitle{Implementation - ADTs}
-  \begin{lstlisting}
-:: SimState = { 
-	sclock :: Int,
-	mSize :: Int, 
-	mem :: [BC],
-	sSize :: Int,
-	stack :: [BCValue],
-	pc :: Int,
-	tsks :: [SimTask],
-	dsds  :: [(Int, BCValue)],
-	apins :: [(AnalogPin, Int)], 
-	dpins :: [(DigitalPin, Bool)],
-	leds :: [(UserLED,Bool)],
-	shb :: Maybe Heartbeat,
-	ssp02 :: Maybe SP02,
-	lcd :: Maybe SimLCD,
-	taskHead :: Int,
-	taskNext :: Int,
-	lastTaskId :: Int }
-  \end{lstlisting}
-\end{frame}
-
-\begin{frame}[fragile]
-  \frametitle{Main Idea}
-  \begin{itemize}
-      \setlength\itemsep{1em}
-      \item Looping
-      \item Process channels \texttt{->} execute tasks
-      \item Automatic vs. Manual
-      \item Manual: small and big step
-      \item The simulator interpreter
-      \item Data sharing
-      \begin{itemize}[label=$\diamond$]
-          \item \texttt{Shared [(MTaskDevice, SimSettings)]}
-          \item Crucial for debugging and for the manual mode
-      \end{itemize}
-  \end{itemize}
-\end{frame}
-
-\begin{frame}[fragile]
-  \frametitle{Debugging UI}
-  \begin{itemize}
-      \setlength\itemsep{1em}
-      \item Channels + SimState + Stepping
-      \item Optional for automatic, mandatory for manual
-      \item \texttt{viewSims :: Task ()}
-      \item Access the simulators \texttt{Shared}
-      \item Just a Task, publishing is easy
   \end{itemize}
 \end{frame}
 
 \section{Example}
-\begin{frame}[fragile]
-  \frametitle{Example - Factorial - The mTask Program}
+\begin{frame}[fragile,c]
+  \frametitle{mTask Example: Factorial}
   \begin{lstlisting}
 factorial :: (Shared Int) Int -> Main (ByteCode () Stmt)
-factorial si i = sds \y=i In lowerSds \x=si 
-    In {main =
+factorial si i = sds \y=i In lowerSds \x=si In {main =
     IF (y <=. lit 1) (
-		pub x :. retrn
+		pub x :. 
+		ledOn (lit LED1) :.
+		retrn
 	) (
 		x =. x *. y :.
 		y =. y -. lit 1
@@ -182,36 +102,91 @@ factorial si i = sds \y=i In lowerSds \x=si
     \end{lstlisting}
 \end{frame}
 
-% Maybe this slide is too much. It shows the interpreted mTask, not the simulator. Also, it's a lot of code.
+\section{Research Question}
+\begin{frame}[plain,c]
+    \frametitle{Research Question}
+    \begin{center}
+        Is it possible to develop real-life, IoT applications using mTask? If so, how can the development process be improved? If not, what are the challenges to solve to make it possible?
+    \end{center}
+\end{frame}
+
+\section{Application Domain}
 \begin{frame}[fragile]
-  \frametitle{Example - Factorial - The Task}
-  \begin{lstlisting}
-facTask :: Task ()
-facTask = withShared 1 \resultShare->
-  withDevice dev \device->
-    enterInformation "Factorial of what?" []
-      >>= \i->liftmTask (device, OnInterval 100)
-                        (factorial resultShare i)
-      ||- viewSharedInformation "Result" [] resultShare
-    >>* [OnAction (Action "Stop") $ always $ return ()]
-where
-  dev = let spec = {defaultValue & 
-                    stackSize = 1024, 
-                    bytesMemory = 2048, 
-                    resolveLabels = False}
-        in SimSettings spec Automatic 50.0
-    \end{lstlisting}
+    \frametitle{Application Domain}
+    \begin{itemize}
+        \setlength\itemsep{1em}
+        \item Selection Criteria
+        \item Home Automation
+        \item Autohouse
+        \begin{itemize}[label=$\diamond$]
+            \item Architecture
+            \item Tasks
+            \item Devices
+        \end{itemize}
+    \end{itemize}
+\end{frame}
+
+\section{Development}
+\begin{frame}[fragile]
+    \frametitle{Development Overview}
+    \begin{itemize}
+        \item Simulator on early stages of development
+        \item Wireless communication
+        \item Device deployment
+    \end{itemize}
+\end{frame}
+
+\begin{frame}[fragile,c]
+    \includegraphics[scale=0.06]{presentation/img/side.jpg}
+\end{frame}
+
+\begin{frame}[fragile,c]
+    \includegraphics[scale=0.06]{presentation/img/top.jpg}
+\end{frame}
+
+
+\begin{frame}[fragile]
+    \frametitle{Changes to mTask}
+    \begin{itemize}
+        \setlength\itemsep{1em}
+        \item Variables
+        \item New peripherals
+        \item Requirements view
+        \item Device disconnection
+        \item Simulator improvements
+    \end{itemize}
 \end{frame}
 
 \begin{frame}[fragile]
-  \frametitle{Example - Factorial - Start}
-  \begin{lstlisting}
-Start w = startEngine [
-    publish "/" $ const $ 
-        (viewSharedInformation "Devices" [] realDeviceStore 
-        ||- facTask),
-    publish ("/simulators") \$ const viewSims] w
-    \end{lstlisting}
+    \frametitle{Limitations of mTask}
+    \begin{itemize}
+        \setlength\itemsep{1em}
+        \item SDSs live forever
+        \item Unwanted SDS update loop
+        \item No task acknowledgment communication
+        \item Floating-point arithmetic
+    \end{itemize}
+\end{frame}
+
+\begin{frame}[fragile]
+    \frametitle{Task Migration}
+    \begin{itemize}
+        \setlength\itemsep{1em}
+        \item Device disconnection recogniziton
+        \begin{itemize}[label=$\diamond$]
+            \item Using the connection error handler
+        \end{itemize}
+        \item Migration strategies
+        \begin{itemize}[label=$\diamond$]
+            \item Do not migrate
+            \item Same room
+            \item Any room
+        \end{itemize}
+        \item Migration to compatible devices
+        \begin{itemize}[label=$\diamond$]
+            \item Using the Requirements view
+        \end{itemize}
+    \end{itemize}
 \end{frame}
 
 \section{Demo}
@@ -222,15 +197,28 @@ Start w = startEngine [
   \end{center}
 \end{frame}
 
-\section{What's Next?}
+\section{Conclusion}
 \begin{frame}[fragile]
-  \frametitle{What's Next?}
+  \frametitle{Conclusion}
   \begin{itemize}
       \setlength\itemsep{1em}
-      \item Adapt to new mTask
-      \item Simulator for (automated) testing
-      \item Test for similarity with devices (Gast?)
-      \item OnInterrupt tasks 
+      \item A real-life application was developed using mTask
+      \item mTask was improved
+        \begin{itemize}[label=$\diamond$]
+            \item Changes to mTask
+        \end{itemize}
+      \item Future work on mTask
+        \begin{itemize}[label=$\diamond$]
+            \item Overcome the limitations found during research
+            \item mTask2
+            \item Test mTask performance
+            \item Test mTask with the Raspberry Pi
+        \end{itemize}
+      \item Future work on Autohouse
+        \begin{itemize}
+            \item Task migration with tags
+            \item Peripheral sharing
+        \end{itemize}
   \end{itemize}
 \end{frame}
 
@@ -244,7 +232,6 @@ Start w = startEngine [
 
 \begin{frame}[plain,c]
   \frametitle{}
-
   \begin{center}
     \Huge Thank you
   \end{center}
