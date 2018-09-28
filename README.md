@@ -1,10 +1,10 @@
-# masterthesis
+# Master Thesis
 
-Source code for my Master's thesis report and presentation.
+LaTeX source code for my Master's thesis report and presentation. These files are extracted from a ShareLatex (now Overleaf v2) project. Hence the lack of a Makefile. The report's main file is "/thesis.tex" and presentation's is "presentation/presentation.tex". The PDF for both the report and the presentation are in the repository's root folder (named "thesis-matheus-andrade.pdf" and "presentation.pdf" respectively).
 
 The title was "Developing Real Life, Task Oriented Applications for the Internet of Things".
 
-The thesis was part of my Master's in Computing Science (Software Science specialization) at Radboud University (Nijmegen, the Netherlands).
+The thesis was part of my Master's in Computing Science (Software Science specialization) at [Radboud University](https://www.ru.nl/english/) (Nijmegen, the Netherlands).
 
 Abstract
 --------------
@@ -14,3 +14,4 @@ Autohouse
 --------------
 The application developed during research: 
 https://github.com/matheusamazonas/autohouse
+
